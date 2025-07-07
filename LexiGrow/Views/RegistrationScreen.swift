@@ -12,26 +12,20 @@ struct RegistrationScreen: View {
   @Environment(\.dismiss) var dismiss
   
   var body: some View {
-    ZStack {
-      // Add a background color in the future.
-      ScrollView {
-        VStack(spacing:30) {
-          title
-          inputFields
-          signUpButton
-          signInOption
-        }.padding(.top)
-      }
+    ScrollView {
+      VStack(spacing:30) {
+        title
+        inputFields
+        signUpButton
+        signInOption
+      }.padding(.top)
     }
   }
   
   // MARK: - Subviews
   
   private var title: some View {
-    Text("Registration")
-      .font(.title2)
-      .fontWeight(.semibold)
-      .fontDesign(.monospaced)
+    TypingEffectView(text: "Registration in LexiGrow.")
   }
   
   private var inputFields: some View {
@@ -45,7 +39,7 @@ struct RegistrationScreen: View {
       SecureField("Confirm Password", text: $viewModel.confirmedPassword)
         .customInputFieldStyle()
     }
-    .fontDesign(.monospaced)
+    .font(.subheadline)
     .padding(.horizontal)
   }
   
@@ -54,14 +48,13 @@ struct RegistrationScreen: View {
       viewModel.signUp()
     } label: {
       Text("Sign Up")
-        .font(.callout)
+        .font(.subheadline)
         .fontWeight(.medium)
-        .fontDesign(.monospaced)
-        .foregroundStyle(.white)
-        .padding(.vertical)
-        .padding(.horizontal,160)
-        .background(.indigo)
-        .clipShape(.rect(cornerRadius:15))
+        .foregroundStyle(.background)
+        .padding(.vertical,18)
+        .padding(.horizontal,140)
+        .background(.primary)
+        .clipShape(.rect(cornerRadius: 14))
     }
     .disabled(!viewModel.isValidForm)
     .opacity(!viewModel.isValidForm ? 0.5 : 1)
