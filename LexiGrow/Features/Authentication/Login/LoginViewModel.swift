@@ -7,7 +7,7 @@
 
 import Foundation
 
-@Observable class LoginViewModel {
+@Observable final class LoginViewModel {
   var email: String = ""
   var password: String = ""
   

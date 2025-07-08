@@ -7,7 +7,7 @@
 
 import Foundation
 
-@Observable class RegistrationViewModel {
+@Observable final class RegistrationViewModel {
   var fullName: String = ""
   var email: String = ""
   var password: String = ""
