@@ -14,6 +14,7 @@ extension View {
       .frame(minHeight: 55)
       .overlay {
         RoundedRectangle(cornerRadius: 15)
+          .inset(by: 0.5)
           .stroke(.gray.opacity(0.5), lineWidth: 1)
       }
   }
