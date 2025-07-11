@@ -10,46 +10,51 @@ import Foundation
 @MainActor
 @Observable
 final class AuthManager {
-  var currentUser: User?
-  private let authService: SupabaseAuthService
   
+  var currentUser: AppUser?
   var isLoading: Bool = false
+  private let authService: AuthServiceProtocol
   
-  init(authService: SupabaseAuthService = SupabaseAuthService()) {
+  init(authService: AuthServiceProtocol = AuthService()) {
     self.authService = authService
   }
   
   func signIn(email: String, password: String) async {
-    isLoading = false
+    isLoading = true
     do {
-      isLoading = true
-      self.currentUser = try await authService.signIn(email: email, password: password)
-      isLoading = false
+      self.currentUser = try await authService.signIn(
+        email: email,
+        password: password
+      )
     } catch {
-      isLoading = false
-      print("DEBUG: Sign in error: \(error.localizedDescription)")
+      print("⚠️ AuthManager: Failed to sign in: \(error.localizedDescription)")
     }
+    isLoading = false
   }
   
-  func signUp(email: String, password: String) async {
-    isLoading = false
+  func signUp(username: String, email: String, password: String) async {
+    isLoading = true
     do {
-      isLoading = true
-      self.currentUser = try await authService.signUp(email: email, password: password)
-      isLoading = false
+      self.currentUser = try await authService.signUp(
+        username: username,
+        email: email,
+        password: password
+      )
     } catch {
-      isLoading = false
-      print("DEBUG: Sign up error: \(error.localizedDescription)")
+      print("⚠️ AuthManager: Failed to sign up: \(error.localizedDescription)")
     }
+    isLoading = false
   }
   
   func signOut() async {
+    isLoading = true
     do {
       try await authService.signOut()
       currentUser = nil
     } catch {
-      print("DEBUG: Sign out error: \(error.localizedDescription)")
+      print("⚠️ AuthManager: Failed to sign out: \(error.localizedDescription)")
     }
+    isLoading = false
   }
   
   func refreshUser() async {
