@@ -6,8 +6,12 @@
 //
 
 import Foundation
+import SwiftUICore
 
-@Observable final class LoginViewModel {
+@Observable
+@MainActor
+final class LoginViewModel {
+  
   var email: String = ""
   var password: String = ""
   
@@ -15,5 +19,15 @@ import Foundation
     !email.isEmpty && !password.isEmpty
   }
   
-  func signIn() {}
+  private let authManager: AuthManager
+  
+  init(authManager: AuthManager) {
+    self.authManager = authManager
+  }
+  
+  func signIn() {
+    Task {
+      await authManager.signIn(email: email, password: password)
+    }
+  }
 }
