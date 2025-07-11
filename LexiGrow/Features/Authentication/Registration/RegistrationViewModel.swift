@@ -6,18 +6,35 @@
 //
 
 import Foundation
+import SwiftUICore
 
-@Observable final class RegistrationViewModel {
-  var fullName: String = ""
+@Observable
+@MainActor
+final class RegistrationViewModel {
+  var username: String = ""
   var email: String = ""
   var password: String = ""
   var confirmedPassword: String = ""
   
   var isValidForm: Bool {
-    !fullName.isEmpty
+    !username.isEmpty
     && !email.isEmpty
     && !password.isEmpty && password == confirmedPassword
   }
   
-  func signUp() {}
+  private let authManager: AuthManager
+  
+  init(authManager: AuthManager) {
+    self.authManager = authManager
+  }
+  
+  func signUp() {
+    Task {
+      await authManager.signUp(
+        username: username,
+        email: email,
+        password: password
+      )
+    }
+  }
 }
