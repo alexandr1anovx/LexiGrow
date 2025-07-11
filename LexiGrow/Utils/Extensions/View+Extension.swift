@@ -8,14 +8,43 @@
 import SwiftUI
 
 extension View {
+  func standardButtonStyle(bgColor: Color) -> some View {
+    self
+      .font(.callout)
+      .fontWeight(.medium)
+      .fontDesign(.monospaced)
+      .foregroundStyle(.white)
+      .padding(.vertical,16)
+      .padding(.horizontal,35)
+      .background(bgColor)
+      .clipShape(.capsule)
+      .shadow(radius: 5)
+  }
+  
+  func gradientButtonStyle(
+    bgColor: LinearGradient? = Color.gradientOrangePink
+  ) -> some View {
+    self
+      .font(.callout)
+      .fontWeight(.medium)
+      .fontDesign(.monospaced)
+      .foregroundStyle(.white)
+      .padding(.vertical,16)
+      .padding(.horizontal,35)
+      .background(bgColor)
+      .clipShape(.capsule)
+      .shadow(radius: 5)
+  }
+  
   func customInputFieldStyle() -> some View {
     self
+      .font(.subheadline)
+      .fontDesign(.monospaced)
       .padding()
       .frame(minHeight: 55)
       .overlay {
-        RoundedRectangle(cornerRadius: 15)
-          .inset(by: 0.5)
-          .stroke(.gray.opacity(0.5), lineWidth: 1)
+        RoundedRectangle(cornerRadius: 20)
+          .stroke(.secondary.tertiary, lineWidth: 1)
       }
   }
 }
