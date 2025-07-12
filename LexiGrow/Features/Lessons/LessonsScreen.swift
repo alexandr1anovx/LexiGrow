@@ -13,7 +13,7 @@ enum DisplayMode: String, Identifiable, CaseIterable {
   var id: Self { self }
 }
 
-struct HomeScreen: View {
+struct LessonsScreen: View {
   @State private var displayMode: DisplayMode = .blocks
   @Environment(\.colorScheme) var colorScheme
   private let feedbackGenerator = UIImpactFeedbackGenerator(style: .soft)
@@ -76,5 +76,5 @@ struct HomeScreen: View {
 }
 
 #Preview {
-  HomeScreen()
+  LessonsScreen()
 }
