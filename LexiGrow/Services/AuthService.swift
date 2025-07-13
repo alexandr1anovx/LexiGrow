@@ -8,24 +8,7 @@
 import Foundation
 import Supabase
 
-protocol AuthServiceProtocol {
-  
-  func signIn(
-    email: String,
-    password: String
-  ) async throws -> AppUser
-  
-  func signUp(
-    username: String,
-    email: String,
-    password: String
-  ) async throws -> AppUser
-  
-  func signOut() async throws
-  func getCurrentUser() async throws -> AppUser
-}
-
-struct AuthService: AuthServiceProtocol {
+struct AuthService {
   private let client: SupabaseClient
   
   init() {
@@ -68,6 +51,13 @@ struct AuthService: AuthServiceProtocol {
     } catch {
       throw AuthError.serverError(description: error.localizedDescription)
     }
+  }
+  
+  func updateUser(username: String) async throws -> AppUser {
+    let updatedUser = try await client.auth.update(
+      user: UserAttributes(data: ["username": .string(username)])
+    )
+    return try mapSupabaseUserToAppUser(updatedUser)
   }
   
   func getCurrentUser() async throws -> AppUser {
