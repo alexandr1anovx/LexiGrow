@@ -8,7 +8,7 @@
 import SwiftUI
 
 enum Tab {
-  case home, profile
+  case lessons, general
 }
 
 struct LaunchView: View {
@@ -30,20 +30,20 @@ struct LaunchView: View {
 
 struct AppTabView: View {
   @Environment(AuthManager.self) private var authManager
-  @State private var selectedTab: Tab = .home
+  @State private var selectedTab: Tab = .lessons
   private let feedbackGenerator = UIImpactFeedbackGenerator(style: .soft)
   
   var body: some View {
     TabView(selection: $selectedTab) {
-      HomeScreen()
-        .tag(Tab.home)
+      LessonsScreen()
+        .tag(Tab.lessons)
         .tabItem {
-          Label("Home", systemImage: "house")
+          Label("Lessons", systemImage: "book.pages")
         }
       GeneralScreen(authManager: authManager)
-        .tag(Tab.profile)
+        .tag(Tab.general)
         .tabItem {
-          Label("Profile", systemImage: "person")
+          Label("General", systemImage: "ellipsis.circle.fill")
         }
     }
     .onChange(of: selectedTab) { // Creates a haptic feedback when selecting a tab.
