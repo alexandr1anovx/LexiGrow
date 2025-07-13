@@ -10,12 +10,11 @@ import Foundation
 @MainActor
 @Observable
 final class AuthManager {
-  
   var currentUser: AppUser?
   var isLoading: Bool = false
-  private let authService: AuthServiceProtocol
+  private let authService: AuthService
   
-  init(authService: AuthServiceProtocol = AuthService()) {
+  init(authService: AuthService = AuthService()) {
     self.authService = authService
   }
   
@@ -57,11 +56,23 @@ final class AuthManager {
     isLoading = false
   }
   
+  func updateUser(username: String) async {
+    guard currentUser != nil else { return }
+    isLoading = true
+    do {
+      let updatedUser = try await authService.updateUser(username: username)
+      self.currentUser = updatedUser
+    } catch {
+      print("⚠️ AuthManager: Failed to update user: \(error.localizedDescription)")
+    }
+    isLoading = false
+  }
+  
   func refreshUser() async {
     do {
       self.currentUser = try await authService.getCurrentUser()
     } catch {
-      print("Refresh current user error: \(error)")
+      print("Refresh current user error: \(error.localizedDescription)")
       currentUser = nil
     }
   }
