@@ -14,7 +14,6 @@ final class LoginViewModel {
   
   var email: String = ""
   var password: String = ""
-  
   var isValidForm: Bool {
     !email.isEmpty && !password.isEmpty
   }
@@ -23,6 +22,10 @@ final class LoginViewModel {
   
   init(authManager: AuthManager) {
     self.authManager = authManager
+    print("✅ Login View Model has been initialized.")
+  }
+  deinit {
+    print("❌ Login View Model has been deinitialized.")
   }
   
   func signIn() {
