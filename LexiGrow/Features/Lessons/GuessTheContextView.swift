@@ -11,7 +11,7 @@ import GoogleGenerativeAI
 struct GuessTheContextView: View {
   @State private var generatedText: String = "This is where the text will be displayed."
   @State private var isLoading: Bool = false
-  @State private var isShownExitSheet: Bool = false
+  @State private var isShowingExitSheet: Bool = false
   @Environment(\.dismiss) var dismiss
   
   private let model = GenerativeModel(
@@ -60,7 +60,7 @@ struct GuessTheContextView: View {
       .toolbar {
         ToolbarItem(placement: .topBarTrailing) {
           Button {
-            isShownExitSheet = true
+            isShowingExitSheet = true
           } label: {
             Image(systemName: "xmark.circle.fill")
               .font(.title)
@@ -69,44 +69,15 @@ struct GuessTheContextView: View {
           }
         }
       }
-      .sheet(isPresented: $isShownExitSheet) {
-        exitPreview
+      .sheet(isPresented: $isShowingExitSheet) {
+        ExitLessonView($isShowingExitSheet) {
+          dismiss()
+        }
       }
     }
   }
   
-  private var exitPreview: some View {
-    VStack(spacing: 15) {
-      Spacer()
-      Text("Finish the lesson?")
-        .font(.title2)
-        .fontWeight(.semibold)
-      Text("Are you sure you want to exit the lesson?")
-        .font(.callout)
-        .fontWeight(.medium)
-        .foregroundStyle(.gray)
-        .multilineTextAlignment(.center)
-        .padding(.horizontal)
-      Spacer()
-      HStack {
-        Button {
-          // action
-        } label: {
-          Text("Cancel")
-            .standardButtonStyle(bgColor: .gray)
-        }
-        Button {
-          dismiss()
-        } label: {
-          Text("Finish")
-            .standardButtonStyle(bgColor: .red)
-        }
-      }.padding(.bottom)
-    }
-    .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .presentationDetents([.height(250)])
-    .presentationCornerRadius(50)
-  }
+  // MARK: - Subviews
   
   func generateContext() {
     isLoading = true
@@ -115,15 +86,12 @@ struct GuessTheContextView: View {
     Task {
       do {
         let prompt = ""
-        
         let response = try await model.generateContent(prompt)
-        
         if let text = response.text {
           generatedText = text
         }
-        
       } catch {
-        generatedText = "Error happened:: \(error.localizedDescription)"
+        generatedText = "Error happened: \(error.localizedDescription)"
       }
       isLoading = false
     }

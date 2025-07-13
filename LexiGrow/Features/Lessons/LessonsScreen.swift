@@ -20,20 +20,24 @@ struct LessonsScreen: View {
   
   var body: some View {
     NavigationView {
-      VStack(spacing:15) {
-        displayModeSelector
-        TabView(selection: $displayMode) {
-          LessonViewBlocks()
-            .tag(DisplayMode.blocks)
-          LessonViewCapsules()
-            .tag(DisplayMode.capsules)
+      ZStack {
+        Color.cmBlack
+          .ignoresSafeArea()
+        VStack(spacing: 15) {
+          displayModeSelector
+          TabView(selection: $displayMode) {
+            LessonViewBlocks()
+              .tag(DisplayMode.blocks)
+            LessonViewCapsules()
+              .tag(DisplayMode.capsules)
+          }
+          .tabViewStyle(.page)
+          .onChange(of: displayMode) {
+            feedbackGenerator.impactOccurred()
+          }
         }
-        .tabViewStyle(.page)
-        .onChange(of: displayMode) {
-          feedbackGenerator.impactOccurred()
-        }
+        .navigationTitle("Lessons")
       }
-      .navigationTitle("Lessons")
     }
   }
   

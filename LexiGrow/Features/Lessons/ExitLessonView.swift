@@ -33,31 +33,33 @@ struct ExitLessonView: View {
         .multilineTextAlignment(.center)
         .padding(.horizontal)
       Spacer()
-      HStack {
+      HStack(spacing: 20) {
         Button {
           isShowing = false
         } label: {
           Text("Cancel")
             .padding(11)
             .foregroundStyle(.white)
+            .fontWeight(.medium)
         }
+        .tint(.black)
         .buttonBorderShape(.capsule)
         .buttonStyle(.bordered)
         Button(action: dismissAction) {
           Text("Exit")
             .padding(11)
-            .foregroundStyle(.red)
+            .foregroundStyle(.white)
             .fontWeight(.medium)
         }
-        .tint(.white)
+        .tint(.black)
         .buttonBorderShape(.capsule)
-        .buttonStyle(.borderedProminent)
+        .buttonStyle(.bordered)
       }.padding(.bottom)
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .presentationBackground(
+    .background(
       LinearGradient(
-        colors: [.red, .pink],
+        colors: [.red.opacity(0.5), .pink],
         startPoint: .leading,
         endPoint: .trailing
       )
