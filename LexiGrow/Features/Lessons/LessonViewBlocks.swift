@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct LessonViewBlocks: View {
-  @State private var selectedLesson: Lesson?
+  @State private var selectedLessonForSheet: Lesson?
+  @State private var selectedLessonForFullScreenCover: Lesson?
   
   private let columns: [GridItem] = [
     GridItem(.flexible(), spacing: 18),
@@ -21,7 +22,7 @@ struct LessonViewBlocks: View {
         ForEach(Lesson.lessons) { lesson in
           BlockView(lesson: lesson)
             .onTapGesture {
-              selectedLesson = lesson
+              selectedLessonForSheet = lesson
             }
         }
       }
@@ -34,7 +35,7 @@ struct LessonViewBlocks: View {
     .tag(DisplayMode.blocks)
     .padding()
     .shadow(radius: 5)
-    .sheet(item: $selectedLesson) { lesson in
+    .sheet(item: $selectedLessonForSheet) { lesson in
       Group {
         if lesson.isLocked {
           lockedLessonPreview(lesson)
@@ -50,12 +51,22 @@ struct LessonViewBlocks: View {
         )
       )
     }
+    .fullScreenCover(item: $selectedLessonForFullScreenCover) { lesson in
+      switch lesson.name {
+      case "Flashcards":
+        FlashcardsView()
+      case "Guess the context":
+        GuessTheContextView()
+      default:
+        EmptyView()
+      }
+    }
   }
   
   // MARK: - Subviews
   
   private func lessonPreview(_ lesson: Lesson) -> some View {
-    VStack(spacing:15) {
+    VStack(spacing: 15) {
       Spacer()
       Text(lesson.name)
         .font(.title2)
@@ -69,7 +80,8 @@ struct LessonViewBlocks: View {
         .padding(.horizontal)
       Spacer()
       Button {
-        
+        selectedLessonForSheet = nil
+        selectedLessonForFullScreenCover = lesson
       } label: {
         Text("Start Lesson")
           .standardButtonStyle(bgColor: lesson.color)
@@ -80,7 +92,7 @@ struct LessonViewBlocks: View {
     .presentationCornerRadius(50)
     .overlay(alignment: .topTrailing) {
       Button {
-        selectedLesson = nil
+        selectedLessonForSheet = nil
       } label: {
         Image(systemName: "xmark.circle.fill")
           .font(.title)
@@ -103,7 +115,7 @@ struct LessonViewBlocks: View {
         .foregroundStyle(.white)
         .padding(.horizontal)
       Button {
-        
+        // action
       } label: {
         Label("Get Premium", systemImage: "star.leadinghalf.filled")
           .fontWeight(.bold)
@@ -115,7 +127,7 @@ struct LessonViewBlocks: View {
     .presentationCornerRadius(50)
     .overlay(alignment: .topTrailing) {
       Button {
-        selectedLesson = nil
+        selectedLessonForSheet = nil
       } label: {
         Image(systemName: "xmark.circle.fill")
           .font(.title)
@@ -126,9 +138,14 @@ struct LessonViewBlocks: View {
   }
 }
 
+// MARK: - Block View
+
 struct BlockView: View {
   let lesson: Lesson
   @State private var isShownDescriptionPopover: Bool = false
+  
+  @State var counter: Int = 0
+  @State var origin: CGPoint = .zero
   
   var body: some View {
     HStack {
@@ -156,6 +173,18 @@ struct BlockView: View {
             colors: [lesson.color, .teal],
             startPoint: .topLeading,
             endPoint: .bottomTrailing
+          )
+        )
+        .onPressingChanged { point in
+            if let point {
+                origin = point
+                counter += 1
+            }
+        }
+        .modifier(
+          RippleEffect(
+            at: origin,
+            trigger: counter
           )
         )
     )
