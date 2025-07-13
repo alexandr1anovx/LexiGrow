@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct TypingEffectView: View {
+struct TypingTextEffect: View {
   
   let text: String
   @State private var displayedText = ""
@@ -16,12 +16,12 @@ struct TypingEffectView: View {
   @State private var typingTextOpacity = 0.0
   
   var body: some View {
-    
     HStack(spacing: 0) {
       Text(displayedText)
-        .font(.body)
+        .font(.subheadline)
         .fontWeight(.semibold)
         .underline()
+        .fontDesign(.monospaced)
       Rectangle() // Cursor
         .frame(width: 2, height: 20)
     }
