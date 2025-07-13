@@ -7,21 +7,12 @@
 
 import SwiftUI
 
-enum InputFieldContent {
-  case username
-  case email
-  case password
-  case confirmPassword
-}
-
 struct RegistrationScreen: View {
-  
   @State var viewModel: RegistrationViewModel
   @Environment(AuthManager.self) private var authManager
-  @Environment(\.dismiss) var dismiss
   
-  @State private var isShownPassword: Bool = false
   @FocusState private var inputContent: InputFieldContent?
+  @Environment(\.dismiss) var dismiss
   
   init(authManager: AuthManager) {
     _viewModel = State(wrappedValue: RegistrationViewModel(authManager: authManager))
@@ -41,77 +32,45 @@ struct RegistrationScreen: View {
   // MARK: - Subviews
   
   private var title: some View {
-    TypingEffectView(text: "Registration in LexiGrow.")
+    TypingTextEffect(text: "Registration in LexiGrow.")
   }
   
   private var inputFields: some View {
-    VStack(spacing:12) {
-      TextField("Username", text: $viewModel.username)
+    VStack(spacing: 10) {
+      InputField(.standard, "Username", text: $viewModel.username)
         .focused($inputContent, equals: .username)
         .textInputAutocapitalization(.never)
         .autocorrectionDisabled(true)
-        .customInputFieldStyle() // repeats
         .submitLabel(.next)
         .onSubmit {
           inputContent = .email
         }
-      TextField("Email", text: $viewModel.email)
+      InputField(.standard, "Email", text: $viewModel.email)
         .focused($inputContent, equals: .email)
         .textInputAutocapitalization(.never)
         .autocorrectionDisabled(true)
         .keyboardType(.emailAddress)
-        .customInputFieldStyle() // repeats
         .submitLabel(.next)
         .onSubmit {
           inputContent = .password
         }
-      
-      Group {
-        if isShownPassword {
-          HStack {
-            TextField("Password", text: $viewModel.password)
-            Button {
-              isShownPassword.toggle()
-            } label: {
-              Image(systemName: "eye.slash")
-            }
-            .opacity(viewModel.password.count > 1 ? 1 : 0)
-          }
-        } else {
-          HStack {
-            SecureField("Password", text: $viewModel.password)
-            Button {
-              isShownPassword.toggle()
-            } label: {
-              Image(systemName: "eye")
-            }
-            .opacity(viewModel.password.count > 1 ? 1 : 0)
-          }
+      InputField(.password, "Password", text: $viewModel.password)
+        .focused($inputContent, equals: .password)
+        .textInputAutocapitalization(.never)
+        .autocorrectionDisabled(true)
+        .submitLabel(.next)
+        .onSubmit {
+          inputContent = .confirmPassword
         }
-      }
-      .focused($inputContent, equals: .password)
-      .textInputAutocapitalization(.never)
-      .autocorrectionDisabled(true)
-      .customInputFieldStyle() // repeats
-      .submitLabel(.next)
-      .onSubmit {
-        inputContent = .confirmPassword
-      }
-        
-      HStack {
-        SecureField("Confirm Password", text: $viewModel.confirmedPassword)
-        Button {
-          isShownPassword.toggle()
-        } label: {
-          Image(systemName: viewModel.password == viewModel.confirmedPassword ? "checkmark.seal.fill" : "xmark.seal.fill")
-            .foregroundStyle(viewModel.password == viewModel.confirmedPassword ? .green : .red)
-            .opacity(viewModel.confirmedPassword.count > 1 ? 1 : 0)
-        }
-      }
+      InputField(
+        .passwordConfirmation,
+        "Confirm Password",
+        text: $viewModel.confirmedPassword,
+        isMatchPassword: viewModel.password == viewModel.confirmedPassword
+      )
       .focused($inputContent, equals: .confirmPassword)
       .textInputAutocapitalization(.never)
       .autocorrectionDisabled(true)
-      .customInputFieldStyle() // repeats
       .submitLabel(.done)
       .onSubmit {
         inputContent = nil
@@ -131,29 +90,15 @@ struct RegistrationScreen: View {
             ProgressView()
             Text("Registration ...")
           }
-          .font(.callout)
-          .fontWeight(.medium)
-          .fontDesign(.monospaced)
-          .foregroundStyle(.white)
-          .padding(.vertical,16)
-          .padding(.horizontal,80)
-          .background(Color.gradientOrangePink)
-          .clipShape(.rect(cornerRadius:15))
         } else {
           Text("Sign Up")
-            .font(.callout)
-            .fontWeight(.medium)
-            .fontDesign(.monospaced)
-            .foregroundStyle(.white)
-            .padding(.vertical,16)
-            .padding(.horizontal,135)
-            .background(Color.gradientOrangePink)
-            .clipShape(.rect(cornerRadius:15))
         }
       }
-      .disabled(!viewModel.isValidForm)
-      .opacity(!viewModel.isValidForm ? 0.5 : 1)
     }
+    .linearGradientButtonStyle()
+    .padding(.horizontal,30)
+    .disabled(!viewModel.isValidForm)
+    .opacity(!viewModel.isValidForm ? 0.5 : 1)
   }
   
   private var signInOption: some View {

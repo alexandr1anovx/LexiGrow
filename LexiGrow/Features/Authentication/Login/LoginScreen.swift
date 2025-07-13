@@ -8,51 +8,46 @@
 import SwiftUI
 
 struct LoginScreen: View {
-  
+  @State var viewModel: LoginViewModel
   @Environment(AuthManager.self) private var authManager
   @FocusState private var inputContent: InputFieldContent?
-  @State var viewModel: LoginViewModel
   
   init(authManager: AuthManager) {
     _viewModel = State(wrappedValue: LoginViewModel(authManager: authManager))
   }
   
   var body: some View {
-    NavigationStack {
-      VStack(spacing:30) {
-        title
-        inputFields
-        signInButton
-        signUpOption
-      }.padding(.top)
+    NavigationView {
+      ScrollView {
+        VStack(spacing:30) {
+          title
+          inputFields
+          signInButton
+          signUpOption
+        }.padding(.top)
+      }
     }
   }
   
   // MARK: - Subviews
   
   private var title: some View {
-    TypingEffectView(text: "Login. Welcome to LexiGrow.")
+    TypingTextEffect(text: "Login. Welcome to LexiGrow.")
   }
   
   private var inputFields: some View {
     VStack(spacing:12) {
-      TextField("Email", text: $viewModel.email)
+      InputField(.standard, "Email", text: $viewModel.email)
         .focused($inputContent, equals: .email)
         .textInputAutocapitalization(.never)
         .autocorrectionDisabled(true)
         .keyboardType(.emailAddress)
-        .customInputFieldStyle() // repeats
         .submitLabel(.next)
-        .onSubmit {
-          inputContent = .password
-        }
-      SecureField("Password", text: $viewModel.password)
+        .onSubmit { inputContent = .password }
+      InputField(.password, "Password", text: $viewModel.password)
         .focused($inputContent, equals: .email)
-        .customInputFieldStyle()
         .submitLabel(.done)
-        .onSubmit {
-          inputContent = nil
-        }
+        .onSubmit { inputContent = nil }
     }
     .padding(.horizontal,25)
   }
@@ -67,30 +62,15 @@ struct LoginScreen: View {
             ProgressView()
             Text("Checking ...")
           }
-          .font(.callout)
-          .fontWeight(.medium)
-          .fontDesign(.monospaced)
-          .foregroundStyle(.white)
-          .padding(.vertical,16)
-          .padding(.horizontal,95)
-          .background(Color.gradientOrangePink)
-          .clipShape(.rect(cornerRadius:15))
         } else {
           Text("Sign In")
-            .font(.callout)
-            .fontWeight(.medium)
-            .fontDesign(.monospaced)
-            .foregroundStyle(.white)
-            .padding(.vertical,16)
-            .padding(.horizontal,135)
-            .background(Color.gradientOrangePink)
-            .clipShape(.rect(cornerRadius:15))
         }
       }
-      .shadow(radius: 5)
-      .disabled(!viewModel.isValidForm)
-      .opacity(!viewModel.isValidForm ? 0.5 : 1.0)
     }
+    .linearGradientButtonStyle()
+    .padding(.horizontal,30)
+    .disabled(!viewModel.isValidForm)
+    .opacity(!viewModel.isValidForm ? 0.5:1)
   }
   
   private var signUpOption: some View {
@@ -109,4 +89,9 @@ struct LoginScreen: View {
       .tint(.primary)
     }
   }
+}
+
+#Preview {
+  LoginScreen(authManager: AuthManager())
+    .environment(AuthManager())
 }
