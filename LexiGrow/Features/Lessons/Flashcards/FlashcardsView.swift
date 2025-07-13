@@ -27,7 +27,7 @@ struct FlashcardsView: View {
             cardBack
               .opacity(isFlipped ? 1:0)
           }
-          .padding()
+          .padding(30)
           .rotation3DEffect(
             .degrees(isFlipped ? 180 : 0),
             axis: (x: 0.0, y: 1.0, z: 0.0)
