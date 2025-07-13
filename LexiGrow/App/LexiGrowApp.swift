@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct LexiGrowApp: App {
+  @State private var authManager = AuthManager()
+  
   var body: some Scene {
     WindowGroup {
-      AppTabView()
+      LaunchView()
+        .environment(authManager)
     }
   }
 }

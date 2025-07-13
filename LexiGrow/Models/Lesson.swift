@@ -36,7 +36,7 @@ extension Lesson {
       name: "Reading",
       description: "Just read and translate.",
       iconName: "apple.logo",
-      color: .orange,
+      color: .brown,
       isLocked: true
     ),
     Lesson(

@@ -12,39 +12,47 @@ extension View {
     self
       .font(.callout)
       .fontWeight(.medium)
-      .fontDesign(.monospaced)
       .foregroundStyle(.white)
-      .padding(.vertical,16)
+      .padding(.vertical,17)
       .padding(.horizontal,35)
       .background(bgColor)
       .clipShape(.capsule)
-      .shadow(radius: 5)
+      .shadow(radius:5)
   }
   
-  func gradientButtonStyle(
+  func gradientButtonStyle(bgColor: AnyGradient) -> some View {
+    self
+      .font(.callout)
+      .fontWeight(.semibold)
+      .foregroundStyle(.white)
+      .padding(.vertical,17)
+      .padding(.horizontal,35)
+      .background(bgColor.secondary)
+      .clipShape(.capsule)
+      .shadow(radius:5)
+  }
+  
+  func linearGradientButtonStyle(
     bgColor: LinearGradient? = Color.gradientOrangePink
   ) -> some View {
     self
-      .font(.callout)
-      .fontWeight(.medium)
-      .fontDesign(.monospaced)
+      .font(.headline)
       .foregroundStyle(.white)
-      .padding(.vertical,16)
-      .padding(.horizontal,35)
+      .frame(maxWidth: .infinity)
+      .padding(.vertical,17)
       .background(bgColor)
-      .clipShape(.capsule)
-      .shadow(radius: 5)
+      .clipShape(.rect(cornerRadius: 17))
   }
   
   func customInputFieldStyle() -> some View {
     self
       .font(.subheadline)
-      .fontDesign(.monospaced)
       .padding()
-      .frame(minHeight: 55)
+      .frame(minHeight:55)
       .overlay {
-        RoundedRectangle(cornerRadius: 20)
-          .stroke(.secondary.tertiary, lineWidth: 1)
+        RoundedRectangle(cornerRadius:15)
+          .stroke(.secondary.tertiary, lineWidth:1)
       }
   }
 }
+
