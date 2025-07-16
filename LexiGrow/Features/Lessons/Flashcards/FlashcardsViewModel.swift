@@ -12,18 +12,14 @@ import SwiftUICore
 @MainActor
 final class FlashcardsViewModel {
   
-  enum LessonState: Equatable, Hashable {
-    case selecting, inProgress, summary
-  }
-  
-  var lessonState: LessonState = .selecting
+  var lessonState: LessonState = .inProgress
   private(set) var lessonCards: [Flashcard] = []
   private(set) var currentIndex: Int = 0
   
   private(set) var knownWordsCount: Int = 0
   private(set) var repetitionWords: Set<Word> = []
   
-  // MARK: Computed Properties
+  // MARK: - Computed Properties
   
   var currentCard: Flashcard? {
     guard lessonCards.indices.contains(currentIndex) else {
@@ -37,13 +33,11 @@ final class FlashcardsViewModel {
     return Double(currentIndex + 1) / Double(lessonCards.count)
   }
   
-  init() {
-    print("✅ FlashcardsViewModel initialized!")
-  }
+  // MARK: - Init / Deinit
   
-  deinit {
-    print("❌ FlashcardsViewModel deinitialized!")
-  }
+  // just for console output
+  init() { print("FlashcardsViewModel initialized") }
+  deinit { print("FlashcardsViewModel deinitialized") }
   
   // MARK: - Public Methods
   
@@ -59,8 +53,11 @@ final class FlashcardsViewModel {
   }
   
   func handleKnown() {
-    guard currentCard != nil else { return }
-    if !repetitionWords.contains(where: { $0.id == currentCard?.word.id }) {
+    guard let card = currentCard else { return }
+    
+    if repetitionWords.contains(card.word) {
+      repetitionWords.remove(card.word)
+    } else {
       knownWordsCount += 1
     }
     selectNextCard()
@@ -73,7 +70,7 @@ final class FlashcardsViewModel {
   }
   
   func resetLesson() {
-    lessonState = .selecting
+    withAnimation { lessonState = .tryAgain }
   }
   
   // MARK: - Private Methods
@@ -92,10 +89,14 @@ final class FlashcardsViewModel {
         }
         self.currentIndex = 0
       } else {
-        withAnimation {
-          lessonState = .summary
-        }
+        withAnimation { lessonState = .summary }
       }
     }
+  }
+}
+
+extension FlashcardsViewModel {
+  enum LessonState: Equatable, Hashable {
+    case inProgress, summary, tryAgain
   }
 }
