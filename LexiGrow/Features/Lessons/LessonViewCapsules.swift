@@ -8,50 +8,71 @@
 import SwiftUI
 
 struct LessonViewCapsules: View {
-  @Environment(\.colorScheme) var colorScheme
   @State private var selectedLesson: Lesson?
   
-  let rows = [
-    GridItem(.flexible(minimum: 20, maximum: 50)),
+  private let rows = [
+    GridItem(.flexible(minimum: 20, maximum: 50), spacing: 13),
     GridItem(.flexible(minimum: 20, maximum: 50))
   ]
   
   var body: some View {
     VStack {
-      LazyHGrid(rows: rows, alignment: .center, spacing: 15) {
+      closedLessonsHintLabel
+      LazyHGrid(rows: rows, spacing: 15) {
         ForEach(Lesson.lessons, id: \.self) { lesson in
-          capsuleButton(for: lesson)
+          LessonCapsule(
+            lesson: lesson,
+            selectedLesson: $selectedLesson
+          )
         }
       }
-      .frame(maxWidth: .infinity, maxHeight: 160)
-      
       Button {
-        // action
+        // start lesson action
       } label: {
         Text("Start Lesson")
-          .linearGradientButtonStyle()
+          .fontWeight(.medium)
+          .foregroundStyle(.white)
+          .padding(11)
       }
-      .opacity(selectedLesson == nil ? 0.5 : 1)
+      .tint(.pink)
+      .buttonBorderShape(.roundedRectangle(radius: 20))
+      .buttonStyle(.borderedProminent)
       .disabled(selectedLesson == nil)
-      .shadow(radius: 5)
+      .shadow(radius:10)
       
       Spacer()
     }
+    .padding(.top, 20)
+    .tag(DisplayMode.capsules)
   }
   
   // MARK: - Subviews
   
-  private var hintsView: some View {
+  private var closedLessonsHintLabel: some View {
     Label {
-      Text("**Closed lessons** require premium subscription.")
-        .font(.footnote)
+      HStack(spacing: 5) {
+        Text("Closed lessons")
+          .fontWeight(.semibold)
+          .foregroundStyle(.orange)
+        Text("require premium subscription.")
+      }
+      .font(.subheadline)
     } icon: {
       Image(systemName: "lock.fill")
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.orange)
     }
   }
+}
+
+#Preview {
+  LessonViewCapsules()
+}
+
+struct LessonCapsule: View {
+  let lesson: Lesson
+  @Binding var selectedLesson: Lesson?
   
-  private func capsuleButton(for lesson: Lesson) -> some View {
+  var body: some View {
     Button {
       if !lesson.isLocked {
         withAnimation {
@@ -63,61 +84,50 @@ struct LessonViewCapsules: View {
         }
       }
     } label: {
-      HStack(spacing: 5) {
+      HStack(spacing: 8) {
         Text(lesson.name)
-          .font(.subheadline)
-          .fontWeight(.medium)
+          .font(.headline)
         if lesson.isLocked {
           Image(systemName: "lock.fill")
             .font(.footnote)
+            .foregroundStyle(.orange)
         }
       }
-      .foregroundColor(capsuleForeground(for: lesson))
-      .padding(.vertical, 13)
-      .padding(.horizontal, 15)
+      .padding(13)
+      .foregroundColor(.white)
       .background(
-        Capsule()
-          .fill(capsuleBackground(for: lesson))
-          .overlay(
-            Capsule()
-              .stroke(capsuleBorder(for: lesson), lineWidth: 3)
-              .shadow(radius: 2)
+        RoundedRectangle(cornerRadius: 15)
+          .fill(selectedLesson == lesson ? .pink : .cmBlack)
+          .stroke(
+            selectedLesson == lesson ? .clear : .white,
+            lineWidth: 2
           )
+          .shadow(radius: 10)
       )
     }.disabled(lesson.isLocked)
   }
   
-  // MARK: - Styling helpers
-  
   private func capsuleForeground(for lesson: Lesson) -> Color {
-    if lesson.isLocked {
-      return .primary
-    } else if selectedLesson == lesson {
-      return colorScheme == .light ? .white : .black
+    if selectedLesson == lesson {
+      return .white
     } else {
-      return .primary
+      return .white
     }
   }
   
   private func capsuleBackground(for lesson: Lesson) -> Color {
-    if selectedLesson == lesson && !lesson.isLocked {
-      return colorScheme == .light ? .black : .white
+    if selectedLesson == lesson {
+      return .pink
     } else {
-      return Color.clear
+      return .cmBlack
     }
   }
   
-  private func capsuleBorder(for lesson: Lesson) -> AnyGradient {
-    if selectedLesson == lesson && !lesson.isLocked {
-      return Color.primary.gradient
-    } else if lesson.isLocked {
-      return Color.primary.opacity(0.2).gradient
+  private func capsuleStroke(for lesson: Lesson) -> Color {
+    if selectedLesson == lesson {
+      return .clear
     } else {
-      return lesson.color.gradient
+      return .white
     }
   }
-}
-
-#Preview {
-  LessonViewCapsules()
 }
