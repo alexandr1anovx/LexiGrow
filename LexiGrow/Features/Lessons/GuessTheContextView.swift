@@ -24,24 +24,13 @@ struct GuessTheContextView: View {
       VStack(spacing: 20) {
         ScrollView {
           Text(generatedText)
-            .foregroundStyle(.white)
             .fontWeight(.medium)
-            .padding()
-            .frame(
-              maxWidth: .infinity,
-              minHeight: 80,
-              alignment: .center
-            )
+            .frame(maxWidth: .infinity, minHeight: 80)
             .background(
-              LinearGradient(
-                colors: [.blue, .orange],
-                startPoint: .leading,
-                endPoint: .trailing
-              ).opacity(0.6)
+              Capsule()
+                .fill(Color.gradientBluePurple.secondary)
             )
-            .cornerRadius(15)
-        }
-        .shadow(radius: 15)
+        }.shadow(radius: 10)
         
         Button(action: generateContext) {
           if isLoading {
@@ -51,12 +40,13 @@ struct GuessTheContextView: View {
             Label("Generate Text", systemImage: "sparkles")
           }
         }
-        .linearGradientButtonStyle()
-        .shadow(radius:10)
+        .linearGradientButtonStyle(bgColor: Color.gradientBluePurple)
+        .shadow(radius: 10)
         .disabled(isLoading)
       }
       .padding()
       .navigationTitle("Guess the context")
+      .navigationBarTitleDisplayMode(.inline)
       .toolbar {
         ToolbarItem(placement: .topBarTrailing) {
           Button {
@@ -70,7 +60,7 @@ struct GuessTheContextView: View {
         }
       }
       .sheet(isPresented: $isShowingExitSheet) {
-        ExitLessonView($isShowingExitSheet) {
+        ExitLessonView {
           dismiss()
         }
       }
@@ -82,7 +72,6 @@ struct GuessTheContextView: View {
   func generateContext() {
     isLoading = true
     generatedText = ""
-    
     Task {
       do {
         let prompt = ""
