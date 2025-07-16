@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct LessonViewBlocks: View {
+  @State var viewModel = FlashcardsViewModel()
   @State private var selectedLessonForSheet: Lesson?
   @State private var selectedLessonForFullScreenCover: Lesson?
   
@@ -22,40 +23,56 @@ struct LessonViewBlocks: View {
         ForEach(Lesson.lessons) { lesson in
           BlockView(lesson: lesson)
             .onTapGesture {
+              viewModel.resetLesson()
               selectedLessonForSheet = lesson
+//              if !lesson.isLocked {
+//                viewModel.resetLesson()
+//                selectedLessonForSheet = lesson
+//              }
             }
         }
       }
     }
-    .shadow(
-      color: .primary.opacity(0.7),
-      radius: 0.5,
-      x: 4, y: -3
-    )
     .tag(DisplayMode.blocks)
     .padding()
-    .shadow(radius: 5)
+    
+    // MARK: - Presentation
+    
     .sheet(item: $selectedLessonForSheet) { lesson in
-      Group {
-        if lesson.isLocked {
-          lockedLessonPreview(lesson)
-        } else {
-          lessonPreview(lesson)
-        }
+      if !lesson.isLocked {
+        lessonPreview(lesson)
+      } else {
+        lockedLessonPreview(lesson)
       }
-      .presentationBackground(
-        LinearGradient(
-          colors: [lesson.color, .teal],
-          startPoint: .topLeading,
-          endPoint: .bottomTrailing
-        )
-      )
     }
     .fullScreenCover(item: $selectedLessonForFullScreenCover) { lesson in
       switch lesson.name {
       case "Flashcards":
-        FlashcardsView()
+        FlashcardsGroupView(viewModel: viewModel)
       case "Guess the context":
+        GuessTheContextView()
+      default:
+        EmptyView()
+      }
+    }
+    .shadow(
+      color: .cmReversed.opacity(0.7),
+      radius: 0.5,
+      x: 4, y: -3
+    )
+  }
+  
+  // MARK: - Subviews
+  
+  private func lessonPreview(_ lesson: Lesson) -> some View {
+    Group {
+      switch lesson.name {
+        case "Flashcards":
+        FlashcardsSetupView(lesson: lesson, viewModel: viewModel, selectedLessonForFullScreenCover: $selectedLessonForFullScreenCover)
+          .presentationDetents([.fraction(0.38)])
+          .presentationCornerRadius(50)
+          .presentationBackgroundInteraction(.disabled)
+        case "Guess the context":
         GuessTheContextView()
       default:
         EmptyView()
@@ -63,75 +80,47 @@ struct LessonViewBlocks: View {
     }
   }
   
-  // MARK: - Subviews
-  
-  private func lessonPreview(_ lesson: Lesson) -> some View {
-    VStack(spacing: 15) {
-      Spacer()
-      Text(lesson.name)
-        .font(.title2)
-        .fontWeight(.semibold)
-        .foregroundStyle(.white)
-      Text(lesson.description)
-        .font(.callout)
-        .fontWeight(.medium)
-        .multilineTextAlignment(.center)
-        .foregroundStyle(.white.secondary)
-        .padding(.horizontal)
-      Spacer()
-      Button {
-        selectedLessonForSheet = nil
-        selectedLessonForFullScreenCover = lesson
-      } label: {
-        Text("Start Lesson")
-          .standardButtonStyle(bgColor: lesson.color)
-      }.padding(.bottom)
-    }
-    .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .presentationDetents([.height(250)])
-    .presentationCornerRadius(50)
-    .overlay(alignment: .topTrailing) {
-      Button {
-        selectedLessonForSheet = nil
-      } label: {
-        Image(systemName: "xmark.circle.fill")
-          .font(.title)
-          .foregroundStyle(.white)
-          .symbolRenderingMode(.hierarchical)
-      }.padding(20)
-    }
-  }
-  
   private func lockedLessonPreview(_ lesson: Lesson) -> some View {
-    VStack(spacing:18) {
+    VStack(spacing: 20) {
+      Spacer()
       Label("**\(lesson.name)** is locked.", systemImage: "lock.circle.dotted")
         .font(.title2)
         .fontWeight(.semibold)
-        .foregroundStyle(.white)
+        
       Text("Get premium subscription to unlock this lesson.")
         .font(.headline)
         .fontWeight(.medium)
         .multilineTextAlignment(.center)
-        .foregroundStyle(.white)
         .padding(.horizontal)
+      Spacer()
       Button {
         // action
       } label: {
         Label("Get Premium", systemImage: "star.leadinghalf.filled")
           .fontWeight(.bold)
-          .standardButtonStyle(bgColor: .green.opacity(0.8))
-      }.padding(.top)
+          .padding(11)
+      }
+      .buttonStyle(.borderedProminent)
+      .buttonBorderShape(.roundedRectangle(radius: 20))
+      .tint(.pink)
+      .padding(.bottom)
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .presentationDetents([.height(250)])
+    .presentationDetents([.fraction(0.35)])
     .presentationCornerRadius(50)
+    .presentationBackground(
+      LinearGradient(
+        colors: [.orange, .cmSystem],
+        startPoint: .top,
+        endPoint: .bottom
+      )
+    )
     .overlay(alignment: .topTrailing) {
       Button {
         selectedLessonForSheet = nil
       } label: {
         Image(systemName: "xmark.circle.fill")
           .font(.title)
-          .foregroundStyle(.white)
           .symbolRenderingMode(.hierarchical)
       }.padding(20)
     }
@@ -158,7 +147,7 @@ struct BlockView: View {
       if lesson.isLocked {
         Image(systemName: "lock.circle.dotted")
           .font(.title)
-          .padding(.trailing,8)
+          .padding(.trailing, 8)
           .foregroundStyle(.white)
           .onTapGesture {
             isShownDescriptionPopover.toggle()
@@ -168,13 +157,7 @@ struct BlockView: View {
     .frame(maxHeight: .infinity, alignment: .top)
     .background(
       RoundedRectangle(cornerRadius: 20)
-        .fill(
-          LinearGradient(
-            colors: [lesson.color, .teal],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-          )
-        )
+        .fill(lesson.isLocked ? LinearGradient.lockedLesson : LinearGradient.lessonGradient(lesson))
         .onPressingChanged { point in
             if let point {
                 origin = point
@@ -196,9 +179,9 @@ struct BlockView: View {
         Text("Available with premium subscription.")
           .font(.footnote)
           .fontWeight(.medium)
-          .foregroundStyle(.primary)
+          .foregroundStyle(.cmBlack)
           .multilineTextAlignment(.leading)
-          .presentationBackground(lesson.color.opacity(0.3))
+          .presentationBackground(.orange.opacity(0.5))
           .presentationCompactAdaptation(.popover)
           .padding(.horizontal)
       }

@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct RegistrationScreen: View {
+  
   @State var viewModel: RegistrationViewModel
   @Environment(AuthManager.self) private var authManager
-  
   @FocusState private var inputContent: InputFieldContent?
   @Environment(\.dismiss) var dismiss
   
@@ -20,7 +20,7 @@ struct RegistrationScreen: View {
   
   var body: some View {
     ScrollView {
-      VStack(spacing:30) {
+      VStack(spacing: 30) {
         title
         inputFields
         signUpButton
@@ -77,7 +77,7 @@ struct RegistrationScreen: View {
       }
     }
     .font(.subheadline)
-    .padding(.horizontal,25)
+    .padding(.horizontal, 25)
   }
   
   private var signUpButton: some View {
@@ -96,7 +96,7 @@ struct RegistrationScreen: View {
       }
     }
     .linearGradientButtonStyle()
-    .padding(.horizontal,30)
+    .padding(.horizontal, 30)
     .disabled(!viewModel.isValidForm)
     .opacity(!viewModel.isValidForm ? 0.5 : 1)
   }

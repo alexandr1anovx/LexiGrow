@@ -8,67 +8,67 @@
 import SwiftUI
 
 struct ExitLessonView: View {
-  @Binding var isShowing: Bool
   private var dismissAction: () -> Void
+  @Environment(\.dismiss) var dismiss
   
-  init(
-    _ isShowing: Binding<Bool>,
-    dismissAction: @escaping () -> Void
-  ) {
-    self._isShowing = isShowing
+  init(_ dismissAction: @escaping () -> Void) {
     self.dismissAction = dismissAction
   }
   
   var body: some View {
-    VStack(spacing: 15) {
-      Spacer()
-      Text("Exit the lesson?")
-        .font(.title2)
-        .fontWeight(.bold)
-        .foregroundStyle(.white)
-      Text("All progress will be canceled.")
-        .font(.callout)
-        .fontWeight(.medium)
-        .foregroundStyle(.white.opacity(0.8))
-        .multilineTextAlignment(.center)
-        .padding(.horizontal)
-      Spacer()
-      HStack(spacing: 20) {
-        Button {
-          isShowing = false
-        } label: {
-          Text("Cancel")
-            .padding(11)
-            .foregroundStyle(.white)
-            .fontWeight(.medium)
-        }
-        .tint(.black)
-        .buttonBorderShape(.capsule)
-        .buttonStyle(.bordered)
-        Button(action: dismissAction) {
-          Text("Exit")
-            .padding(11)
-            .foregroundStyle(.white)
-            .fontWeight(.medium)
-        }
-        .tint(.black)
-        .buttonBorderShape(.capsule)
-        .buttonStyle(.bordered)
+    ZStack {
+      Color.mainBackgroundColor.ignoresSafeArea()
+      VStack(spacing: 30) {
+        Spacer()
+        confirmationText
+        finishButton
       }.padding(.bottom)
     }
-    .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .background(
-      LinearGradient(
-        colors: [.red.opacity(0.5), .pink],
-        startPoint: .leading,
-        endPoint: .trailing
-      )
-    )
-    .presentationDetents([.height(250)])
+    .presentationDetents([.fraction(0.3)])
     .presentationCornerRadius(50)
+    .overlay(alignment: .topTrailing) {
+      dismissButton
+    }
+  }
+  
+  private var confirmationText: some View {
+    VStack(spacing: 15) {
+      Text("All progress will be canceled")
+        .font(.title2)
+        .fontWeight(.bold)
+      Text("Are you sure you want to finish the lesson?")
+        .font(.callout)
+        .fontWeight(.medium)
+        .foregroundStyle(.gray)
+        .multilineTextAlignment(.center)
+    }
+  }
+  
+  private var dismissButton: some View {
+    Button {
+      dismiss()
+    } label: {
+      Image(systemName: "xmark.circle.fill")
+        .font(.title)
+        .symbolRenderingMode(.hierarchical)
+        .foregroundStyle(.pink)
+    }
+    .padding([.top,.trailing], 20)
+  }
+  
+  private var finishButton: some View {
+    Button(action: dismissAction) {
+      Text("Yes, finish")
+        .foregroundStyle(.white)
+        .fontWeight(.semibold)
+        .padding(11)
+    }
+    .tint(.pink)
+    .buttonBorderShape(.roundedRectangle(radius: 20))
+    .buttonStyle(.borderedProminent)
   }
 }
 
 #Preview {
-  ExitLessonView(.constant(true), dismissAction: {})
+  ExitLessonView {}
 }

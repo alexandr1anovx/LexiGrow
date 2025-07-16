@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct LoginScreen: View {
+  
   @State var viewModel: LoginViewModel
   @Environment(AuthManager.self) private var authManager
   @FocusState private var inputContent: InputFieldContent?
@@ -19,7 +20,7 @@ struct LoginScreen: View {
   var body: some View {
     NavigationView {
       ScrollView {
-        VStack(spacing:30) {
+        VStack(spacing: 30) {
           title
           inputFields
           signInButton
@@ -36,7 +37,7 @@ struct LoginScreen: View {
   }
   
   private var inputFields: some View {
-    VStack(spacing:12) {
+    VStack(spacing: 12) {
       InputField(.standard, "Email", text: $viewModel.email)
         .focused($inputContent, equals: .email)
         .textInputAutocapitalization(.never)
@@ -49,7 +50,7 @@ struct LoginScreen: View {
         .submitLabel(.done)
         .onSubmit { inputContent = nil }
     }
-    .padding(.horizontal,25)
+    .padding(.horizontal, 25)
   }
   
   private var signInButton: some View {
@@ -70,7 +71,7 @@ struct LoginScreen: View {
     .linearGradientButtonStyle()
     .padding(.horizontal,30)
     .disabled(!viewModel.isValidForm)
-    .opacity(!viewModel.isValidForm ? 0.5:1)
+    .opacity(!viewModel.isValidForm ? 0.5 : 1)
   }
   
   private var signUpOption: some View {
