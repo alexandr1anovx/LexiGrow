@@ -17,3 +17,9 @@ struct Word: Identifiable, Hashable, Codable {
     case translation
   }
 }
+
+extension Word {
+  static var mock: Word {
+    Word(original: "Car", translation: "Машина")
+  }
+}
