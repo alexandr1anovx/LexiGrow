@@ -8,117 +8,96 @@
 import SwiftUI
 
 struct FlashcardsSetupView: View {
-  
-  // MARK: - Properties
-  
-  let lesson: Lesson // принимает выбранный урок (блок)
+  let lesson: Lesson
   @Bindable var viewModel: FlashcardsViewModel
-  @Binding var selectedLessonForScreenCover: Lesson?
-  
-  @State private var selectedCount: Int?
+  @Binding var selectedLessonForFullScreenCover: Lesson?
+  @State private var selectedWordCount: Int?
   @Environment(\.dismiss) private var dismiss
   
-  // MARK: - body
-  
   var body: some View {
-    VStack(spacing:15) {
-      
-      Text(lesson.name)
-        .font(.title2)
-        .fontWeight(.semibold)
-        .padding(.top)
-        
-      Text(lesson.description)
-        .font(.callout)
-        .fontWeight(.medium)
-        .multilineTextAlignment(.center)
-        .padding(.horizontal)
-      
-      Spacer()
-      
-      Text("How many words do you want to repeat?")
-        .font(.headline)
-      
-      HStack {
-        capsuleButton(for: 5)
-        capsuleButton(for: 20)
-        capsuleButton(for: 30)
+    ZStack {
+      Color.mainBackgroundColor.ignoresSafeArea()
+      VStack(spacing: 30) {
+        Spacer()
+        lessonDescription
+        wordCountOptions
+        startLessonButton
       }
-      
-      Spacer()
-      
-      Button {
-        viewModel.startLesson(count: selectedCount ?? 0)
-        dismiss()
-        selectedLessonForScreenCover = lesson
-      } label: {
-        Text("Start Lesson")
-          .fontWeight(.medium)
-          .padding(13)
+      .frame(maxHeight: .infinity)
+      .overlay(alignment: .topTrailing) {
+        dismissButton
       }
-      .tint(Color.teal)
-      .buttonBorderShape(.capsule)
-      .buttonStyle(.bordered)
-      .padding(.bottom)
-      
     }
-    .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .presentationDetents([.height(280)])
-    .presentationCornerRadius(50)
-    .background(Color.cmBlack)
   }
   
   // MARK: - Subviews
   
-  private func capsuleButton(for count: Int) -> some View {
+  private var dismissButton: some View {
     Button {
-      if selectedCount == count {
-        selectedCount = nil
+      dismiss()
+    } label: {
+      Image(systemName: "xmark.circle.fill")
+        .font(.title)
+        .symbolRenderingMode(.hierarchical)
+        .foregroundStyle(.pink)
+    }.padding(.top)
+  }
+  
+  private var lessonDescription: some View {
+    VStack(spacing: 15) {
+      Text(lesson.name)
+        .font(.title)
+        .fontWeight(.semibold)
+      Text("How many words do you want to repeat?")
+        .font(.callout)
+    }
+  }
+  
+  private func wordCountButton(count: Int) -> some View {
+    Button {
+      if selectedWordCount == count {
+        selectedWordCount = nil
       } else {
-        selectedCount = count
+        selectedWordCount = count
       }
     } label: {
-      Text("\(count)")
-        .font(.subheadline)
-        .fontWeight(.medium)
-        .padding(.vertical, 13)
-        .padding(.horizontal, 15)
-        .foregroundColor(
-          capsuleForeground(for: count)
-        )
+      Text("\(count) words")
+        .font(.headline)
+        .padding(15)
+        .foregroundColor(.white)
         .background(
-          Circle()
-            .fill(capsuleBackground(for: count))
-            .stroke(
-              capsuleBorder(for: count),
-              lineWidth: 3
-            )
+          RoundedRectangle(cornerRadius: 20)
+            .fill(selectedWordCount == count ? .pink : .cmBlack)
+            .stroke(selectedWordCount == count ? .clear : .white, lineWidth: 2)
+            .shadow(radius: 10)
         )
     }
   }
   
-  private func capsuleForeground(for count: Int) -> Color {
-    if selectedCount == count {
-      return .blue
-    } else {
-      return .primary
+  private var wordCountOptions: some View {
+    HStack(spacing: 20) {
+      wordCountButton(count: 5)
+      wordCountButton(count: 20)
+      wordCountButton(count: 30)
     }
   }
   
-  private func capsuleBackground(for count: Int) -> Color {
-    if selectedCount == count {
-      return .primary
-    } else {
-      return Color.clear
+  private var startLessonButton: some View {
+    Button {
+      viewModel.startLesson(count: selectedWordCount!)
+      selectedLessonForFullScreenCover = lesson
+      dismiss()
+    } label: {
+      Text("Start Lesson")
+        .fontWeight(.medium)
+        .foregroundStyle(.white)
+        .padding(12)
     }
-  }
-  
-  private func capsuleBorder(for count: Int) -> AnyGradient {
-    if selectedCount == count {
-      return Color.clear.gradient
-    } else {
-      return lesson.color.gradient
-    }
+    .tint(.pink)
+    .buttonBorderShape(.roundedRectangle(radius: 20))
+    .buttonStyle(.borderedProminent)
+    .shadow(radius: 8)
+    .disabled(selectedWordCount == nil)
   }
 }
 
@@ -126,6 +105,6 @@ struct FlashcardsSetupView: View {
   FlashcardsSetupView(
     lesson: Lesson.mock,
     viewModel: FlashcardsViewModel(),
-    selectedLessonForScreenCover: .constant(.mock)
+    selectedLessonForFullScreenCover: .constant(.mock)
   )
 }
