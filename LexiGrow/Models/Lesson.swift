@@ -17,12 +17,21 @@ struct Lesson: Identifiable, Hashable {
 }
 
 extension Lesson {
+  
+  static let mock: Lesson = Lesson(
+    name: "Flashcards",
+    description: "Word ↔ Translation",
+    iconName: "apple.logo",
+    color: .blue,
+    isLocked: false
+  )
+  
   static let lessons: [Lesson] = [
     Lesson(
       name: "Flashcards",
       description: "Word ↔ Translation",
       iconName: "apple.logo",
-      color: .blue,
+      color: .green,
       isLocked: false
     ),
     Lesson(
