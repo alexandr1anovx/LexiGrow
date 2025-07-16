@@ -8,179 +8,61 @@
 import SwiftUI
 
 struct FlashcardsView: View {
+  @Bindable var viewModel: FlashcardsViewModel
   @State private var isShowingExitSheet: Bool = false
   @State private var isFlipped: Bool = false
   @Environment(\.dismiss) var dismiss
   
-  @State var cardCounter: Int = 0
-  @State var cardOrigin: CGPoint = .zero
-  
   var body: some View {
-    NavigationView {
-      ZStack {
-        Color.cmBlack
-        .ignoresSafeArea()
-        VStack(spacing: 10) {
-          
-          ZStack {
-            cardFront
-            cardBack
-              .opacity(isFlipped ? 1:0)
+    ZStack {
+      Color.mainBackgroundColor.ignoresSafeArea()
+      VStack {
+        HStack(spacing: 20) {
+          ProgressView(value: viewModel.progress)
+            .tint(.pink)
+          HStack(spacing: 3) {
+            Text("\(viewModel.currentIndex + 1)")
+              .foregroundStyle(.pink)
+              .contentTransition(.numericText())
+              .animation(.bouncy, value: viewModel.currentIndex)
+            Text("/")
+            Text("\(viewModel.lessonCards.count)")
           }
-          .padding(30)
-          .rotation3DEffect(
-            .degrees(isFlipped ? 180 : 0),
-            axis: (x: 0.0, y: 1.0, z: 0.0)
-          )
+          .font(.subheadline)
+          .fontWeight(.semibold)
+          .foregroundStyle(.gray)
+        }
+        .padding([.top, .horizontal])
+        
+        if let card = viewModel.currentCard {
+          Group {
+            if isFlipped {
+              FlashcardBackView(
+                card.word,
+                isFlipped: $isFlipped,
+                viewModel: viewModel
+              )
+            } else {
+              FlashcardFrontView(card.word)
+            }
+          }
           .onTapGesture {
-            withAnimation(.spring(response: 1, dampingFraction: 0.7)) {
+            withAnimation {
               isFlipped.toggle()
             }
           }
-          Spacer()
-          
-          randomizeButton
-            .padding(.vertical)
-          
+          .padding(30)
+          .shadow(radius: 20)
+        } else {
+          ProgressView("Loading Cards...")
         }
-        .navigationTitle("Flashcards")
-        .navigationBarTitleDisplayMode(.large)
-        .toolbar {
-          ToolbarItem(placement: .topBarTrailing) {
-            Button {
-              isShowingExitSheet = true
-            } label: {
-              Image(systemName: "xmark.circle.fill")
-                .font(.title)
-                .symbolRenderingMode(.hierarchical)
-                .foregroundStyle(.pink)
-            }
-          }
-        }
-        .sheet(isPresented: $isShowingExitSheet) {
-          ExitLessonView($isShowingExitSheet) {
-            dismiss()
-          }
-        }
+        Spacer()
+        FlashcardShuffleButton()
       }
     }
-  }
-  
-  // MARK: - Subviews
-  
-  private var cardFront: some View {
-    RoundedRectangle(cornerRadius: 40)
-      .fill(
-        LinearGradient(
-          colors: [.teal, .green],
-          startPoint: .topLeading,
-          endPoint: .bottomTrailing
-        )
-      )
-      .onPressingChanged { point in
-        if let point {
-          cardOrigin = point
-          cardCounter += 1
-        }
-      }
-      .modifier(
-        RippleEffect(
-          at: cardOrigin,
-          trigger: cardCounter
-        )
-      )
-      .shadow(radius: 10)
-      .overlay {
-        VStack(spacing: 20) {
-          Text("Word")
-            .font(.largeTitle)
-            .fontWeight(.semibold)
-          Text("Transcription")
-            .font(.title2)
-            .fontWeight(.semibold)
-        }
-        .foregroundStyle(.white)
-      }
-  }
-  
-  private var cardBack: some View {
-    RoundedRectangle(cornerRadius: 40)
-      .fill(
-        LinearGradient(
-          colors: [.purple, .blue],
-          startPoint: .topLeading,
-          endPoint: .bottomTrailing
-        )
-      )
-      .shadow(radius: 10)
-      .overlay {
-        VStack {
-          Spacer()
-          Text("Translation")
-            .font(.largeTitle)
-            .fontWeight(.semibold)
-          Spacer()
-          HStack(spacing: 25) {
-            repeatButton
-            knowButton
-          }.padding(.vertical)
-        }
-        .foregroundStyle(.white)
-      }
-      .rotation3DEffect(
-        .degrees(180),
-        axis: (x: 0.0, y: 1.0, z: 0.0)
-      )
-  }
-  
-  private var randomizeButton: some View {
-    Button {
-      
-    } label: {
-      Label("Randomize", systemImage: "arrow.trianglehead.2.counterclockwise")
-        .font(.title3)
-        .fontWeight(.medium)
-        .padding(10)
-    }
-    .tint(.blue)
-    .buttonStyle(.bordered)
-    .buttonBorderShape(.capsule)
-    .shadow(radius: 8)
-  }
-  
-  private var knowButton: some View {
-    Button {
-      
-    } label: {
-      Label("Know", systemImage: "checkmark.seal.fill")
-        .font(.title3)
-        //.foregroundStyle(.white)
-        .fontWeight(.medium)
-        .padding(10)
-    }
-    .tint(.teal)
-    .buttonStyle(.bordered)
-    .buttonBorderShape(.capsule)
-    .shadow(radius: 8)
-  }
-  
-  private var repeatButton: some View {
-    Button {
-      
-    } label: {
-      Label("Repeat", systemImage: "repeat")
-        .font(.title3)
-        //.foregroundStyle(.white)
-        .fontWeight(.medium)
-        .padding(11)
-    }
-    .tint(.teal)
-    .buttonStyle(.bordered)
-    .buttonBorderShape(.capsule)
-    .shadow(radius: 8)
   }
 }
 
 #Preview {
-  FlashcardsView()
+  FlashcardsGroupView(viewModel: FlashcardsViewModel())
 }
