@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct GeneralScreen: View {
-  @State private var isShownChangeLanguageSheet: Bool = false
-  @State private var isShownSignOutSheet: Bool = false
+  
   private let authManager: AuthManager
+  @State private var isShowingSignOutView: Bool = false
   
   init(authManager: AuthManager) {
     self.authManager = authManager
@@ -18,84 +18,99 @@ struct GeneralScreen: View {
   
   var body: some View {
     NavigationView {
-      Form {
-        
-        Section {
-          VStack(alignment: .leading, spacing: 10) {
-            Text(authManager.currentUser?.username ?? "No username")
-              .fontWeight(.semibold)
-            Text(authManager.currentUser?.email ?? "No email")
-              .foregroundStyle(.secondary)
-          }
-          .font(.subheadline)
-        } footer: {
-          HStack(spacing:5) {
-            Text("You can edit your data in")
-            NavigationLink {
-              ProfileScreen(authManager: authManager)
-            } label: {
-              Text("Settings.")
-                .font(.footnote)
-                .fontWeight(.medium)
-                .foregroundStyle(.primary.opacity(0.9))
-                .underline()
-            }
-          }
+      ZStack {
+        Color.mainBackgroundColor.ignoresSafeArea()
+        Form {
+          userDataSection
+          signOutSection
         }
-        
-        Section {
-          Button("Language") {
-            isShownChangeLanguageSheet.toggle()
-          }
+        .scrollContentBackground(.hidden)
+        .navigationTitle("General")
+        .navigationBarTitleDisplayMode(.large)
+        .sheet(isPresented: $isShowingSignOutView) {
+          signOutView
         }
-        
-        Section {
-          Button("Sign Out") {
-            isShownSignOutSheet = true
-          }
-        }.tint(.red)
-      }
-      .navigationTitle("General")
-      .navigationBarTitleDisplayMode(.large)
-      .sheet(isPresented: $isShownSignOutSheet) {
-        signOutSheet
       }
     }
   }
   
   // MARK: - Subviews
   
-  private var signOutSheet: some View {
-    VStack(spacing: 10) {
-      Text("Sign Out")
-        .font(.title3)
-        .fontWeight(.semibold)
-      Text("Are you sure you want to sign out?")
-        .font(.callout)
-        .foregroundStyle(.secondary)
-      HStack(spacing: 30) {
-        Button("Cancel") {
-          isShownSignOutSheet = false
+  private var userDataSection: some View {
+    Section {
+      VStack(alignment: .leading, spacing: 15) {
+        Text(authManager.currentUser?.username ?? "No username")
+          .fontWeight(.semibold)
+        Text(authManager.currentUser?.email ?? "No email")
+          .foregroundStyle(.secondary)
+      }
+      .font(.subheadline)
+    } footer: {
+      HStack(spacing: 5) {
+        Text("Would you like to edit your data?")
+        NavigationLink {
+          ProfileScreen(authManager: authManager)
+        } label: {
+          Text("Go to Profile.")
+            .font(.footnote)
+            .fontWeight(.medium)
+            .underline()
         }
-        .buttonStyle(.bordered)
-        Button("Yes, I'm sure") {
-          Task { await authManager.signOut() }
-        }
-        .fontWeight(.semibold)
-        .tint(.red)
-      }.padding(.top)
+      }
     }
-    .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .presentationDetents([.height(250)])
-    .presentationCornerRadius(50)
-    .overlay(alignment: .topTrailing) {
-      Button {
-        isShownSignOutSheet = false
-      } label: {
-        Image(systemName: "xmark.circle.fill")
-          .font(.title)
-          .symbolRenderingMode(.hierarchical)
-      }.padding(20)
+  }
+  
+  private var signOutSection: some View {
+    Section {
+      Button("Sign Out") { isShowingSignOutView = true }
+    }
+    .tint(.red)
+  }
+  
+  private var signOutView: some View {
+    ZStack {
+      Color.mainBackgroundColor.ignoresSafeArea()
+      VStack(spacing: 15) {
+        Spacer()
+        Text("Sign Out")
+          .font(.title2)
+          .fontWeight(.bold)
+        Text("Are you sure you want to sign out?")
+          .font(.callout)
+          .foregroundStyle(.secondary)
+        
+        Button {
+          Task { await authManager.signOut() }
+        } label: {
+          HStack {
+            if authManager.isLoading {
+              ProgressView().tint(.white)
+            }
+            Text(authManager.isLoading ? "Signing out..." : "Yes, sign out")
+              .fontWeight(.semibold)
+              .padding(11)
+          }
+          .padding(.horizontal,5)
+        }
+        .buttonStyle(.borderedProminent)
+        .buttonBorderShape(.roundedRectangle(radius: 20))
+        .tint(.pink)
+        .padding(.top)
+      }
+      .padding(.bottom)
+      .frame(maxWidth: .infinity, maxHeight: .infinity)
+      .presentationDetents([.fraction(0.3)])
+      .presentationCornerRadius(50)
+      .overlay(alignment: .topTrailing) {
+        Button {
+          isShowingSignOutView = false
+        } label: {
+          Image(systemName: "xmark.circle.fill")
+            .font(.title)
+            .foregroundStyle(.red)
+            .symbolRenderingMode(.hierarchical)
+        }.padding(20)
+      }
     }
   }
 }
