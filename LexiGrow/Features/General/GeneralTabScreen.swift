@@ -7,8 +7,7 @@
 
 import SwiftUI
 
-struct GeneralScreen: View {
-  
+struct GeneralTabScreen: View {
   private let authManager: AuthManager
   @State private var isShowingSignOutView: Bool = false
   
@@ -116,5 +115,5 @@ struct GeneralScreen: View {
 }
 
 #Preview {
-  GeneralScreen(authManager: AuthManager())
+  GeneralTabScreen(authManager: AuthManager())
 }

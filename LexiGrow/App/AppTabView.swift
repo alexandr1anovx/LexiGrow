@@ -35,12 +35,12 @@ struct AppTabView: View {
   
   var body: some View {
     TabView(selection: $selectedTab) {
-      LessonsScreen()
+      LessonsTabScreen()
         .tag(Tab.lessons)
         .tabItem {
           Label("Lessons", systemImage: "book.pages")
         }
-      GeneralScreen(authManager: authManager)
+      GeneralTabScreen(authManager: authManager)
         .tag(Tab.general)
         .tabItem {
           Label("General", systemImage: "ellipsis.circle.fill")
@@ -55,4 +55,5 @@ struct AppTabView: View {
 #Preview {
   AppTabView()
     .environment(AuthManager())
+    .environment(FlashcardsViewModel())
 }
