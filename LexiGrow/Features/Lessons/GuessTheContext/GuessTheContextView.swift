@@ -28,9 +28,9 @@ struct GuessTheContextView: View {
             .frame(maxWidth: .infinity, minHeight: 80)
             .background(
               Capsule()
-                .fill(Color.gradientBluePurple.secondary)
+                .fill(.purple.gradient)
             )
-        }.shadow(radius: 10)
+        }.shadow(radius: 3)
         
         Button(action: generateContext) {
           if isLoading {
@@ -40,8 +40,7 @@ struct GuessTheContextView: View {
             Label("Generate Text", systemImage: "sparkles")
           }
         }
-        .linearGradientButtonStyle(bgColor: Color.gradientBluePurple)
-        .shadow(radius: 10)
+        .shadow(radius: 3)
         .disabled(isLoading)
       }
       .padding()
@@ -60,7 +59,7 @@ struct GuessTheContextView: View {
         }
       }
       .sheet(isPresented: $isShowingExitSheet) {
-        ExitLessonView {
+        FinishLessonPreview {
           dismiss()
         }
       }
