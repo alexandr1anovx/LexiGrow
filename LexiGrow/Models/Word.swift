@@ -8,18 +8,21 @@
 import Foundation
 
 struct Word: Identifiable, Hashable, Codable {
-  let id: UUID = UUID()
+  let id: String
   let original: String
   let translation: String
-  
-  enum CodingKeys: String, CodingKey {
-    case original = "word"
-    case translation
-  }
+  let level: String
+  let topic: String
 }
 
 extension Word {
   static var mock: Word {
-    Word(original: "Car", translation: "Машина")
+    Word(
+      id: "01",
+      original: "Bus",
+      translation: "Автобус",
+      level: "B1.1",
+      topic: "Vehicles"
+    )
   }
 }
