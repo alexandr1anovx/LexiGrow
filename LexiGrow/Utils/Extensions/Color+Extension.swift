@@ -8,32 +8,5 @@
 import SwiftUI
 
 extension Color {
-  
   static let mainBackgroundColor: Color = .cmSystem
-  
-  static var gradientBluePurple = LinearGradient(
-    colors: [.blue, .purple],
-    startPoint: .leading,
-    endPoint: .trailing
-  )
-  static var gradientOrangePink = LinearGradient(
-    colors: [.orange.opacity(0.8), .pink.opacity(0.5)],
-    startPoint: .leading,
-    endPoint: .trailing
-  )
-  static var gradientBlue = LinearGradient(
-    colors: [.blue],
-    startPoint: .leading,
-    endPoint: .trailing
-  )
-  static var gradientIndigo = LinearGradient(
-    colors: [.indigo],
-    startPoint: .leading,
-    endPoint: .trailing
-  )
-  static var gradientPurple = LinearGradient(
-    colors: [.purple],
-    startPoint: .leading,
-    endPoint: .trailing
-  )
 }
