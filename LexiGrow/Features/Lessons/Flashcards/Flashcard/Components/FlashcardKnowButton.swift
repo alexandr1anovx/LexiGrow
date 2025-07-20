@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct FlashcardKnowButton: View {
+  @Environment(FlashcardsViewModel.self) var viewModel
   @Binding var isFlipped: Bool
-  @Bindable var viewModel: FlashcardsViewModel
   
   var body: some View {
     Button {
@@ -17,21 +17,14 @@ struct FlashcardKnowButton: View {
       isFlipped = false
     } label: {
       Label("Know", systemImage: "checkmark.seal.fill")
-        .font(.title3)
-        .fontWeight(.medium)
-        .foregroundStyle(.white)
-        .padding(10)
+        .padding(11)
     }
-    .tint(.cyan)
-    .buttonStyle(.bordered)
-    .buttonBorderShape(.capsule)
-    .shadow(radius:8)
+    .borderedButtonStyle(tint: .cyan)
   }
 }
 
 #Preview {
   FlashcardKnowButton(
-    isFlipped: .constant(true),
-    viewModel: FlashcardsViewModel()
+    isFlipped: .constant(true)
   )
 }
