@@ -50,8 +50,7 @@ private extension FlashcardTryAgainView {
     var body: some View {
       Button {
         dismiss()
-        viewModel.selectedLevel = nil
-        viewModel.selectedTopic = nil
+        viewModel.resetSelectedLevelAndTopic()
       } label: {
         Text("No, return home")
           .padding(11)

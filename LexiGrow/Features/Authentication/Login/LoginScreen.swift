@@ -68,7 +68,7 @@ struct LoginScreen: View {
         }
       }
     }
-    .linearGradientButtonStyle()
+    
     .padding(.horizontal,30)
     .disabled(!viewModel.isValidForm)
     .opacity(!viewModel.isValidForm ? 0.5 : 1)

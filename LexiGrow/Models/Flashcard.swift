@@ -8,7 +8,7 @@
 import Foundation
 
 struct Flashcard: Identifiable {
-  let id: UUID
+  let id: String
   var word: Word
   var status: Status = .unknown
   

@@ -46,7 +46,7 @@ struct InputField: View {
       case .password: passwordInputField
       case .passwordConfirmation: passwordConfirmationInputField
       }
-    }.customInputFieldStyle()
+    }.inputFieldStyle()
   }
   
   var standardInputField: some View {

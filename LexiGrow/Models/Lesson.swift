@@ -22,7 +22,7 @@ extension Lesson {
     name: "Flashcards",
     description: "Word ↔ Translation",
     iconName: "apple.logo",
-    color: .blue,
+    color: .green,
     isLocked: false
   )
   
@@ -38,7 +38,7 @@ extension Lesson {
       name: "Guess the context",
       description: "Choosing the right word for the meaning in the text.",
       iconName: "apple.logo",
-      color: .indigo,
+      color: .green,
       isLocked: false
     ),
     Lesson(
@@ -52,7 +52,7 @@ extension Lesson {
       name: "Writing",
       description: "Just read and translate.",
       iconName: "apple.logo",
-      color: .purple,
+      color: .brown,
       isLocked: true
     )
   ]

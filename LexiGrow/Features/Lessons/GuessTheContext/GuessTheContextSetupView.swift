@@ -65,7 +65,7 @@ struct GuessTheContextSetupView: View {
           // viewModel.startLesson()
         } label: {
           Label("Start the lesson", systemImage: "play.circle.fill")
-            .padding(11)
+            .padding(12)
         }
         .prominentButtonStyle(tint: .pink)
       }

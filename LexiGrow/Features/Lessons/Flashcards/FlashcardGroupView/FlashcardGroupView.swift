@@ -10,7 +10,7 @@ import SwiftUI
 struct FlashcardGroupView: View {
   @Environment(\.dismiss) var dismiss
   @Environment(FlashcardsViewModel.self) var viewModel
-  @State private var isShowingExitView: Bool = false
+  @State private var isShowingFinishPreview: Bool = false
   
   var body: some View {
     NavigationView {
@@ -29,24 +29,23 @@ struct FlashcardGroupView: View {
       .toolbar {
         if viewModel.lessonState == .inProgress {
           ToolbarItem(placement: .topBarTrailing) {
-            Button {
-              isShowingExitView = true
-            } label: {
-              Image(systemName: "xmark.circle.fill")
-                .font(.title)
-                .foregroundStyle(.pink)
-                .symbolRenderingMode(.hierarchical)
+            DismissXButton {
+              isShowingFinishPreview = true
             }
           }
         }
       }
-      .sheet(isPresented: $isShowingExitView) {
+      .sheet(isPresented: $isShowingFinishPreview) {
         FinishLessonPreview {
           dismiss()
-          viewModel.selectedLevel = nil
-          viewModel.selectedTopic = nil
+          viewModel.resetSelectedLevelAndTopic()
         }
       }
     }
   }
+}
+
+#Preview {
+  FlashcardGroupView()
+    .environment(FlashcardsViewModel())
 }

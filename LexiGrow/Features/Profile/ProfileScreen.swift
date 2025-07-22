@@ -63,7 +63,7 @@ struct ProfileScreen: View {
     } label: {
       Text("Save changes")
     }
-    .standardButtonStyle(bgColor: .blue)
+    
     .opacity(viewModel.formHasChanges ? 1:0)
   }
 }
