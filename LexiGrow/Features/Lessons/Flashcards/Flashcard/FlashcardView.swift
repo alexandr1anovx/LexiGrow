@@ -7,15 +7,16 @@
 
 import SwiftUI
 
-struct FlashcardsView: View {
-  @Bindable var viewModel: FlashcardsViewModel
+struct FlashcardView: View {
+  @Environment(FlashcardsViewModel.self) var viewModel
+  @Environment(\.dismiss) var dismiss
   @State private var isShowingExitSheet: Bool = false
   @State private var isFlipped: Bool = false
-  @Environment(\.dismiss) var dismiss
   
   var body: some View {
     ZStack {
-      Color.mainBackgroundColor.ignoresSafeArea()
+      Color.mainBackgroundColor
+        .ignoresSafeArea()
       VStack {
         HStack(spacing: 20) {
           ProgressView(value: viewModel.progress)
@@ -39,30 +40,27 @@ struct FlashcardsView: View {
             if isFlipped {
               FlashcardBackView(
                 card.word,
-                isFlipped: $isFlipped,
-                viewModel: viewModel
+                isFlipped: $isFlipped
               )
             } else {
-              FlashcardFrontView(card.word)
+              FlashcardFrontView(word: card.word)
             }
           }
           .onTapGesture {
-            withAnimation {
+            withAnimation(.easeInOut) {
               isFlipped.toggle()
             }
           }
           .padding(30)
-          .shadow(radius: 20)
         } else {
           ProgressView("Loading Cards...")
         }
-        Spacer()
-        FlashcardShuffleButton()
       }
     }
   }
 }
 
 #Preview {
-  FlashcardsGroupView(viewModel: FlashcardsViewModel())
+  FlashcardView()
+    .environment(FlashcardsViewModel())
 }
