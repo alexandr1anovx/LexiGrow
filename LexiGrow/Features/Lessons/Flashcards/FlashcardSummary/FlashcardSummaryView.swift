@@ -24,7 +24,7 @@ struct FlashcardSummaryView: View {
           FlashcardTryAgainButton()
           FlashcardFinishButton {
             dismiss()
-            viewModel.resetSelectedLevelAndTopic()
+            viewModel.resetSetupSettings()
           }
         }.font(.headline)
       }

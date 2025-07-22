@@ -34,7 +34,7 @@ struct FlashcardSetupView: View {
       .overlay(alignment: .topTrailing) {
         DismissXButton {
           dismiss()
-          viewModel.resetSelectedLevelAndTopic()
+          viewModel.resetSetupSettings()
         }.padding(20)
       }
     }
@@ -44,7 +44,7 @@ struct FlashcardSetupView: View {
   
   private var lessonTitle: some View {
     VStack(spacing: 15) {
-      MultiColoredText(text: lesson.name)
+      MultiColoredText(lesson.name, color: .pink)
         .font(.title)
         .fontWeight(.bold)
       Text("Select a level and topic to start the lesson.")
@@ -58,5 +58,5 @@ struct FlashcardSetupView: View {
   FlashcardSetupView(
     lesson: Lesson.mock,
     selectedLessonForFullScreenCover: .constant(.mock)
-  )
+  ).environment(FlashcardsViewModel())
 }

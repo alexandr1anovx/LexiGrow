@@ -34,7 +34,7 @@ private extension FlashcardTryAgainView {
   struct TitleView: View {
     var body: some View {
       VStack(spacing: 15) {
-        MultiColoredText(text: "Try Again")
+        MultiColoredText("Try Again", color: .pink)
           .font(.title)
           .fontWeight(.semibold)
         Text("Would you like to repeat the lesson?")
@@ -50,7 +50,7 @@ private extension FlashcardTryAgainView {
     var body: some View {
       Button {
         dismiss()
-        viewModel.resetSelectedLevelAndTopic()
+        viewModel.resetSetupSettings()
       } label: {
         Text("No, return home")
           .padding(11)

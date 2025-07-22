@@ -38,7 +38,7 @@ struct FlashcardGroupView: View {
       .sheet(isPresented: $isShowingFinishPreview) {
         FinishLessonPreview {
           dismiss()
-          viewModel.resetSelectedLevelAndTopic()
+          viewModel.resetSetupSettings()
         }
       }
     }

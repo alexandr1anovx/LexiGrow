@@ -82,12 +82,12 @@ final class FlashcardsViewModel {
     withAnimation { lessonState = .tryAgain }
   }
   
-  func resetSelectedLevelAndTopic() {
+  func resetSetupSettings() {
     selectedLevel = nil
     selectedTopic = nil
   }
   
-  func updateTopicsForSelectedLevel() {
+  func resetTopics() {
     guard let level = selectedLevel else {
       availableTopics = []
       return

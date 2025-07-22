@@ -55,10 +55,10 @@ struct FlashcardTopicOptionsView: View {
       .scrollIndicators(.hidden)
     }
     .onAppear {
-      viewModel.updateTopicsForSelectedLevel()
+      viewModel.resetTopics()
      }
     .onChange(of: viewModel.selectedLevel) {
-      viewModel.updateTopicsForSelectedLevel()
+      viewModel.resetTopics()
       if let topic = viewModel.selectedTopic,
          !viewModel.availableTopics.contains(topic) {
         viewModel.selectedTopic = nil
