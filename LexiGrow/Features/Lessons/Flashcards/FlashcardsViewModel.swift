@@ -12,12 +12,20 @@ import SwiftUICore
 @MainActor
 final class FlashcardsViewModel {
   
+  // MARK: - Properties
+  
   var lessonState: LessonState = .inProgress
   private(set) var lessonCards: [Flashcard] = []
   private(set) var currentIndex: Int = 0
   
   private(set) var knownWordsCount: Int = 0
   private(set) var repetitionWords: Set<Word> = []
+  
+  let levels: [String] = ["B1.1", "B1.2", "B2.1", "B2.2"]
+  
+  var selectedLevel: String?
+  var selectedTopic: String?
+  var availableTopics: [String] = []
   
   // MARK: - Computed Properties
   
@@ -28,6 +36,8 @@ final class FlashcardsViewModel {
     return lessonCards[currentIndex]
   }
   
+  // var currentCard: Flashcard? = Flashcard(id: "1", word: Word.mock)
+  
   var progress: Double {
     guard !lessonCards.isEmpty else { return 0.0 }
     return Double(currentIndex + 1) / Double(lessonCards.count)
@@ -35,14 +45,13 @@ final class FlashcardsViewModel {
   
   // MARK: - Init / Deinit
   
-  // just for console output
-  init() { print("FlashcardsViewModel initialized") }
-  deinit { print("FlashcardsViewModel deinitialized") }
+  init() { print("✅ FlashcardsViewModel initialized") }
+  deinit { print("❌ FlashcardsViewModel deinitialized") }
   
   // MARK: - Public Methods
   
-  func startLesson(count: Int) {
-    let words = WordProvider.getRandomWords(count: count)
+  func startLesson(level: String, topic: String) {
+    let words = WordProvider.getWords(for: level, topic: topic)
     self.lessonCards = words.map {
       Flashcard(id: $0.id, word: $0)
     }
@@ -71,6 +80,19 @@ final class FlashcardsViewModel {
   
   func resetLesson() {
     withAnimation { lessonState = .tryAgain }
+  }
+  
+  func resetSelectedLevelAndTopic() {
+    selectedLevel = nil
+    selectedTopic = nil
+  }
+  
+  func updateTopicsForSelectedLevel() {
+    guard let level = selectedLevel else {
+      availableTopics = []
+      return
+    }
+    availableTopics = WordProvider.getTopics(for: level)
   }
   
   // MARK: - Private Methods
