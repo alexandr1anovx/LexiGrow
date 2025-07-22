@@ -9,6 +9,7 @@ import SwiftUI
 
 struct FlashcardTryAgainView: View {
   @Environment(FlashcardsViewModel.self) var viewModel
+  @Environment(\.dismiss) var dismiss
   
   var body: some View {
     ZStack {
@@ -17,7 +18,9 @@ struct FlashcardTryAgainView: View {
       VStack(spacing: 40) {
         TitleView()
         HStack(spacing: 20) {
-          ReturnHomeButton()
+          ReturnHomeButton {
+            dismiss()
+          }
           TryAgainButton()
         }
       }
@@ -45,11 +48,11 @@ private extension FlashcardTryAgainView {
   
   struct ReturnHomeButton: View {
     @Environment(FlashcardsViewModel.self) var viewModel
-    @Environment(\.dismiss) var dismiss
+    var dismissAction: () -> Void
     
     var body: some View {
       Button {
-        dismiss()
+        dismissAction()
         viewModel.resetSetupSettings()
       } label: {
         Text("No, return home")
