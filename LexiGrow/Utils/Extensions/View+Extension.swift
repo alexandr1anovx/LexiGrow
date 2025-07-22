@@ -8,50 +8,51 @@
 import SwiftUI
 
 extension View {
-  func standardButtonStyle(bgColor: Color) -> some View {
+  
+  // MARK: - Button Styles
+  
+  func prominentButtonStyle(
+    tint: Color,
+    textColor: Color? = nil
+  ) -> some View {
     self
       .font(.callout)
       .fontWeight(.medium)
-      .foregroundStyle(.white)
-      .padding(.vertical,17)
-      .padding(.horizontal,35)
-      .background(bgColor)
-      .clipShape(.capsule)
-      .shadow(radius:5)
+      .foregroundStyle(textColor ?? .white)
+      .tint(tint)
+      .buttonBorderShape(
+        .roundedRectangle(radius: 20)
+      )
+      .buttonStyle(.borderedProminent)
+      .shadow(radius: 3)
   }
   
-  func gradientButtonStyle(bgColor: AnyGradient) -> some View {
-    self
-      .font(.callout)
-      .fontWeight(.semibold)
-      .foregroundStyle(.white)
-      .padding(.vertical,17)
-      .padding(.horizontal,35)
-      .background(bgColor.secondary)
-      .clipShape(.capsule)
-      .shadow(radius:5)
-  }
-  
-  func linearGradientButtonStyle(
-    bgColor: LinearGradient? = Color.gradientOrangePink
+  func borderedButtonStyle(
+    tint: Color,
+    textColor: Color? = nil
   ) -> some View {
     self
-      .font(.headline)
-      .foregroundStyle(.white)
-      .frame(maxWidth: .infinity)
-      .padding(.vertical,17)
-      .background(bgColor)
-      .clipShape(.rect(cornerRadius: 17))
+      .font(.callout)
+      .fontWeight(.medium)
+      .foregroundStyle(textColor ?? .white)
+      .tint(tint)
+      .buttonBorderShape(
+        .roundedRectangle(radius: 20)
+      )
+      .buttonStyle(.bordered)
+      .shadow(radius: 3)
   }
   
-  func customInputFieldStyle() -> some View {
+  // MARK: - Input Field Style
+  
+  func inputFieldStyle() -> some View {
     self
       .font(.subheadline)
       .padding()
       .frame(minHeight:55)
       .overlay {
         RoundedRectangle(cornerRadius:15)
-          .stroke(.secondary.tertiary, lineWidth:1)
+          .stroke(.secondary.tertiary, lineWidth: 1)
       }
   }
 }
