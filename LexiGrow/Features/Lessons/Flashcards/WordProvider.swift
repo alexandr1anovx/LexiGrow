@@ -8,12 +8,26 @@
 import Foundation
 
 struct WordProvider {
+  
   private static let dictionary: [Word] = Bundle.main.decode(
     [Word].self,
     from: "words.json"
   )
-  static func getRandomWords(count: Int) -> [Word] {
-    let requestedCount = min(count, dictionary.count)
-    return Array(dictionary.shuffled().prefix(requestedCount))
+  
+  // Output example: ["cabbage", "lettuce" ...] (for level "B1.1" and topic "Eating")
+  static func getWords(for level: String, topic: String) -> [Word] {
+    return dictionary.filter {
+      $0.level == level &&
+      $0.topic == topic
+    }
+    .shuffled()
+  }
+  
+  
+  static func getTopics(for level: String) -> [String] {
+    let topics = dictionary
+      .filter { $0.level == level }
+      .map { $0.topic }
+    return Array(Set(topics)).sorted()
   }
 }
