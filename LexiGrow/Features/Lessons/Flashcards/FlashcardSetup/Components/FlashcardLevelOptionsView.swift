@@ -8,9 +8,7 @@
 import SwiftUI
 
 struct FlashcardLevelOptionsView: View {
-  @Binding var selectedLevel: String?
-  @Binding var selectedTopic: String?
-  private let levels: [String] = ["B1.1", "B1.2", "B2.1", "B2.2"]
+  @Bindable var viewModel: FlashcardsViewModel
   
   var body: some View {
     HStack {
@@ -18,22 +16,29 @@ struct FlashcardLevelOptionsView: View {
         .font(.headline)
       ScrollView(.horizontal) {
         HStack {
-          ForEach(levels, id: \.self) { level in
-            FlashcardLevelButton(
-              level: level,
-              selectedLevel: $selectedLevel,
-              selectedTopic: $selectedTopic
-            )
+          ForEach(viewModel.levels, id: \.self) { level in
+            SelectableButton(
+              content: level,
+              selectedContent: $viewModel.selectedLevel,
+              activeColor: .pink) {
+                if viewModel.selectedLevel == level {
+                  viewModel.selectedLevel = nil
+                } else {
+                  viewModel.selectedLevel = level
+                  viewModel.selectedTopic = nil // reset the selected topic
+                }
+              }
           }
         }.padding(5)
-      }.shadow(radius: 10)
+      }
+      .shadow(radius: 3)
+      .scrollIndicators(.hidden)
     }
   }
 }
 
 #Preview {
   FlashcardLevelOptionsView(
-    selectedLevel: .constant("B1.1"),
-    selectedTopic: .constant("Eating")
+    viewModel: FlashcardsViewModel()
   )
 }
