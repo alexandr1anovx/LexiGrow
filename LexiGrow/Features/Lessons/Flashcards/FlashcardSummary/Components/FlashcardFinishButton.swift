@@ -18,3 +18,7 @@ struct FlashcardFinishButton: View {
     .prominentButtonStyle(tint: .pink)
   }
 }
+
+#Preview {
+  FlashcardFinishButton {}
+}

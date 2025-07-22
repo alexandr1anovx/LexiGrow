@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct FlashcardTryAgainButton: View {
-  @Bindable var viewModel: FlashcardsViewModel
+  @Environment(FlashcardsViewModel.self) var viewModel
   
   var body: some View {
     Button {
@@ -19,4 +19,8 @@ struct FlashcardTryAgainButton: View {
     }
     .prominentButtonStyle(tint: .cmReversed, textColor: .cmSystem)
   }
+}
+
+#Preview {
+  FlashcardTryAgainButton()
 }

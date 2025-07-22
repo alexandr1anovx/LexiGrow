@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct FlashcardSummaryView: View {
-  @Bindable var viewModel: FlashcardsViewModel
+  @Environment(FlashcardsViewModel.self) var viewModel
   @Environment(\.dismiss) var dismiss
   
   var body: some View {
@@ -16,13 +16,16 @@ struct FlashcardSummaryView: View {
       Color.mainBackgroundColor
         .ignoresSafeArea()
       VStack(spacing: 40) {
-        MultiColoredText(text: "The lesson is over!")
+        Text("The lesson is over!")
           .font(.title)
           .fontWeight(.bold)
-        FlashcardLessonResultView(viewModel: viewModel)
+        FlashcardLessonResultView()
         HStack(spacing: 15) {
-          FlashcardTryAgainButton(viewModel: viewModel)
-          FlashcardFinishButton { dismiss() }
+          FlashcardTryAgainButton()
+          FlashcardFinishButton {
+            dismiss()
+            viewModel.resetSelectedLevelAndTopic()
+          }
         }.font(.headline)
       }
     }
@@ -30,7 +33,5 @@ struct FlashcardSummaryView: View {
 }
 
 #Preview {
-  FlashcardSummaryView(
-    viewModel: FlashcardsViewModel()
-  )
+  FlashcardSummaryView()
 }

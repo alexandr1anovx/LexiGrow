@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct FlashcardLessonResultView: View {
-  @Bindable var viewModel: FlashcardsViewModel
+  @Environment(FlashcardsViewModel.self) var viewModel
   
   var body: some View {
     VStack(spacing: 15) {
@@ -25,4 +25,8 @@ struct FlashcardLessonResultView: View {
         .foregroundStyle(.gray)
     }
   }
+}
+
+#Preview {
+  FlashcardLessonResultView()
 }
