@@ -9,34 +9,34 @@ import SwiftUI
 
 struct FlashcardFrontView: View {
   let word: Word
-  @State var cardCounter: Int = 0
-  @State var cardOrigin: CGPoint = .zero
   
-  init(_ word: Word) {
-    self.word = word
-  }
+  @State var counter: Int = 0
+  @State var origin: CGPoint = .zero
   
   var body: some View {
     RoundedRectangle(cornerRadius: 40)
       .fill(LinearGradient.flashcardFront)
-      .onPressingChanged { point in
-        if let point {
-          cardOrigin = point
-          cardCounter += 1
-        }
-      }
-      .modifier(
-        RippleEffect(at: cardOrigin, trigger: cardCounter)
-      )
+      .shadow(radius: 3)
       .overlay {
         Text(word.original)
           .font(.largeTitle)
           .fontWeight(.semibold)
           .foregroundStyle(.white)
+          .padding(.horizontal)
+          .multilineTextAlignment(.center)
       }
+      .onPressingChanged { point in
+        if let point {
+          origin = point
+          counter += 1
+        }
+      }
+      .modifier(
+        RippleEffect(at: origin, trigger: counter)
+      )
   }
 }
 
 #Preview {
-  FlashcardFrontView(Word.mock)
+  FlashcardFrontView(word: Word.mock)
 }
