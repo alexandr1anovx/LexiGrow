@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct LessonsTabScreen: View {
-  @State var viewModel = FlashcardsViewModel()
+  @Environment(FlashcardsViewModel.self) var viewModel
   @State private var selectedLessonForSheet: Lesson?
   @State private var selectedLessonForFullScreenCover: Lesson?
   
@@ -25,22 +25,39 @@ struct LessonsTabScreen: View {
         ScrollView {
           LazyVGrid(columns: columns, spacing: 25) {
             ForEach(Lesson.lessons) { lesson in
-              LessonBlockView(lesson: lesson)
-                .onTapGesture {
-                  viewModel.resetLesson()
-                  selectedLessonForSheet = lesson
-                }
+              if lesson.isLocked {
+                PremiumLessonBlock(lesson: lesson)
+                  .onTapGesture {
+                    viewModel.resetLesson()
+                    selectedLessonForSheet = lesson
+                  }
+              } else {
+                FreeLessonBlock(lesson: lesson)
+                  .onTapGesture {
+                    viewModel.resetLesson()
+                    selectedLessonForSheet = lesson
+                  }
+              }
             }
           }.padding()
         }.padding(.top)
       }
       .navigationTitle("Lessons")
       .navigationBarTitleDisplayMode(.large)
+      .toolbar {
+        ToolbarItem(placement: .topBarTrailing) {
+          Button {
+            //
+          } label: {
+            Image(.comet)
+              .foregroundStyle(.pink.gradient)
+          }
+        }
+      }
       .sheet(item: $selectedLessonForSheet) { lesson in
         if !lesson.isLocked {
           FreeLessonPreview(
             lesson: lesson,
-            viewModel: viewModel,
             selectedLessonForFullScreenCover: $selectedLessonForFullScreenCover
           )
         } else {
@@ -53,7 +70,7 @@ struct LessonsTabScreen: View {
       .fullScreenCover(item: $selectedLessonForFullScreenCover) { lesson in
         switch lesson.name {
         case "Flashcards":
-          FlashcardGroupView(viewModel: viewModel)
+          FlashcardGroupView()
         case "Guess the context":
           GuessTheContextView()
         default:
@@ -65,7 +82,6 @@ struct LessonsTabScreen: View {
 }
 
 #Preview {
-  LessonsTabScreen(
-    viewModel: FlashcardsViewModel()
-  )
+  LessonsTabScreen()
+    .environment(FlashcardsViewModel())
 }

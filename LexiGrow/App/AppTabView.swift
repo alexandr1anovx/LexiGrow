@@ -33,6 +33,8 @@ struct AppTabView: View {
   @State private var selectedTab: Tab = .lessons
   private let feedbackGenerator = UIImpactFeedbackGenerator(style: .soft)
   
+  @State private var flashcardViewModel = FlashcardsViewModel()
+  
   var body: some View {
     TabView(selection: $selectedTab) {
       LessonsTabScreen()
@@ -46,6 +48,7 @@ struct AppTabView: View {
           Label("General", systemImage: "ellipsis.circle.fill")
         }
     }
+    .environment(flashcardViewModel)
     .onChange(of: selectedTab) { // Creates a haptic feedback when selecting a tab.
       feedbackGenerator.impactOccurred()
     }
