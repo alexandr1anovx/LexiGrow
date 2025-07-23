@@ -13,26 +13,23 @@ struct FlashcardTopicOptionsView: View {
   var body: some View {
     HStack {
       Text("Topic:")
-        .font(.headline)
       ScrollView(.horizontal) {
         HStack {
           if viewModel.selectedLevel != nil && viewModel.availableTopics.isEmpty {
             Text("No topics available yet")
-              .font(.headline)
               .padding(15)
               .foregroundColor(.white)
               .background(
-                RoundedRectangle(cornerRadius: 18)
+                RoundedRectangle(cornerRadius: 20)
                   .fill(.gray)
               )
           } else if viewModel.selectedLevel == nil {
             Text("Select a level above")
-              .font(.headline)
-              .padding(15)
               .foregroundColor(.white)
+              .padding(15)
               .background(
-                RoundedRectangle(cornerRadius: 15)
-                  .fill(.gray.secondary)
+                RoundedRectangle(cornerRadius: 20)
+                  .fill(.gray.tertiary)
               )
           } else {
             ForEach(viewModel.availableTopics, id: \.self) { topic in
@@ -49,11 +46,14 @@ struct FlashcardTopicOptionsView: View {
               }
             }
           }
-        }.padding(5)
+        }.padding(1)
       }
       .shadow(radius: 3)
       .scrollIndicators(.hidden)
     }
+    .font(.callout)
+    .fontWeight(.medium)
+    
     .onAppear {
       viewModel.resetTopics()
      }

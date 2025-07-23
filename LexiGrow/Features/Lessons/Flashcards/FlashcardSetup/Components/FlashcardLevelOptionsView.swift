@@ -13,7 +13,6 @@ struct FlashcardLevelOptionsView: View {
   var body: some View {
     HStack {
       Text("Level:")
-        .font(.headline)
       ScrollView(.horizontal) {
         HStack {
           ForEach(viewModel.levels, id: \.self) { level in
@@ -29,11 +28,13 @@ struct FlashcardLevelOptionsView: View {
                 }
               }
           }
-        }.padding(5)
+        }.padding(1)
       }
       .shadow(radius: 3)
       .scrollIndicators(.hidden)
     }
+    .font(.callout)
+    .fontWeight(.medium)
   }
 }
 

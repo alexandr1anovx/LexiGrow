@@ -34,4 +34,5 @@ struct FlashcardSummaryView: View {
 
 #Preview {
   FlashcardSummaryView()
+    .environment(FlashcardsViewModel())
 }

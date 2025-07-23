@@ -23,4 +23,5 @@ struct FlashcardTryAgainButton: View {
 
 #Preview {
   FlashcardTryAgainButton()
+    .environment(FlashcardsViewModel())
 }
