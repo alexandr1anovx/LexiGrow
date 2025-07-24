@@ -15,28 +15,24 @@ struct PremiumLessonBlock: View {
   var body: some View {
     ZStack {
       RoundedRectangle(cornerRadius: 30)
-        .fill(
-          .pink
-        )
+        .fill(Color.pink)
         .frame(width: 165, height: 150)
         .offset(x: 0, y: -7)
       
       RoundedRectangle(cornerRadius: 35)
-        .fill(.white.secondary)
+        .fill(Color.white.secondary)
         .stroke(.white, lineWidth: 2)
         .frame(width: 175, height: 150)
         .shadow(radius: 3)
-        
+        .modifier(RippleEffect(at: origin, trigger: counter))
         .onPressingChanged { point in
           if let point {
             origin = point
             counter += 1
           }
         }
-        .modifier(
-          RippleEffect(at: origin, trigger: counter)
-        )
-      VStack(spacing: 15) {
+      
+      VStack(spacing: 10) {
         Text(lesson.name)
           .fontWeight(.bold)
           .fontDesign(.monospaced)

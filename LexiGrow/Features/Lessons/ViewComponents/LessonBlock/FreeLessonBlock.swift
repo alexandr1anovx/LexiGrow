@@ -15,14 +15,7 @@ struct FreeLessonBlock: View {
   var body: some View {
     ZStack {
       RoundedRectangle(cornerRadius: 30)
-        .fill(
-          LinearGradient(
-            colors: [.cream, .orange],
-            startPoint: .top,
-            endPoint: .bottom
-          )
-          //Color.cream
-        )
+        .fill(Color.green)
         .frame(width: 165, height: 150)
         .offset(x: 0, y: -7)
       
@@ -38,15 +31,13 @@ struct FreeLessonBlock: View {
         .foregroundColor(.white)
         .padding(.horizontal)
     }
+    .modifier(RippleEffect(at: origin, trigger: counter))
     .onPressingChanged { point in
       if let point {
         origin = point
         counter += 1
       }
     }
-    .modifier(
-      RippleEffect(at: origin, trigger: counter)
-    )
   }
 }
 
