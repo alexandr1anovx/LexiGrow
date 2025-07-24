@@ -13,20 +13,17 @@ struct FlashcardSummaryView: View {
   
   var body: some View {
     ZStack {
-      Color.mainBackgroundColor
-        .ignoresSafeArea()
-      VStack(spacing: 40) {
-        Text("The lesson is over!")
+      Color.mainBackgroundColor.ignoresSafeArea()
+      
+      VStack(spacing: 30) {
+        Text("Summary:")
           .font(.title)
           .fontWeight(.bold)
-        FlashcardLessonResultView()
-        HStack(spacing: 15) {
-          FlashcardTryAgainButton()
-          FlashcardFinishButton {
-            dismiss()
-            viewModel.resetSetupSettings()
-          }
-        }.font(.headline)
+        ResultsView()
+        HStack(spacing: 10) {
+          TryAgainButton()
+          ReturnHomeButton { dismiss() }
+        }
       }
     }
   }
@@ -34,5 +31,5 @@ struct FlashcardSummaryView: View {
 
 #Preview {
   FlashcardSummaryView()
-    .environment(FlashcardsViewModel())
+    .environment(FlashcardsViewModel.previewMode)
 }

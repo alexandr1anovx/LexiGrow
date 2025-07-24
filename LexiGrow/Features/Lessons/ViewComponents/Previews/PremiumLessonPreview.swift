@@ -12,18 +12,20 @@ struct PremiumLessonPreview: View {
   @Binding var selectedLessonForSheet: Lesson?
   
   var body: some View {
-    VStack {
-      Spacer()
-      DescriptionText(lesson: lesson)
-      Spacer()
-      GetPremiumButton()
-    }
-    .presentationDetents([.fraction(0.38)])
-    .presentationCornerRadius(50)
-    .presentationBackground(lesson.color.gradient)
-    .overlay(alignment: .topTrailing) {
-      DismissXButton {
-        selectedLessonForSheet = nil
+    ZStack {
+      Color.mainBackgroundColor.ignoresSafeArea()
+      
+      VStack(spacing: 40) {
+        Spacer()
+        DescriptionText(lesson: lesson)
+        GetPremiumButton()
+      }
+      .presentationDetents([.fraction(0.33)])
+      .presentationCornerRadius(50)
+      .overlay(alignment: .topTrailing) {
+        DismissXButton {
+          selectedLessonForSheet = nil
+        }.padding(20)
       }
     }
   }
@@ -36,11 +38,19 @@ private extension PremiumLessonPreview {
     
     var body: some View {
       VStack(spacing: 20) {
-        Label("**\(lesson.name)** is locked.", systemImage: "lock.circle.dotted")
-          .font(.title2)
-          .fontWeight(.semibold)
+        
+        Label {
+          Text("\(lesson.name) is locked.")
+            .font(.title2)
+            .fontWeight(.bold)
+        } icon: {
+          Image(systemName: "lock.circle.dotted")
+            .font(.title)
+            .foregroundStyle(.pink)
+        }
+          
         Text("Get premium subscription to unlock this lesson.")
-          .font(.headline)
+          .font(.callout)
           .fontWeight(.medium)
           .multilineTextAlignment(.center)
           .padding(.horizontal)
@@ -53,8 +63,18 @@ private extension PremiumLessonPreview {
       Button {
         // action
       } label: {
-        Label("Get Premium", systemImage: "star.leadinghalf.filled")
-          .padding(11)
+        Label {
+          HStack(spacing: 4) {
+            Text("Subscribe for")
+              .fontWeight(.semibold)
+            Text("$4.99")
+              .font(.headline)
+              .fontWeight(.bold)
+          }
+        } icon: {
+          Image(.stars)
+        }
+        .padding(11)
       }
       .prominentButtonStyle(tint: .pink)
     }

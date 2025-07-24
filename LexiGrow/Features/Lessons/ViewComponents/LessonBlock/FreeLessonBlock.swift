@@ -17,23 +17,22 @@ struct FreeLessonBlock: View {
       RoundedRectangle(cornerRadius: 30)
         .fill(
           LinearGradient(
-            colors: [lesson.color, .orange],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
+            colors: [.cream, .orange],
+            startPoint: .top,
+            endPoint: .bottom
           )
+          //Color.cream
         )
         .frame(width: 165, height: 150)
         .offset(x: 0, y: -7)
-        .shadow(color: lesson.color, radius: 3)
       
       RoundedRectangle(cornerRadius: 35)
         .fill(.white.tertiary)
         .stroke(.white, lineWidth: 2)
         .frame(width: 175, height: 150)
-        .shadow(radius: 5)
+        .shadow(radius: 3)
       
       Text(lesson.name)
-        .font(.callout)
         .fontWeight(.bold)
         .fontDesign(.monospaced)
         .foregroundColor(.white)

@@ -20,21 +20,19 @@ struct LessonsTabScreen: View {
   var body: some View {
     NavigationView {
       ZStack {
-        Color.mainBackgroundColor
-          .ignoresSafeArea()
+        Color.mainBackgroundColor.ignoresSafeArea()
+        
         ScrollView {
           LazyVGrid(columns: columns, spacing: 25) {
             ForEach(Lesson.lessons) { lesson in
               if lesson.isLocked {
                 PremiumLessonBlock(lesson: lesson)
                   .onTapGesture {
-                    viewModel.resetLesson()
                     selectedLessonForSheet = lesson
                   }
               } else {
                 FreeLessonBlock(lesson: lesson)
                   .onTapGesture {
-                    viewModel.resetLesson()
                     selectedLessonForSheet = lesson
                   }
               }
@@ -49,7 +47,7 @@ struct LessonsTabScreen: View {
           Button {
             //
           } label: {
-            Image(.comet)
+            Image(.stars)
               .foregroundStyle(.pink.gradient)
           }
         }
@@ -70,9 +68,9 @@ struct LessonsTabScreen: View {
       .fullScreenCover(item: $selectedLessonForFullScreenCover) { lesson in
         switch lesson.name {
         case "Flashcards":
-          FlashcardGroupView()
+          FlashcardContainerView()
         case "Guess the context":
-          GuessTheContextView()
+          GuessTheContextContainerView()
         default:
           EmptyView()
         }
@@ -84,4 +82,5 @@ struct LessonsTabScreen: View {
 #Preview {
   LessonsTabScreen()
     .environment(FlashcardsViewModel())
+    .environment(GuessTheContextViewModel())
 }

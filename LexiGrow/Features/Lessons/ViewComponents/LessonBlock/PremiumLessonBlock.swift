@@ -16,20 +16,16 @@ struct PremiumLessonBlock: View {
     ZStack {
       RoundedRectangle(cornerRadius: 30)
         .fill(
-          LinearGradient(
-            colors: [lesson.color, .orange],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-          )
+          .pink
         )
         .frame(width: 165, height: 150)
         .offset(x: 0, y: -7)
       
       RoundedRectangle(cornerRadius: 35)
-        .fill(.orange.secondary)
+        .fill(.white.secondary)
         .stroke(.white, lineWidth: 2)
         .frame(width: 175, height: 150)
-        .shadow(radius: 5)
+        .shadow(radius: 3)
         
         .onPressingChanged { point in
           if let point {
@@ -42,11 +38,13 @@ struct PremiumLessonBlock: View {
         )
       VStack(spacing: 15) {
         Text(lesson.name)
-          .font(.callout)
           .fontWeight(.bold)
           .fontDesign(.monospaced)
-        Image(systemName: "lock.circle.dotted")
-          .font(.title)
+        HStack {
+          Image(.stars)
+          Image(systemName: "lock.circle.dotted")
+            .font(.title)
+        }
       }.foregroundStyle(.white)
     }
   }

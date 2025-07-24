@@ -8,18 +8,19 @@
 import SwiftUI
 
 struct DismissXButton: View {
-  var dismissAction: () -> Void
+  var color: Color?
+  var onDismiss: () -> Void
   
   var body: some View {
-    Button(action: dismissAction) {
+    Button(action: onDismiss) {
       Image(systemName: "xmark.circle.fill")
         .font(.title)
         .symbolRenderingMode(.hierarchical)
-        .foregroundStyle(.pink)
+        .foregroundStyle(color ?? .pink)
     }
   }
 }
 
 #Preview {
-  DismissXButton(dismissAction: {})
+  DismissXButton {}
 }

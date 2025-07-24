@@ -9,6 +9,12 @@ import SwiftUI
 
 struct MultiColoredText: View {
   let text: String
+  let color: Color
+  
+  init(_ text: String, color: Color) {
+    self.text = text
+    self.color = color
+  }
   
   private var middleIndex: String.Index {
     if !text.isEmpty {
@@ -29,10 +35,10 @@ struct MultiColoredText: View {
     Text(firstHalf)
     +
     Text(secondHalf)
-      .foregroundStyle(.pink)
+      .foregroundStyle(color)
   }
 }
 
 #Preview {
-  MultiColoredText(text: "Flashcards")
+  MultiColoredText("Flashcards", color: .pink)
 }

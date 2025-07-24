@@ -49,11 +49,10 @@ extension View {
     self
       .font(.subheadline)
       .padding()
-      .frame(minHeight:55)
+      .frame(minHeight: 55)
       .overlay {
-        RoundedRectangle(cornerRadius:15)
+        RoundedRectangle(cornerRadius: 15)
           .stroke(.secondary.tertiary, lineWidth: 1)
       }
   }
 }
-

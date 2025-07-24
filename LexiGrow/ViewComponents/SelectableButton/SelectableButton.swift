@@ -18,7 +18,8 @@ struct SelectableButton<Value: Equatable & CustomStringConvertible> : View {
       action()
     } label: {
       Text(content.description)
-        .font(.headline)
+        .font(.callout)
+        .fontWeight(.medium)
         .padding(15)
         .foregroundColor(.white)
         .background(
@@ -33,8 +34,6 @@ struct SelectableButton<Value: Equatable & CustomStringConvertible> : View {
 #Preview {
   SelectableButton(
     content: "Topic",
-    selectedContent: .constant("Topic"),
-    activeColor: .pink) {
-      //
-    }
+    selectedContent: .constant(""),
+    activeColor: .pink) {}
 }

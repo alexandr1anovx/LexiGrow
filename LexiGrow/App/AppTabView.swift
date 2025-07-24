@@ -11,22 +11,7 @@ enum Tab {
   case lessons, general
 }
 
-struct LaunchView: View {
-  @Environment(AuthManager.self) private var authManager
-  
-  var body: some View {
-    Group {
-      if authManager.currentUser != nil {
-        AppTabView()
-      } else {
-        LoginScreen(authManager: authManager)
-      }
-    }
-    .task {
-      await authManager.refreshUser()
-    }
-  }
-}
+
 
 struct AppTabView: View {
   @Environment(AuthManager.self) private var authManager
@@ -34,6 +19,7 @@ struct AppTabView: View {
   private let feedbackGenerator = UIImpactFeedbackGenerator(style: .soft)
   
   @State private var flashcardViewModel = FlashcardsViewModel()
+  @State private var guessTheContextViewModel = GuessTheContextViewModel()
   
   var body: some View {
     TabView(selection: $selectedTab) {
@@ -49,6 +35,7 @@ struct AppTabView: View {
         }
     }
     .environment(flashcardViewModel)
+    .environment(guessTheContextViewModel)
     .onChange(of: selectedTab) { // Creates a haptic feedback when selecting a tab.
       feedbackGenerator.impactOccurred()
     }

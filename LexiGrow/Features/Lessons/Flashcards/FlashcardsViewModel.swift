@@ -78,10 +78,6 @@ final class FlashcardsViewModel {
     selectNextCard()
   }
   
-  func resetLesson() {
-    withAnimation { lessonState = .tryAgain }
-  }
-  
   func resetSetupSettings() {
     selectedLevel = nil
     selectedTopic = nil
@@ -119,6 +115,15 @@ final class FlashcardsViewModel {
 
 extension FlashcardsViewModel {
   enum LessonState: Equatable, Hashable {
-    case inProgress, summary, tryAgain
+    case inProgress, summary
+  }
+}
+
+extension FlashcardsViewModel {
+  static var previewMode: FlashcardsViewModel {
+    let viewModel = FlashcardsViewModel()
+    viewModel.selectedLevel = "B1.1"
+    viewModel.selectedTopic = "Eating"
+    return viewModel
   }
 }

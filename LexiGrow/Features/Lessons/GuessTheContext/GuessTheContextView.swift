@@ -6,86 +6,127 @@
 //
 
 import SwiftUI
-import GoogleGenerativeAI
 
 struct GuessTheContextView: View {
-  @State private var generatedText: String = "This is where the text will be displayed."
-  @State private var isLoading: Bool = false
-  @State private var isShowingExitSheet: Bool = false
   @Environment(\.dismiss) var dismiss
-  
-  private let model = GenerativeModel(
-    name: "gemini-1.5-flash",
-    apiKey: "AIzaSyAvp16KVd9zRoKbyBPHtRYgkNDxSZZRR6Q"
-  )
+  @Environment(GuessTheContextViewModel.self) var viewModel
   
   var body: some View {
-    NavigationView {
-      VStack(spacing: 20) {
-        ScrollView {
-          Text(generatedText)
-            .fontWeight(.medium)
-            .frame(maxWidth: .infinity, minHeight: 80)
-            .background(
-              Capsule()
-                .fill(.purple.gradient)
-            )
-        }.shadow(radius: 3)
+    ZStack {
+      Color.mainBackgroundColor.ignoresSafeArea()
+      
+      VStack {
+        Text(viewModel.selectedContext ?? "No Selected Context")
+          .fontWeight(.bold)
+          .padding(5)
+        ProgressBarView()
         
-        Button(action: generateContext) {
-          if isLoading {
-            ProgressView()
-              .progressViewStyle(.circular)
-          } else {
-            Label("Generate Text", systemImage: "sparkles")
-          }
-        }
-        .shadow(radius: 3)
-        .disabled(isLoading)
-      }
-      .padding()
-      .navigationTitle("Guess the context")
-      .navigationBarTitleDisplayMode(.inline)
-      .toolbar {
-        ToolbarItem(placement: .topBarTrailing) {
-          Button {
-            isShowingExitSheet = true
-          } label: {
-            Image(systemName: "xmark.circle.fill")
-              .font(.title)
-              .symbolRenderingMode(.hierarchical)
+        Group {
+          if viewModel.isLoading {
+            ProgressView("Generating...")
+          } else if let errorMessage = viewModel.errorMessage {
+            Text(errorMessage)
               .foregroundStyle(.red)
+          } else if viewModel.currentTask != nil {
+            AnswerView()
+          } else {
+            if let context = viewModel.selectedContext {
+              GenerateTextButton(context: context)
+            } else {
+              Text("Please select a context first.")
+            }
           }
         }
+        Spacer()
       }
-      .sheet(isPresented: $isShowingExitSheet) {
-        FinishLessonPreview {
-          dismiss()
-        }
-      }
-    }
-  }
-  
-  // MARK: - Subviews
-  
-  func generateContext() {
-    isLoading = true
-    generatedText = ""
-    Task {
-      do {
-        let prompt = ""
-        let response = try await model.generateContent(prompt)
-        if let text = response.text {
-          generatedText = text
-        }
-      } catch {
-        generatedText = "Error happened: \(error.localizedDescription)"
-      }
-      isLoading = false
     }
   }
 }
 
 #Preview {
   GuessTheContextView()
+    .environment(GuessTheContextViewModel.previewMode)
+}
+
+// MARK: - Generated Answer View
+
+private extension GuessTheContextView {
+  
+  struct ProgressBarView: View {
+    @Environment(GuessTheContextViewModel.self) var viewModel
+    
+    var body: some View {
+      HStack(spacing: 20) {
+        ProgressView(value: viewModel.progress)
+          .tint(.pink)
+        HStack(spacing: 3) {
+          Text("\(viewModel.currentIndex + 1)")
+            .font(.headline)
+            .foregroundStyle(.pink)
+            .contentTransition(.numericText())
+            .animation(.bouncy, value: viewModel.currentIndex)
+          Text("/")
+          Text("\(viewModel.tasks.count > 0 ? viewModel.tasks.count : 5)")
+        }
+        .font(.subheadline)
+        .fontWeight(.semibold)
+        .foregroundStyle(.gray)
+      }
+      .padding()
+    }
+  }
+  
+  struct GenerateTextButton: View {
+    @Environment(GuessTheContextViewModel.self) var viewModel
+    let context: String
+    
+    var body: some View {
+      Button {
+        viewModel.startNewLesson(context: context)
+      } label: {
+        Label("Generate Text", systemImage: "sparkles")
+          .padding(12)
+          .fontWeight(.semibold)
+      }
+      .prominentButtonStyle(tint: .pink)
+    }
+  }
+  
+  
+  struct AnswerView: View {
+    @Environment(GuessTheContextViewModel.self) var viewModel
+    
+    var columns: [GridItem] = [
+      GridItem(.flexible(minimum: 120, maximum: 200))
+    ]
+    
+    var body: some View {
+      if let task = viewModel.currentTask {
+        VStack(spacing: 20) {
+          Text(task.text)
+            .fontWeight(.medium)
+            .padding()
+          LazyVGrid(columns: columns, spacing: 10) {
+            ForEach(task.answers) { answer in
+              Button {
+                viewModel.selectAnswer(answer)
+              } label: {
+                Text(answer.text)
+                  .font(.callout)
+                  .fontWeight(.medium)
+                  .foregroundColor(.white)
+                  .padding(15)
+                  .background(
+                    RoundedRectangle(cornerRadius: 20)
+                      .fill(viewModel.buttonColor(answer: answer))
+                      .stroke(.white, lineWidth: 2)
+                  )
+              }
+            }
+          }.shadow(radius: 3)
+        }
+      }
+    }
+  }
+  
 }

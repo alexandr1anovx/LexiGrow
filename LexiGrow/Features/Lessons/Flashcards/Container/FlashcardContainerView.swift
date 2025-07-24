@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct FlashcardGroupView: View {
+struct FlashcardContainerView: View {
   @Environment(\.dismiss) var dismiss
   @Environment(FlashcardsViewModel.self) var viewModel
   @State private var isShowingFinishPreview: Bool = false
@@ -20,8 +20,6 @@ struct FlashcardGroupView: View {
           FlashcardView()
         case .summary:
           FlashcardSummaryView()
-        case .tryAgain:
-          FlashcardTryAgainView()
         }
       }
       .navigationTitle("Flashcards")
@@ -46,6 +44,6 @@ struct FlashcardGroupView: View {
 }
 
 #Preview {
-  FlashcardGroupView()
-    .environment(FlashcardsViewModel())
+  FlashcardContainerView()
+    .environment(FlashcardsViewModel.previewMode)
 }

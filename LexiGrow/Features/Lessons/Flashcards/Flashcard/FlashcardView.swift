@@ -15,35 +15,16 @@ struct FlashcardView: View {
   
   var body: some View {
     ZStack {
-      Color.mainBackgroundColor
-        .ignoresSafeArea()
+      Color.mainBackgroundColor.ignoresSafeArea()
+      
       VStack {
-        HStack(spacing: 20) {
-          ProgressView(value: viewModel.progress)
-            .tint(.pink)
-          HStack(spacing: 3) {
-            Text("\(viewModel.currentIndex + 1)")
-              .foregroundStyle(.pink)
-              .contentTransition(.numericText())
-              .animation(.bouncy, value: viewModel.currentIndex)
-            Text("/")
-            Text("\(viewModel.lessonCards.count)")
-          }
-          .font(.subheadline)
-          .fontWeight(.semibold)
-          .foregroundStyle(.gray)
-        }
-        .padding([.top, .horizontal])
-        
+        ProgressBarView(viewModel: viewModel)
         if let card = viewModel.currentCard {
           Group {
-            if isFlipped {
-              FlashcardBackView(
-                card.word,
-                isFlipped: $isFlipped
-              )
+            if !isFlipped {
+              FrontView(word: card.word)
             } else {
-              FlashcardFrontView(word: card.word)
+              BackView(card.word, isFlipped: $isFlipped)
             }
           }
           .onTapGesture {
@@ -62,5 +43,8 @@ struct FlashcardView: View {
 
 #Preview {
   FlashcardView()
-    .environment(FlashcardsViewModel())
+    .environment(FlashcardsViewModel.previewMode)
 }
+
+
+
