@@ -9,17 +9,17 @@ import SwiftUI
 
 struct FinishLessonPreview: View {
   @Environment(\.dismiss) var dismiss
-  var dismissAction: () -> Void
+  var onDismiss: () -> Void
   
   var body: some View {
     ZStack {
-      Color.mainBackgroundColor
-        .ignoresSafeArea()
+      Color.mainBackgroundColor.ignoresSafeArea()
+      
       VStack(spacing: 30) {
         Spacer()
         ConfirmationText()
         FinishButton {
-          dismissAction()
+          onDismiss()
         }
       }.padding(.bottom)
     }
@@ -34,8 +34,6 @@ struct FinishLessonPreview: View {
 }
 
 private extension FinishLessonPreview {
-  
-  // MARK: - Confirmation Text
   
   struct ConfirmationText: View {
     var body: some View {
@@ -52,13 +50,11 @@ private extension FinishLessonPreview {
     }
   }
   
-  // MARK: - Finish Button
-  
   struct FinishButton: View {
-    var finishAction: () -> Void
+    var action: () -> Void
     
     var body: some View {
-      Button(action: finishAction) {
+      Button(action: action) {
         Text("Yes, finish")
           .padding(11)
       }

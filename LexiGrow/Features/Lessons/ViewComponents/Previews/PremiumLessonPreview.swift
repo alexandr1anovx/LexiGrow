@@ -38,7 +38,6 @@ private extension PremiumLessonPreview {
     
     var body: some View {
       VStack(spacing: 20) {
-        
         Label {
           Text("\(lesson.name) is locked.")
             .font(.title2)
@@ -48,7 +47,6 @@ private extension PremiumLessonPreview {
             .font(.title)
             .foregroundStyle(.pink)
         }
-          
         Text("Get premium subscription to unlock this lesson.")
           .font(.callout)
           .fontWeight(.medium)
