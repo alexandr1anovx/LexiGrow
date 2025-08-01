@@ -26,10 +26,10 @@ struct FlashcardContainerView: View {
       .navigationBarTitleDisplayMode(.large)
       .toolbar {
         if viewModel.lessonState == .inProgress {
-          ToolbarItem(placement: .topBarTrailing) {
+          ToolbarItem(placement: .destructiveAction) {
             DismissXButton {
               isShowingFinishPreview = true
-            }
+            }.padding(.top)
           }
         }
       }
@@ -38,6 +38,8 @@ struct FlashcardContainerView: View {
           dismiss()
           viewModel.resetSetupSettings()
         }
+        .presentationDetents([.fraction(0.37)])
+        .presentationCornerRadius(50)
       }
     }
   }

@@ -1,5 +1,5 @@
 //
-//  KnowButton.swift
+//  FlashcardRepeatButton.swift
 //  LexiGrow
 //
 //  Created by Alexander Andrianov on 16.07.2025.
@@ -8,25 +8,25 @@
 import SwiftUI
 
 extension FlashcardView {
-  
-  struct KnowButton: View {
+ 
+  struct RepeatButton: View {
     @Environment(FlashcardsViewModel.self) var viewModel
     @Binding var isFlipped: Bool
     
     var body: some View {
       Button {
-        viewModel.handleKnown()
+        viewModel.handleRepeat()
         isFlipped = false
       } label: {
-        Label("Know", systemImage: "checkmark.seal.fill")
+        Label("Repeat", systemImage: "repeat")
           .padding(12)
       }
-      .prominentButtonStyle(tint: .blue)
+      .borderedButtonStyle(tint: .secondary)
     }
   }
 }
 
 #Preview {
-  FlashcardView.KnowButton(isFlipped: .constant(true))
+  FlashcardView.RepeatButton(isFlipped: .constant(true))
     .environment(FlashcardsViewModel.previewMode)
 }
