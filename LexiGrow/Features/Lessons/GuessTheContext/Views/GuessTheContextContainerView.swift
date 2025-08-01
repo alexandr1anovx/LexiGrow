@@ -23,7 +23,7 @@ struct GuessTheContextContainerView: View {
         }
       }
       .navigationTitle("Guess The Context")
-      .navigationBarTitleDisplayMode(.inline)
+      .navigationBarTitleDisplayMode(.large)
       .toolbar {
         if viewModel.lessonState == .inProgress {
           ToolbarItem(placement: .topBarTrailing) {
@@ -35,8 +35,11 @@ struct GuessTheContextContainerView: View {
       }
       .sheet(isPresented: $isShowingFinishPreview) {
         FinishLessonPreview {
+          viewModel.endLesson()
           dismiss()
         }
+        .presentationDetents([.fraction(0.33)])
+        .presentationCornerRadius(50)
       }
     }
   }
