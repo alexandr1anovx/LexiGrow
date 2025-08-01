@@ -15,57 +15,66 @@ final class FlashcardsViewModel {
   // MARK: - Properties
   
   var lessonState: LessonState = .inProgress
-  private(set) var lessonCards: [Flashcard] = []
+  private(set) var cards: [Flashcard] = []
   private(set) var currentIndex: Int = 0
   
   private(set) var knownWordsCount: Int = 0
-  private(set) var repetitionWords: Set<Word> = []
-  
-  let levels: [String] = ["B1.1", "B1.2", "B2.1", "B2.2"]
+  private(set) var knownWords: Set<Word> = []
+  private(set) var unknownWords: Set<Word> = []
   
   var selectedLevel: String?
   var selectedTopic: String?
-  var availableTopics: [String] = []
+  
+  var levels: [String] = []
+  var topics: [String] = []
   
   // MARK: - Computed Properties
   
   var currentCard: Flashcard? {
-    guard lessonCards.indices.contains(currentIndex) else {
+    guard cards.indices.contains(currentIndex) else {
       return nil
     }
-    return lessonCards[currentIndex]
+    return cards[currentIndex]
   }
   
-  // var currentCard: Flashcard? = Flashcard(id: "1", word: Word.mock)
-  
   var progress: Double {
-    guard !lessonCards.isEmpty else { return 0.0 }
-    return Double(currentIndex + 1) / Double(lessonCards.count)
+    guard !cards.isEmpty else { return 0.0 }
+    return Double(currentIndex + 1) / Double(cards.count)
+  }
+  
+  var isStartDisabled: Bool {
+    selectedLevel == nil || selectedTopic == nil
   }
   
   // MARK: - Init / Deinit
   
-  init() { print("✅ FlashcardsViewModel initialized") }
-  deinit { print("❌ FlashcardsViewModel deinitialized") }
+  init() {
+    print("✅ FlashcardsViewModel initialized")
+  }
+  deinit {
+    print("❌ FlashcardsViewModel deinitialized")
+  }
   
   // MARK: - Public Methods
   
-  func startLesson(level: String, topic: String) {
-    let words = WordProvider.getWords(for: level, topic: topic)
-    self.lessonCards = words.map {
-      Flashcard(id: $0.id, word: $0)
+  func startLesson() {
+    if let level = selectedLevel, let topic = selectedTopic {
+      let words = WordService.getWords(for: level, topic: topic)
+      self.cards = words.map {
+        Flashcard(id: $0.id, word: $0)
+      }
+      self.currentIndex = 0
+      self.knownWordsCount = 0
+      self.unknownWords.removeAll()
+      self.lessonState = .inProgress
     }
-    self.currentIndex = 0
-    self.knownWordsCount = 0
-    self.repetitionWords.removeAll()
-    self.lessonState = .inProgress
   }
   
   func handleKnown() {
     guard let card = currentCard else { return }
     
-    if repetitionWords.contains(card.word) {
-      repetitionWords.remove(card.word)
+    if unknownWords.contains(card.word) {
+      unknownWords.remove(card.word)
     } else {
       knownWordsCount += 1
     }
@@ -74,7 +83,7 @@ final class FlashcardsViewModel {
   
   func handleRepeat() {
     guard let card = currentCard else { return }
-    repetitionWords.insert(card.word)
+    unknownWords.insert(card.word)
     selectNextCard()
   }
   
@@ -83,26 +92,30 @@ final class FlashcardsViewModel {
     selectedTopic = nil
   }
   
+  func getLevels() {
+    levels = WordService.getLevels()
+  }
+  
   func resetTopics() {
     guard let level = selectedLevel else {
-      availableTopics = []
+      topics = []
       return
     }
-    availableTopics = WordProvider.getTopics(for: level)
+    topics = WordService.getTopics(for: level)
   }
   
   // MARK: - Private Methods
   
   private func selectNextCard() {
-    if currentIndex < lessonCards.count - 1 {
+    if currentIndex < cards.count - 1 {
       currentIndex += 1
     } else {
-      let wordsStillToRepeat = lessonCards
-        .filter { repetitionWords.contains($0.word) }
+      let wordsStillToRepeat = cards
+        .filter { unknownWords.contains($0.word) }
         .map { $0.word }
       
       if !wordsStillToRepeat.isEmpty {
-        self.lessonCards = wordsStillToRepeat.shuffled().map {
+        self.cards = wordsStillToRepeat.shuffled().map {
           Flashcard(id: $0.id, word: $0)
         }
         self.currentIndex = 0
@@ -124,6 +137,7 @@ extension FlashcardsViewModel {
     let viewModel = FlashcardsViewModel()
     viewModel.selectedLevel = "B1.1"
     viewModel.selectedTopic = "Eating"
+    viewModel.cards = [Flashcard(id: "1", word: Word.mock)]
     return viewModel
   }
 }
