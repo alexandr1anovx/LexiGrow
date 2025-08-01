@@ -8,11 +8,7 @@
 import SwiftUI
 
 struct RegistrationScreen: View {
-  
   @State var viewModel: RegistrationViewModel
-  @Environment(AuthManager.self) private var authManager
-  @FocusState private var inputContent: InputFieldContent?
-  @Environment(\.dismiss) var dismiss
   
   init(authManager: AuthManager) {
     _viewModel = State(wrappedValue: RegistrationViewModel(authManager: authManager))
@@ -21,100 +17,105 @@ struct RegistrationScreen: View {
   var body: some View {
     ScrollView {
       VStack(spacing: 30) {
-        title
-        inputFields
-        signUpButton
-        signInOption
-      }.padding(.top)
-    }
-  }
-  
-  // MARK: - Subviews
-  
-  private var title: some View {
-    TypingTextEffect(text: "Registration in LexiGrow.")
-  }
-  
-  private var inputFields: some View {
-    VStack(spacing: 10) {
-      InputField(.standard, "Username", text: $viewModel.username)
-        .focused($inputContent, equals: .username)
-        .textInputAutocapitalization(.never)
-        .autocorrectionDisabled(true)
-        .submitLabel(.next)
-        .onSubmit {
-          inputContent = .email
-        }
-      InputField(.standard, "Email", text: $viewModel.email)
-        .focused($inputContent, equals: .email)
-        .textInputAutocapitalization(.never)
-        .autocorrectionDisabled(true)
-        .keyboardType(.emailAddress)
-        .submitLabel(.next)
-        .onSubmit {
-          inputContent = .password
-        }
-      InputField(.password, "Password", text: $viewModel.password)
-        .focused($inputContent, equals: .password)
-        .textInputAutocapitalization(.never)
-        .autocorrectionDisabled(true)
-        .submitLabel(.next)
-        .onSubmit {
-          inputContent = .confirmPassword
-        }
-      InputField(
-        .passwordConfirmation,
-        "Confirm Password",
-        text: $viewModel.confirmedPassword,
-        isMatchPassword: viewModel.password == viewModel.confirmedPassword
-      )
-      .focused($inputContent, equals: .confirmPassword)
-      .textInputAutocapitalization(.never)
-      .autocorrectionDisabled(true)
-      .submitLabel(.done)
-      .onSubmit {
-        inputContent = nil
+        TypingTextEffect(text: "Registration in LexiGrow.")
+        InputFields(viewModel: viewModel)
+        SignUpButton(viewModel: viewModel)
+        SignInOption()
       }
+      .padding(.top)
     }
-    .font(.subheadline)
-    .padding(.horizontal, 25)
   }
+}
+
+extension RegistrationScreen {
   
-  private var signUpButton: some View {
-    Button {
-      viewModel.signUp()
-    } label: {
-      Group {
-        if authManager.isLoading {
-          HStack {
-            ProgressView()
-            Text("Registration ...")
+  // MARK: - Input Fields
+  struct InputFields: View {
+    @Bindable var viewModel: RegistrationViewModel
+    @FocusState private var inputContent: InputFieldContent?
+    var body: some View {
+      VStack(spacing: 10) {
+        InputField(.standard, "Username", text: $viewModel.username)
+          .focused($inputContent, equals: .username)
+          .textInputAutocapitalization(.never)
+          .autocorrectionDisabled(true)
+          .submitLabel(.next)
+          .onSubmit {
+            inputContent = .email
           }
-        } else {
-          Text("Sign Up")
+        InputField(.standard, "Email", text: $viewModel.email)
+          .focused($inputContent, equals: .email)
+          .textInputAutocapitalization(.never)
+          .autocorrectionDisabled(true)
+          .keyboardType(.emailAddress)
+          .submitLabel(.next)
+          .onSubmit {
+            inputContent = .password
+          }
+        InputField(.password, "Password", text: $viewModel.password)
+          .focused($inputContent, equals: .password)
+          .textInputAutocapitalization(.never)
+          .autocorrectionDisabled(true)
+          .submitLabel(.next)
+          .onSubmit {
+            inputContent = .confirmPassword
+          }
+        InputField(
+          .passwordConfirmation,
+          "Confirm Password",
+          text: $viewModel.confirmedPassword,
+          isMatchPassword: viewModel.password == viewModel.confirmedPassword
+        )
+        .focused($inputContent, equals: .confirmPassword)
+        .textInputAutocapitalization(.never)
+        .autocorrectionDisabled(true)
+        .submitLabel(.done)
+        .onSubmit {
+          inputContent = nil
         }
       }
+      .font(.subheadline)
+      .padding(.horizontal, 25)
     }
-    .padding(.horizontal, 30)
-    .disabled(!viewModel.isValidForm)
-    .opacity(!viewModel.isValidForm ? 0.5 : 1)
   }
   
-  private var signInOption: some View {
-    HStack {
-      Text("Already have an account?")
-        .font(.footnote)
-        .foregroundStyle(.secondary)
+  // MARK: - Sign Up button
+  struct SignUpButton: View {
+    @Environment(AuthManager.self) var authManager
+    @Bindable var viewModel: RegistrationViewModel
+    var body: some View {
       Button {
-        dismiss()
+        viewModel.signUp()
       } label: {
-        Text("Sign In.")
-          .fontWeight(.medium)
-          .font(.subheadline)
-          .underline()
-      }.tint(.primary)
+        Text("Sign Up")
+          .padding(.horizontal,120)
+          .padding(12)
+      }
+      .prominentButtonStyle(tint: .blue)
+      .disabled(!viewModel.isValidForm)
     }
   }
+  
+  // MARK: - Sign In option
+  struct SignInOption: View {
+    @Environment(\.dismiss) var dismiss
+    var body: some View {
+      HStack {
+        Text("Already have an account?")
+          .font(.footnote)
+          .foregroundStyle(.secondary)
+        Button {
+          dismiss()
+        } label: {
+          Text("Sign In.")
+            .fontWeight(.medium)
+            .font(.subheadline)
+            .underline()
+        }.tint(.primary)
+      }
+    }
+  }
+  
 }
 
 #Preview {
