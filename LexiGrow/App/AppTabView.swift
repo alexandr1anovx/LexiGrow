@@ -11,32 +11,25 @@ enum Tab {
   case lessons, general
 }
 
-
-
 struct AppTabView: View {
-  @Environment(AuthManager.self) private var authManager
   @State private var selectedTab: Tab = .lessons
   private let feedbackGenerator = UIImpactFeedbackGenerator(style: .soft)
   
-  @State private var flashcardViewModel = FlashcardsViewModel()
-  @State private var guessTheContextViewModel = GuessTheContextViewModel()
-  
   var body: some View {
+    let _ = Self._printChanges()
     TabView(selection: $selectedTab) {
       LessonsTabScreen()
         .tag(Tab.lessons)
         .tabItem {
           Label("Lessons", systemImage: "book.pages")
         }
-      GeneralTabScreen(authManager: authManager)
+      GeneralTabScreen()
         .tag(Tab.general)
         .tabItem {
-          Label("General", systemImage: "ellipsis.circle.fill")
+          Label("More", systemImage: "water.waves")
         }
     }
-    .environment(flashcardViewModel)
-    .environment(guessTheContextViewModel)
-    .onChange(of: selectedTab) { // Creates a haptic feedback when selecting a tab.
+    .onChange(of: selectedTab) {
       feedbackGenerator.impactOccurred()
     }
   }
@@ -45,5 +38,6 @@ struct AppTabView: View {
 #Preview {
   AppTabView()
     .environment(AuthManager())
-    .environment(FlashcardsViewModel())
+    .environment(FlashcardsViewModel.previewMode)
+    .environment(GuessTheContextViewModel.previewMode)
 }

@@ -10,11 +10,15 @@ import SwiftUI
 @main
 struct LexiGrowApp: App {
   @State private var authManager = AuthManager()
+  @State private var flashcardViewModel = FlashcardsViewModel()
+  @State private var guessTheContextViewModel = GuessTheContextViewModel()
   
   var body: some Scene {
     WindowGroup {
-      LaunchView()
+      RootView()
         .environment(authManager)
+        .environment(flashcardViewModel)
+        .environment(guessTheContextViewModel)
     }
   }
 }
