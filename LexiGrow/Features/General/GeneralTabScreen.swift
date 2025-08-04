@@ -12,40 +12,37 @@ struct GeneralTabScreen: View {
   @State private var isShowingSignOutView: Bool = false
   
   var body: some View {
-    NavigationView {
-      ZStack {
-        Color.mainBackgroundColor.ignoresSafeArea()
-        
-        Form {
-          // User Data section
-          Section {
-            UserDataView()
-          } footer: {
-            HStack(spacing: 5) {
-              Text("Would you like to edit your data?")
-              NavigationLink {
-                ProfileScreen(authManager: authManager)
-              } label: {
-                Text("Go to Profile.")
-                  .font(.footnote)
-                  .fontWeight(.medium)
-                  .underline()
-              }
+    let _ = Self._printChanges()
+    NavigationStack {
+      Form {
+        // User Data section
+        Section {
+          UserDataView()
+        } footer: {
+          HStack(spacing: 5) {
+            Text("Would you like to edit your data?")
+            NavigationLink {
+              ProfileScreen(authManager: authManager)
+            } label: {
+              Text("Go to Profile.")
+                .font(.footnote)
+                .underline()
             }
           }
-          // Sign Out section
-          Section {
-            Button("Sign Out") {
-              isShowingSignOutView = true
-            }.tint(.red)
-          }
         }
-        .scrollContentBackground(.hidden)
-        .navigationTitle("General")
-        .navigationBarTitleDisplayMode(.large)
-        .sheet(isPresented: $isShowingSignOutView) {
-          SignOutView(isShowingSignOutView: $isShowingSignOutView)
+        // Sign Out section
+        Section {
+          Button("Sign Out") {
+            isShowingSignOutView = true
+          }.tint(.red)
         }
+      }
+      .navigationTitle("General")
+      .navigationBarTitleDisplayMode(.large)
+      .sheet(isPresented: $isShowingSignOutView) {
+        SignOutView()
+          .presentationDetents([.fraction(0.35)])
+          .presentationCornerRadius(50)
       }
     }
   }
