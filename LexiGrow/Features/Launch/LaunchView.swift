@@ -8,18 +8,39 @@
 import SwiftUI
 
 struct LaunchView: View {
-  @Environment(AuthManager.self) private var authManager
+  @State private var isAnimating: Bool = false
   
   var body: some View {
-    Group {
-      if authManager.currentUser != nil {
-        AppTabView()
-      } else {
-        LoginScreen(authManager: authManager)
+    Grid(verticalSpacing: 10) {
+      GridRow {
+        Text("Lexi")
+          .foregroundStyle(isAnimating ? Color.primary : Color.clear)
+          .opacity(isAnimating ? 1 : 0)
+        Image(systemName: "globe")
+          .foregroundStyle(isAnimating ? .clear : .blue)
+          .symbolEffect(.pulse)
+      }
+      Divider()
+        .gridCellUnsizedAxes(.horizontal)
+      GridRow {
+        Image(systemName: "brain.fill")
+          .foregroundStyle(isAnimating ? .clear : .blue)
+          .symbolEffect(.pulse)
+        Text("Grow")
+          .foregroundStyle(isAnimating ? Color.primary : Color.clear)
+          .opacity(isAnimating ? 1 : 0)
       }
     }
-    .task {
-      await authManager.refreshUser()
+    .font(.title2)
+    .fontWeight(.semibold)
+    .onAppear {
+      withAnimation(.bouncy(duration: 1).repeatForever(autoreverses: true)) {
+        isAnimating.toggle()
+      }
     }
   }
+}
+
+#Preview {
+  LaunchView()
 }
