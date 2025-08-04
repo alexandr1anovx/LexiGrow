@@ -8,8 +8,8 @@
 import Foundation
 import SwiftUICore
 
-@Observable
 @MainActor
+@Observable
 final class FlashcardsViewModel {
   
   // MARK: - Properties
@@ -19,6 +19,7 @@ final class FlashcardsViewModel {
   private(set) var currentIndex: Int = 0
   
   private(set) var knownWordsCount: Int = 0
+  
   private(set) var knownWords: Set<Word> = []
   private(set) var unknownWords: Set<Word> = []
   
@@ -39,8 +40,23 @@ final class FlashcardsViewModel {
   
   var progress: Double {
     guard !cards.isEmpty else { return 0.0 }
-    return Double(currentIndex + 1) / Double(cards.count)
+    let raw = Double(currentIndex + 1) / Double(cards.count)
+    return min(raw, 1.0)
   }
+  
+  /*
+  var knownWordsProgress: Double {
+    guard !knownWords.isEmpty else { return 0.0 }
+    let raw = Double(currentIndex + 1) / Double(knownWords.count)
+    return min(raw, 1.0)
+  }
+  
+  var unknownWordsProgress: Double {
+    guard !unknownWords.isEmpty else { return 0.0 }
+    let raw = Double(currentIndex + 1) / Double(unknownWords.count)
+    return min(raw, 1.0)
+  }
+  */
   
   var isStartDisabled: Bool {
     selectedLevel == nil || selectedTopic == nil
@@ -48,12 +64,8 @@ final class FlashcardsViewModel {
   
   // MARK: - Init / Deinit
   
-  init() {
-    print("✅ FlashcardsViewModel initialized")
-  }
-  deinit {
-    print("❌ FlashcardsViewModel deinitialized")
-  }
+  init() { print("Flashcard view model initialized") }
+  deinit { print("Flashcard view model deinitialized") }
   
   // MARK: - Public Methods
   
@@ -65,6 +77,8 @@ final class FlashcardsViewModel {
       }
       self.currentIndex = 0
       self.knownWordsCount = 0
+      self.knownWords = []
+      self.unknownWords = []
       self.unknownWords.removeAll()
       self.lessonState = .inProgress
     }
@@ -76,12 +90,13 @@ final class FlashcardsViewModel {
     if unknownWords.contains(card.word) {
       unknownWords.remove(card.word)
     } else {
+      knownWords.insert(card.word)
       knownWordsCount += 1
     }
     selectNextCard()
   }
   
-  func handleRepeat() {
+  func handleUnknown() {
     guard let card = currentCard else { return }
     unknownWords.insert(card.word)
     selectNextCard()
@@ -106,6 +121,17 @@ final class FlashcardsViewModel {
   
   // MARK: - Private Methods
   
+  /// Advances to the next word in the list by incrementing the current index.
+  /// If the end of the list is reached, transitions to the summary screen with animation.
+  private func selectNextCard() {
+    if currentIndex < cards.count - 1 {
+      currentIndex += 1
+    } else {
+      withAnimation { lessonState = .summary }
+    }
+  }
+  
+  /* 🍀 OLD 'selectNextCard' METHOD
   private func selectNextCard() {
     if currentIndex < cards.count - 1 {
       currentIndex += 1
@@ -124,13 +150,18 @@ final class FlashcardsViewModel {
       }
     }
   }
+  */
 }
+
+// MARK: - Lesson State
 
 extension FlashcardsViewModel {
   enum LessonState: Equatable, Hashable {
     case inProgress, summary
   }
 }
+
+// MARK: - Preview Mode
 
 extension FlashcardsViewModel {
   static var previewMode: FlashcardsViewModel {

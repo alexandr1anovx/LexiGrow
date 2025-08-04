@@ -16,13 +16,18 @@ struct FlashcardView: View {
   
   var body: some View {
     VStack {
-      ProgressBarView()
+      ProgressBar()
+      HStack {
+        KnownWordsView()
+        Text("|")
+        UnknownWordsView()
+      }
+      .padding(.vertical)
       
       Toggle("Automatic Sound Playback:", isOn: $isTurnedAutomaticAudio)
         .font(.subheadline)
         .foregroundStyle(.secondary)
         .padding(.horizontal)
-        .padding(.top)
       
       if let card = viewModel.currentCard {
         Group {
@@ -43,6 +48,42 @@ struct FlashcardView: View {
         .padding(.horizontal, 30)
       } else {
         GradientRingProgressView()
+      }
+    }
+  }
+}
+
+extension FlashcardView {
+  struct UnknownWordsView: View {
+    @Environment(FlashcardsViewModel.self) var viewModel
+    
+    var body: some View {
+      HStack(spacing: 5) {
+        Text("Unknown:")
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
+        Text("\(viewModel.unknownWords.count)")
+          .contentTransition(.numericText())
+          .animation(.bouncy, value: viewModel.currentIndex)
+          .font(.callout)
+        .fontWeight(.semibold)
+      }
+    }
+  }
+
+  struct KnownWordsView: View {
+    @Environment(FlashcardsViewModel.self) var viewModel
+    
+    var body: some View {
+      HStack(spacing: 5) {
+        Text("Known:")
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
+        Text("\(viewModel.knownWords.count)")
+          .contentTransition(.numericText())
+          .animation(.bouncy, value: viewModel.currentIndex)
+          .font(.callout)
+        .fontWeight(.semibold)
       }
     }
   }

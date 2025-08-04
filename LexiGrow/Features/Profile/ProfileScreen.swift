@@ -17,10 +17,29 @@ struct ProfileScreen: View {
   
   var body: some View {
     VStack {
-      inputFields
-      saveChangesButton
-        .padding()
-        .frame(maxWidth: .infinity, alignment: .trailing)
+      
+      // Input Fields
+      VStack(spacing: 12) {
+        InputField(.standard, "Username", text: $viewModel.username)
+          .focused($inputContent, equals: .username)
+          .textInputAutocapitalization(.words)
+          .autocorrectionDisabled(true)
+        InputField(.standard, "Email", text: $viewModel.email)
+          .textInputAutocapitalization(.never)
+          .autocorrectionDisabled(true)
+          .keyboardType(.emailAddress)
+      }
+      .padding(.horizontal)
+      
+      // Save Changes button
+      Button {
+        viewModel.updateUser()
+      } label: {
+        Text("Save changes")
+      }
+      .opacity(viewModel.formHasChanges ? 1 : 0.5)
+      .padding()
+      .frame(maxWidth: .infinity, alignment: .trailing)
       Spacer()
     }
     .padding(.top)
@@ -28,48 +47,19 @@ struct ProfileScreen: View {
     .navigationBarTitleDisplayMode(.large)
     .toolbar {
       ToolbarItem(placement: .topBarTrailing) {
-        editButton
+        Button {
+          inputContent = .username
+        } label: {
+          Image(systemName: "pencil")
+            .foregroundStyle(.blue)
+        }
       }
     }
-  }
-  
-  // MARK: - Subviews
-  
-  private var inputFields: some View {
-    VStack(spacing: 12) {
-      InputField(.standard, "Username", text: $viewModel.username)
-        .focused($inputContent, equals: .username)
-        .textInputAutocapitalization(.words)
-        .autocorrectionDisabled(true)
-      InputField(.standard, "Email", text: $viewModel.email)
-        .textInputAutocapitalization(.never)
-        .autocorrectionDisabled(true)
-        .keyboardType(.emailAddress)
-    }.padding(.horizontal)
-  }
-  
-  private var editButton: some View {
-    Button {
-      inputContent = .username
-    } label: {
-      Image(systemName: "pencil")
-        .foregroundStyle(.blue)
-    }
-  }
-  
-  private var saveChangesButton: some View {
-    Button {
-      viewModel.updateUser()
-    } label: {
-      Text("Save changes")
-    }
-    
-    .opacity(viewModel.formHasChanges ? 1:0)
   }
 }
 
 #Preview {
   NavigationView {
-    //ProfileScreen(authManager: AuthManager())
+    ProfileScreen(authManager: AuthManager())
   }
 }

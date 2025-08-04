@@ -5,55 +5,56 @@
 //  Created by Alexander Andrianov on 08.07.2025.
 //
 
-import SwiftUICore
+import SwiftUI
 
-struct Lesson: Identifiable, Hashable {
-  let id = UUID()
+enum LessonType: String {
+  case flashcards = "Flashcards"
+  case guessTheContext = "Guess The Context"
+  case reading = "Reading"
+  case writing = "Writing"
+  case unknown
+}
+
+struct Lesson: Identifiable, Codable, Hashable {
+  let id: String
   let name: String
   let description: String
   let iconName: String
-  let color: Color
   let isLocked: Bool
+  let setupData: LessonSetupData
+  
+  var type: LessonType {
+    return LessonType(rawValue: self.name) ?? .unknown
+  }
 }
 
+struct LessonSetupData: Codable, Hashable {
+  var levels: [String]
+  var topics: [String]
+}
+
+
 extension Lesson {
-  
   static let mock: Lesson = Lesson(
-    name: "Flashcards",
-    description: "Word ↔ Translation",
-    iconName: "apple.logo",
-    color: .green,
-    isLocked: false
-  )
-  
-  static let lessons: [Lesson] = [
-    Lesson(
-      name: "Flashcards",
-      description: "Word ↔ Translation",
-      iconName: "apple.logo",
-      color: .green,
-      isLocked: false
-    ),
-    Lesson(
-      name: "Guess the context",
-      description: "Choosing the right word for the meaning in the text.",
-      iconName: "apple.logo",
-      color: .green,
-      isLocked: false
-    ),
-    Lesson(
-      name: "Reading",
-      description: "Just read and translate.",
-      iconName: "apple.logo",
-      color: .brown,
-      isLocked: true
-    ),
-    Lesson(
-      name: "Writing",
-      description: "Just read and translate.",
-      iconName: "apple.logo",
-      color: .brown,
-      isLocked: true
+    id: "94r1",
+    name: "Writing",
+    description: "Learn words with spaced repetition.",
+    iconName: "rectangle.stack.fill",
+    isLocked: true,
+    setupData: LessonSetupData(
+      levels: ["A1", "A2", "B1", "B2", "C1"],
+      topics: ["Politics", "Programming"]
     )
-  ]
+  )
+  static let mock2: Lesson = Lesson(
+    id: "94r1",
+    name: "Flashcards",
+    description: "Learn words with spaced repetition.",
+    iconName: "rectangle.stack.fill",
+    isLocked: false,
+    setupData: LessonSetupData(
+      levels: ["B1.1", "B1.2", "B2.1", "B2.2"],
+      topics: ["Politics", "Programming"]
+    )
+  )
 }

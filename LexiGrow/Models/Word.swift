@@ -11,18 +11,22 @@ struct Word: Identifiable, Hashable, Codable {
   let id: String
   let original: String
   let translation: String
+  let transcription: String
+  let partOfSpeech: String
   let level: String
   let topic: String
+  let audioName: String
 }
 
 extension Word {
-  static var mock: Word {
-    Word(
-      id: "01",
-      original: "Bus",
-      translation: "Автобус",
-      level: "B1.1",
-      topic: "Vehicles"
-    )
-  }
+  static let mock: Word = .init(
+    id: "01",
+    original: "Bus",
+    translation: "Автобус",
+    transcription: "ˈbəs",
+    partOfSpeech: "noun",
+    level: "B1.1",
+    topic: "Vehicles",
+    audioName: "bus"
+  )
 }

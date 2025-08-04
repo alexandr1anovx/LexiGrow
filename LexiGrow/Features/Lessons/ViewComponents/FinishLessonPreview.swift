@@ -12,23 +12,20 @@ struct FinishLessonPreview: View {
   var onDismiss: () -> Void
   
   var body: some View {
-    ZStack {
-      Color.mainBackgroundColor.ignoresSafeArea()
-      
+    NavigationView {
       VStack(spacing: 30) {
-        Spacer()
         ConfirmationText()
         FinishButton {
-          onDismiss()
+          onDismiss() // dismiss the whole lesson screen
         }
-      }.padding(.bottom)
-    }
-    .presentationDetents([.fraction(0.33)])
-    .presentationCornerRadius(50)
-    .overlay(alignment: .topTrailing) {
-      DismissXButton {
-        dismiss()
-      }.padding(20)
+      }
+      .toolbar {
+        ToolbarItem(placement: .destructiveAction) {
+          DismissXButton {
+            dismiss() // dismiss the sheet
+          }
+        }
+      }
     }
   }
 }
@@ -58,7 +55,11 @@ private extension FinishLessonPreview {
         Text("Yes, finish")
           .padding(11)
       }
-      .prominentButtonStyle(tint: .pink)
+      .prominentButtonStyle(tint: .red)
     }
   }
+}
+
+#Preview {
+  FinishLessonPreview {}
 }
