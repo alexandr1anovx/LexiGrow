@@ -86,24 +86,72 @@ private extension FlashcardSetupView {
     var body: some View {
       SelectionScrollView(label: "Level:") {
         ForEach(viewModel.levels, id: \.self) { level in
-          SelectableButton(
-            content: level,
-            selectedContent: $viewModel.selectedLevel,
-            activeColor: .blue
+          LevelButton(
+            name: level,
+            selectedLevel: $viewModel.selectedLevel,
+            activeColor: .teal
           ) {
-            if viewModel.selectedLevel == level {
-              viewModel.selectedLevel = nil
-            } else {
-              viewModel.selectedLevel = level
-              viewModel.selectedTopic = nil // reset the selected topic
+              if viewModel.selectedLevel == level {
+                viewModel.selectedLevel = nil
+              } else {
+                viewModel.selectedLevel = level
+                viewModel.selectedTopic = nil // reset the selected topic
+              }
             }
-          }
         }
       }
     }
   }
   
   // MARK: - Topics View
+  
+  struct LevelButton: View {
+    let name: String
+    @Binding var selectedLevel: String?
+    let activeColor: Color
+    let action: () -> Void
+    
+    var body: some View {
+      Button {
+        action()
+      } label: {
+        Text(name)
+          .font(.callout)
+          .fontWeight(.medium)
+          .foregroundColor(.white)
+          .padding(15)
+          .background(
+            RoundedRectangle(cornerRadius: 20)
+              .fill(selectedLevel == name ? activeColor : .black)
+              .stroke(selectedLevel == name ? .clear : .white, lineWidth: 2)
+        )
+      }
+    }
+  }
+  
+  struct TopicButton: View {
+    let name: String
+    @Binding var selectedTopic: String?
+    let activeColor: Color
+    let action: () -> Void
+    
+    var body: some View {
+      Button {
+        action()
+      } label: {
+        Text(name)
+          .font(.callout)
+          .fontWeight(.medium)
+          .foregroundColor(.white)
+          .padding(15)
+          .background(
+            RoundedRectangle(cornerRadius: 20)
+              .fill(selectedTopic == name ? activeColor : .black)
+              .stroke(selectedTopic == name ? .clear : .white, lineWidth: 2)
+          )
+      }
+    }
+  }
   
   struct TopicsView: View {
     @Bindable var viewModel: FlashcardsViewModel
@@ -118,9 +166,9 @@ private extension FlashcardSetupView {
             .clipShape(.capsule)
         } else {
           ForEach(viewModel.topics, id: \.self) { topic in
-            SelectableButton(
-              content: topic,
-              selectedContent: $viewModel.selectedTopic,
+            TopicButton(
+              name: topic,
+              selectedTopic: $viewModel.selectedTopic,
               activeColor: .teal
             ) {
               viewModel.selectedTopic = (viewModel.selectedTopic == topic) ? nil : topic
