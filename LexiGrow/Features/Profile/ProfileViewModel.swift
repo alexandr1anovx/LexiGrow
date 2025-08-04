@@ -15,8 +15,6 @@ final class ProfileViewModel {
   
   var username: String = ""
   var email: String = ""
-  var isShownSignOutSheet: Bool = false
-  var isShownLanguageSheet: Bool = false
   
   // MARK: - Computed Properties
   
@@ -35,11 +33,11 @@ final class ProfileViewModel {
   
   init(authManager: AuthManager) {
     self.authManager = authManager
-    print("✅ Profile View Model has been initialized.")
+    print("✅ Profile view model initialized.")
     Task { await getUserData() }
   }
   deinit {
-    print("❌ Profile View Model has been deinitialized.")
+    print("❌ Profile view model deinitialized.")
   }
   
   // MARK: - Public Methods

@@ -16,6 +16,10 @@ final class AuthManager {
   
   init(authService: AuthService = AuthService()) {
     self.authService = authService
+    print("✅ Auth Manager initialized.")
+  }
+  deinit {
+    print("❌ Auth Manager deinitialized.")
   }
   
   func signIn(email: String, password: String) async {
@@ -72,7 +76,7 @@ final class AuthManager {
     do {
       self.currentUser = try await authService.getCurrentUser()
     } catch {
-      print("Refresh current user error: \(error.localizedDescription)")
+      print("⚠️ Refresh current user error: \(error.localizedDescription)")
       currentUser = nil
     }
   }
