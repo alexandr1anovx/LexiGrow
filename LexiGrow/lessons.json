@@ -1,0 +1,46 @@
+[
+  {
+    "id": "4E6ACF97-317C-4A9B-A5F3-234D9C33F287",
+    "name": "Flashcards",
+    "description": "Learn words with spaced repetition.",
+    "iconName": "rectangle.stack.fill",
+    "isLocked": false,
+    "setupData": {
+      "levels": ["B1.1", "B1.2", "B2.1"],
+      "topics": ["Eating", "Home", "Everyday Life", "Good & Services", "Family", "Appearance", "Emotions"]
+    }
+  },
+  {
+    "id": "B7F19994-7814-41E4-9C16-95BD95744185",
+    "name": "Guess The Context",
+    "description": "Sharpen your inference skills.",
+    "iconName": "eye.fill",
+    "isLocked": false,
+    "setupData": {
+      "levels": ["A1", "A2", "B1", "B2", "C1"],
+      "topics": ["Food", "Programming", "Politics"]
+    }
+  },
+  {
+    "id": "C0D1B72E-3296-43DF-8D2E-EFBC14CFFAF7",
+    "name": "Reading",
+    "description": "Enhance your reading skills.",
+    "iconName": "book.fill",
+    "isLocked": true,
+    "setupData": {
+      "levels": ["A1", "A2", "B1", "B2", "C1"],
+      "topics": ["Programming", "Politics"]
+    }
+  },
+  {
+    "id": "F4B7D91D-1C8C-4413-9835-8B65A9E49CF0",
+    "name": "Writing",
+    "description": "Practice expressing your thoughts.",
+    "iconName": "pencil",
+    "isLocked": true,
+    "setupData": {
+      "levels": ["A1", "A2", "B1", "B2", "C1"],
+      "topics": ["Programming", "Politics"]
+    }
+  }
+]
