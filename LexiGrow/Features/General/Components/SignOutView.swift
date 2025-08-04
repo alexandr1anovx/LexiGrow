@@ -8,55 +8,50 @@
 import SwiftUI
 
 extension GeneralTabScreen {
+  
   struct SignOutView: View {
     @Environment(AuthManager.self) var authManager
-    @Binding var isShowingSignOutView: Bool
+    @Environment(\.dismiss) var dismiss
     
     var body: some View {
-      VStack {
-        HStack {
-          Spacer()
-          DismissXButton {
-            isShowingSignOutView = false
+      NavigationView {
+        VStack(spacing: 30) {
+          VStack(spacing: 10) {
+            Text("Sign Out")
+              .font(.title2)
+              .fontWeight(.bold)
+            Text("Are you sure you want to sign out?")
+              .font(.callout)
+              .foregroundStyle(.secondary)
           }
-        }.padding(.trailing)
-        
-        VStack(spacing: 10) {
-          Text("Sign Out")
-            .font(.title2)
-            .fontWeight(.bold)
-          Text("Are you sure you want to sign out?")
-            .font(.callout)
-            .foregroundStyle(.secondary)
-        }
-        
-        Button {
-          Task {
-            await authManager.signOut()
-          }
-        } label: {
-          HStack {
+          Group {
             if authManager.isLoading {
-              ProgressView()
-                .tint(.white)
+              GradientRingProgressView(tint: .red)
+            } else {
+              Button {
+                Task { await authManager.signOut() }
+              } label: {
+                Text("Yes, sign out.")
+                  .padding(12)
+              }.prominentButtonStyle(tint: .red)
             }
-            Text(authManager.isLoading ? "Signing out..." : "Yes, sign out")
-              .fontWeight(.semibold)
-              .padding(12)
           }
         }
-        .padding(.top,20)
-        .prominentButtonStyle(tint: .pink)
+        .presentationDetents([.fraction(0.35)])
+        .presentationCornerRadius(50)
+        .toolbar {
+          ToolbarItem(placement: .destructiveAction) {
+            DismissXButton {
+              dismiss()
+            }.padding(.top)
+          }
+        }
       }
-      .presentationDetents([.fraction(0.3)])
-      .presentationCornerRadius(50)
     }
   }
 }
 
 #Preview {
-  GeneralTabScreen.SignOutView(
-    isShowingSignOutView: .constant(true)
-  )
-  .environment(AuthManager())
+  GeneralTabScreen.SignOutView()
+    .environment(AuthManager())
 }
