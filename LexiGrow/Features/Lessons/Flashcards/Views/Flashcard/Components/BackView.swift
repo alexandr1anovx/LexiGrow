@@ -35,12 +35,25 @@ extension FlashcardView {
         }
         .overlay(alignment: .bottom) {
           HStack {
-            RepeatButton(isFlipped: $isFlipped)
+            ActionButton(
+              title: "Don't know",
+              systemImage: "repeat",
+              tint: .red) {
+                viewModel.handleUnknown()
+                isFlipped = false
+              }
             Spacer()
-            KnowButton(isFlipped: $isFlipped)
+            ActionButton(
+              title: "Know",
+              systemImage: "checkmark.seal.fill",
+              tint: .green) {
+                viewModel.handleKnown()
+                isFlipped = false
+              }
           }
           .opacity(isFlipped ? 1 : 0)
-          .padding([.bottom,.horizontal], 30)
+          .padding(.bottom, 30)
+          .padding(.horizontal, 20)
         }
     }
   }
@@ -49,23 +62,4 @@ extension FlashcardView {
 #Preview {
   FlashcardView.BackView(Word.mock, isFlipped: .constant(true))
     .environment(FlashcardsViewModel.previewMode)
-}
-
-extension FlashcardView {
-  
-  struct KnowButton: View {
-    @Environment(FlashcardsViewModel.self) var viewModel
-    @Binding var isFlipped: Bool
-    
-    var body: some View {
-      Button {
-        viewModel.handleKnown()
-        isFlipped = false
-      } label: {
-        Label("Know", systemImage: "checkmark.seal.fill")
-          .padding(12)
-      }
-      .borderedButtonStyle(tint: .secondary)
-    }
-  }
 }

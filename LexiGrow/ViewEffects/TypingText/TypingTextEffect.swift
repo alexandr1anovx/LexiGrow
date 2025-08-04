@@ -16,12 +16,11 @@ struct TypingTextEffect: View {
   @State private var typingTextOpacity = 0.0
   
   var body: some View {
-    HStack(spacing: 0) {
+    HStack(spacing:0) {
       Text(displayedText)
         .font(.subheadline)
-        .fontWeight(.semibold)
+        .fontWeight(.medium)
         .underline()
-        .fontDesign(.monospaced)
       Rectangle() // Cursor
         .frame(width: 2, height: 20)
     }
@@ -31,7 +30,7 @@ struct TypingTextEffect: View {
     .onDisappear {
       timer?.invalidate()
     }
-    .foregroundStyle(displayedText == text ? .primary : .secondary)
+    .foregroundStyle(displayedText == text ? .blue : .secondary)
     .opacity(typingTextOpacity)
   }
   

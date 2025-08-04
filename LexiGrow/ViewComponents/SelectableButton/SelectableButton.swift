@@ -24,7 +24,7 @@ struct SelectableButton<Value: Equatable & CustomStringConvertible> : View {
         .foregroundColor(.white)
         .background(
           RoundedRectangle(cornerRadius: 20)
-            .fill(selectedContent == content ? activeColor : .cmBlack)
+            .fill(selectedContent == content ? activeColor : .black)
             .stroke(selectedContent == content ? .clear : .white, lineWidth: 2)
         )
     }

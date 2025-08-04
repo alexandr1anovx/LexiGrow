@@ -13,16 +13,14 @@ extension View {
   
   func prominentButtonStyle(
     tint: Color,
-    textColor: Color? = nil
+    textColor: Color? = .white
   ) -> some View {
     self
       .font(.callout)
       .fontWeight(.medium)
       .foregroundStyle(textColor ?? .white)
       .tint(tint)
-      .buttonBorderShape(
-        .roundedRectangle(radius: 20)
-      )
+      .buttonBorderShape(.roundedRectangle(radius: 20))
       .buttonStyle(.borderedProminent)
       .shadow(radius: 3)
   }
@@ -36,11 +34,9 @@ extension View {
       .fontWeight(.medium)
       .foregroundStyle(textColor ?? .white)
       .tint(tint)
-      .buttonBorderShape(
-        .roundedRectangle(radius: 20)
-      )
+      .buttonBorderShape(.roundedRectangle(radius: 20))
       .buttonStyle(.bordered)
-      .shadow(radius: 3)
+      .shadow(radius: 2)
   }
   
   // MARK: - Input Field Style

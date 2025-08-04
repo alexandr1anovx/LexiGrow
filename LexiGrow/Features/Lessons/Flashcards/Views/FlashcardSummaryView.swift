@@ -13,13 +13,13 @@ struct FlashcardSummaryView: View {
   
   var body: some View {
     VStack(spacing: 30) {
-      Text("Summary:")
-        .font(.title)
+      Text("Words Knowledge Summary:")
+        .font(.title2)
         .fontWeight(.bold)
       ResultsView()
       HStack(spacing: 10) {
         TryAgainButton()
-        ReturnHomeButton { dismiss() }
+        FinishButton { dismiss() }
       }
     }
   }
@@ -32,6 +32,32 @@ struct FlashcardSummaryView: View {
 
 extension FlashcardSummaryView {
   
+  struct ResultsView: View {
+    @Environment(FlashcardsViewModel.self) var viewModel
+    
+    var body: some View {
+      HStack(spacing: 15) {
+        Text("Total: \(viewModel.cards.count)")
+          .foregroundStyle(.teal)
+        Text("|")
+          .foregroundStyle(.gray)
+        HStack(spacing: 5) {
+          Text("Known:")
+            .foregroundStyle(.green)
+          Text("\(viewModel.knownWords.count)")
+        }
+        Text("|")
+          .foregroundStyle(.gray)
+        HStack(spacing: 5) {
+          Text("Unknown:")
+            .foregroundStyle(.red)
+          Text("\(viewModel.unknownWords.count)")
+        }
+      }
+      .fontWeight(.semibold)
+    }
+  }
+  
   struct TryAgainButton: View {
     @Environment(FlashcardsViewModel.self) var viewModel
     
@@ -42,14 +68,11 @@ extension FlashcardSummaryView {
         Label("Try Again", systemImage: "repeat")
           .padding(11)
       }
-      .prominentButtonStyle(tint: .teal)
+      .prominentButtonStyle(tint: .blue)
     }
   }
-}
-
-extension FlashcardSummaryView {
   
-  struct ReturnHomeButton: View {
+  struct FinishButton: View {
     @Environment(FlashcardsViewModel.self) var viewModel
     var onDismiss: () -> Void
     
@@ -58,26 +81,10 @@ extension FlashcardSummaryView {
         onDismiss()
         viewModel.resetSetupSettings()
       } label: {
-        Text("Return Home").padding(11)
+        Label("Finish", systemImage: "flag.pattern.checkered")
+          .padding(11)
       }
       .prominentButtonStyle(tint: .blue)
-    }
-  }
-}
-
-extension FlashcardSummaryView {
-  
-  struct ResultsView: View {
-    @Environment(FlashcardsViewModel.self) var viewModel
-    
-    var body: some View {
-      VStack(spacing: 15) {
-        Text("You know: **\(viewModel.knownWordsCount)** / \(viewModel.cards.count) words")
-          .font(.title2)
-        Text("To repeat: **\(viewModel.unknownWords.count)** words")
-          .font(.title2)
-          .foregroundStyle(.gray)
-      }
     }
   }
 }
