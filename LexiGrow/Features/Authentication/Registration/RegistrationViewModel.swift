@@ -13,26 +13,22 @@ import SwiftUICore
 final class RegistrationViewModel {
   
   // MARK: - Published Properties
-  
   var username: String = ""
   var email: String = ""
   var password: String = ""
   var confirmedPassword: String = ""
   
   // MARK: - Computed Properties
-  
   var isValidForm: Bool {
     !username.isEmpty
     && !email.isEmpty
     && !password.isEmpty && password == confirmedPassword
   }
   
-  // MARK: - Dependencies
-  
+  // MARK: - Private Properties
   private let authManager: AuthManager
   
   // MARK: - Init / Deinit
-  
   init(authManager: AuthManager) {
     self.authManager = authManager
     print("✅ Registration View Model has been initialized.")
@@ -42,7 +38,6 @@ final class RegistrationViewModel {
   }
   
   // MARK: - Public Methods
-  
   func signUp() {
     Task {
       await authManager.signUp(

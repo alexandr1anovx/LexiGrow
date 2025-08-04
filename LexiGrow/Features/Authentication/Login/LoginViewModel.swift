@@ -12,14 +12,19 @@ import SwiftUICore
 @MainActor
 final class LoginViewModel {
   
+  // MARK: - Public Properties
   var email: String = ""
   var password: String = ""
+  
+  // MARK: - Private Properties
+  private let authManager: AuthManager
+  
+  // MARK: - Computed Properties
   var isValidForm: Bool {
     !email.isEmpty && !password.isEmpty
   }
   
-  private let authManager: AuthManager
-  
+  // MARK: - Init / Deinit
   init(authManager: AuthManager) {
     self.authManager = authManager
     print("✅ Login View Model has been initialized.")
@@ -28,6 +33,7 @@ final class LoginViewModel {
     print("❌ Login View Model has been deinitialized.")
   }
   
+  // MARK: - Public Methods
   func signIn() {
     Task {
       await authManager.signIn(email: email, password: password)
