@@ -7,36 +7,35 @@
 
 import Foundation
 
-@MainActor
-@Observable
-final class AuthManager {
+@Observable final class AuthManager {
   var currentUser: AppUser?
-  var isLoading: Bool = false
+  private(set) var signInError: String?
+  private(set) var signUpError: String?
+  private(set) var signOutError: String?
+  private(set) var updateProfileError: String?
+  private(set) var isLoading = false
   private let authService: AuthService
   
   init(authService: AuthService = AuthService()) {
     self.authService = authService
-    print("✅ Auth Manager initialized.")
-  }
-  deinit {
-    print("❌ Auth Manager deinitialized.")
   }
   
   func signIn(email: String, password: String) async {
     isLoading = true
+    defer { isLoading = false }
     do {
       self.currentUser = try await authService.signIn(
         email: email,
         password: password
       )
     } catch {
-      print("⚠️ AuthManager: Failed to sign in: \(error.localizedDescription)")
+      signInError = "Failed to sign in: \(error)"
     }
-    isLoading = false
   }
   
   func signUp(username: String, email: String, password: String) async {
     isLoading = true
+    defer { isLoading = false }
     do {
       self.currentUser = try await authService.signUp(
         username: username,
@@ -44,9 +43,8 @@ final class AuthManager {
         password: password
       )
     } catch {
-      print("⚠️ AuthManager: Failed to sign up: \(error.localizedDescription)")
+      signUpError = "Failed to sign up: \(error)"
     }
-    isLoading = false
   }
   
   func signOut() async {
@@ -55,7 +53,7 @@ final class AuthManager {
       try await authService.signOut()
       currentUser = nil
     } catch {
-      print("⚠️ AuthManager: Failed to sign out: \(error.localizedDescription)")
+      signOutError = "Failed to sign out: \(error)"
     }
     isLoading = false
   }
@@ -67,7 +65,7 @@ final class AuthManager {
       let updatedUser = try await authService.updateUser(username: username)
       self.currentUser = updatedUser
     } catch {
-      print("⚠️ AuthManager: Failed to update user: \(error.localizedDescription)")
+      updateProfileError = "Failed to update user: \(error)"
     }
     isLoading = false
   }
@@ -76,8 +74,11 @@ final class AuthManager {
     do {
       self.currentUser = try await authService.getCurrentUser()
     } catch {
-      print("⚠️ Refresh current user error: \(error.localizedDescription)")
       currentUser = nil
     }
   }
+}
+
+extension AuthManager {
+  static let mock = AuthManager()
 }
