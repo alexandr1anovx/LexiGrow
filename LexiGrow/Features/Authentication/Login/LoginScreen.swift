@@ -8,60 +8,56 @@
 import SwiftUI
 
 struct LoginScreen: View {
-  
-  @State var viewModel: LoginViewModel
   @Environment(AuthManager.self) private var authManager
-  @FocusState private var inputContent: InputFieldContent?
-  
-  init(authManager: AuthManager) {
-    _viewModel = State(wrappedValue: LoginViewModel(authManager: authManager))
-  }
+  @State private var email: String = ""
+  @State private var password: String = ""
   
   var body: some View {
     NavigationView {
       ScrollView {
         VStack(spacing: 30) {
           TypingTextEffect(text: "Login. Welcome to LexiGrow.")
-          InputFields(viewModel: viewModel)
+          InputFields(email: $email, password: $password)
+          if let error = authManager.signInError {
+            Text(error)
+              .font(.footnote)
+              .foregroundStyle(.red)
+              .fontWeight(.medium)
+              .padding(.horizontal)
+          }
           Group {
             if authManager.isLoading {
               GradientRingProgressView()
             } else {
-              SignInButton(viewModel: viewModel)
+              SignInButton(email: $email, password: $password)
             }
           }
           SignUpOption()
-        }
-        .padding(.top,30)
+        }.padding(.top,30)
       }
     }
   }
 }
 
-#Preview {
-  LoginScreen(authManager: AuthManager())
-    .environment(AuthManager())
-    .environment(LoginViewModel(authManager: AuthManager()))
-}
-
-
 extension LoginScreen {
   
   struct InputFields: View {
-    @Bindable var viewModel: LoginViewModel
+    @Binding var email: String
+    @Binding var password: String
+    @Environment(AuthManager.self) private var authManager
     @FocusState private var inputContent: InputFieldContent?
     
     var body: some View {
-      VStack(spacing: 12) {
-        InputField(.standard, "Email", text: $viewModel.email)
+      VStack {
+        InputField(.standard, "Email", text: $email)
           .focused($inputContent, equals: .email)
           .textInputAutocapitalization(.never)
           .autocorrectionDisabled(true)
           .keyboardType(.emailAddress)
           .submitLabel(.next)
           .onSubmit { inputContent = .password }
-        InputField(.password, "Password", text: $viewModel.password)
-          .focused($inputContent, equals: .email)
+        InputField(.password, "Password", text: $password)
+          .focused($inputContent, equals: .password)
           .submitLabel(.done)
           .onSubmit { inputContent = nil }
       }
@@ -71,18 +67,25 @@ extension LoginScreen {
   
   struct SignInButton: View {
     @Environment(AuthManager.self) var authManager
-    @Bindable var viewModel: LoginViewModel
+    @Binding var email: String
+    @Binding var password: String
+    private var isValidForm: Bool {
+      !email.isEmpty && !password.isEmpty
+    }
     
     var body: some View {
       Button {
-        viewModel.signIn()
+        Task {
+          await authManager.signIn(email: email, password: password)
+        }
+        password = ""
       } label: {
         Text("Sign In")
           .padding(.horizontal,120)
           .padding(12)
       }
       .prominentButtonStyle(tint: .blue)
-      .disabled(!viewModel.isValidForm)
+      .disabled(!isValidForm)
     }
   }
   
@@ -95,15 +98,19 @@ extension LoginScreen {
           .font(.footnote)
           .foregroundStyle(.secondary)
         NavigationLink {
-          RegistrationScreen(authManager: authManager)
+          RegistrationScreen()
         } label: {
           Text("Sign Up.")
             .font(.subheadline)
-            .fontWeight(.medium)
             .underline()
         }
         .tint(.primary)
       }
     }
   }
+}
+
+#Preview {
+  LoginScreen()
+    .environment(AuthManager.mock)
 }
