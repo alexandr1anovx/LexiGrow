@@ -25,12 +25,10 @@ struct LoginScreen: View {
               .fontWeight(.medium)
               .padding(.horizontal)
           }
-          Group {
-            if authManager.isLoading {
-              GradientRingProgressView()
-            } else {
-              SignInButton(email: $email, password: $password)
-            }
+          if authManager.isLoading {
+            GradientRingProgressView()
+          } else {
+            SignInButton(email: $email, password: $password)
           }
           SignUpOption()
         }.padding(.top,30)
@@ -77,8 +75,8 @@ extension LoginScreen {
       Button {
         Task {
           await authManager.signIn(email: email, password: password)
+          password = ""
         }
-        password = ""
       } label: {
         Text("Sign In")
           .padding(.horizontal,120)

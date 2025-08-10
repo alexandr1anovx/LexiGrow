@@ -31,17 +31,15 @@ struct RegistrationScreen: View {
             .fontWeight(.medium)
             .padding(.horizontal)
         }
-        Group {
-          if authManager.isLoading {
-            GradientRingProgressView()
-          } else {
-            SignUpButton(
-              username: $username,
-              email: $email,
-              password: $password,
-              confirmPassword: $confirmPassword
-            )
-          }
+        if authManager.isLoading {
+          GradientRingProgressView()
+        } else {
+          SignUpButton(
+            username: $username,
+            email: $email,
+            password: $password,
+            confirmPassword: $confirmPassword
+          )
         }
         SignInOption()
       }
@@ -116,9 +114,9 @@ extension RegistrationScreen {
             email: email,
             password: password
           )
+          password = ""
+          confirmPassword = ""
         }
-        password = ""
-        confirmPassword = ""
       } label: {
         Text("Sign Up")
           .padding(.horizontal,120)
