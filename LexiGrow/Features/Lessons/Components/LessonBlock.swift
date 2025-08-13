@@ -19,28 +19,26 @@ struct LessonBlock: View {
         .frame(width: 165, height: 150)
         .offset(x: 0, y: -5)
       
-      Group {
-        if lesson.isLocked {
-          RoundedRectangle(cornerRadius: 35)
-            .fill(.white.secondary)
-            .stroke(.white, lineWidth: 2)
-            .frame(width: 175, height: 150)
-            .shadow(radius: 3)
-            .overlay(alignment: .topTrailing) {
-              Image(systemName: "lock.circle.dotted")
-                .font(.title)
-                .padding(3)
-                .foregroundStyle(.black)
-                .background(Color.white)
-                .clipShape(.circle)
-            }
-        } else {
-          RoundedRectangle(cornerRadius: 35)
-            .fill(.white.tertiary)
-            .stroke(.white, lineWidth: 2)
-            .frame(width: 175, height: 150)
-            .shadow(radius: 3)
-        }
+      if lesson.isLocked {
+        RoundedRectangle(cornerRadius: 35)
+          .fill(.white.secondary)
+          .stroke(.white, lineWidth: 2)
+          .frame(width: 175, height: 150)
+          .shadow(radius: 3)
+          .overlay(alignment: .topTrailing) {
+            Image(systemName: "lock.circle.dotted")
+              .font(.title)
+              .padding(3)
+              .foregroundStyle(.black)
+              .background(Color.white)
+              .clipShape(.circle)
+          }
+      } else {
+        RoundedRectangle(cornerRadius: 35)
+          .fill(.white.tertiary)
+          .stroke(.white, lineWidth: 2)
+          .frame(width: 175, height: 150)
+          .shadow(radius: 3)
       }
       
       VStack(spacing: 15) {

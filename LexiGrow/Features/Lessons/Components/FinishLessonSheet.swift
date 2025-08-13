@@ -36,7 +36,7 @@ struct FinishLessonSheet: View {
         ToolbarItem(placement: .destructiveAction) {
           DismissXButton {
             dismiss() // dismiss the sheet
-          }
+          }.padding(.top)
         }
       }
     }
