@@ -26,7 +26,7 @@ struct LoginScreen: View {
               .padding(.horizontal)
           }
           if authManager.isLoading {
-            GradientRingProgressView()
+            GradientProgressView()
           } else {
             SignInButton(email: $email, password: $password)
           }

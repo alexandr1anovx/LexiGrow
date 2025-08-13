@@ -32,7 +32,7 @@ struct RegistrationScreen: View {
             .padding(.horizontal)
         }
         if authManager.isLoading {
-          GradientRingProgressView()
+          GradientProgressView()
         } else {
           SignUpButton(
             username: $username,

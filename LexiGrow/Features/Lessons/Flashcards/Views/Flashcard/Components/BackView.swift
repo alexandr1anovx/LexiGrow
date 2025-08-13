@@ -10,7 +10,7 @@ import SwiftUI
 extension FlashcardView {
   
   struct BackView: View {
-    @Environment(FlashcardsViewModel.self) var viewModel
+    @Environment(FlashcardViewModel.self) var viewModel
     let word: Word
     @Binding var isFlipped: Bool
     
@@ -23,7 +23,7 @@ extension FlashcardView {
       RoundedRectangle(cornerRadius: 40)
         .fill(.blue.gradient)
         .shadow(radius: 3)
-        .opacity(isFlipped ? 1 : 0)
+        .opacity(isFlipped ? 1:0)
         .overlay {
           Text(word.translation)
             .foregroundStyle(.white)
@@ -31,27 +31,33 @@ extension FlashcardView {
             .fontWeight(.semibold)
             .padding(.horizontal)
             .multilineTextAlignment(.center)
-            .opacity(isFlipped ? 1 : 0)
+            .opacity(isFlipped ? 1:0)
         }
         .overlay(alignment: .bottom) {
           HStack {
-            ActionButton(
-              title: "Don't know",
-              systemImage: "repeat",
-              tint: .red) {
-                viewModel.handleUnknown()
-                isFlipped = false
-              }
+            Button {
+              viewModel.handleUnknown()
+              isFlipped = false
+            } label: {
+              Label("Don't know", systemImage: "xmark.circle.fill")
+                .padding(.horizontal,5)
+                .padding(.vertical,13)
+            }
+            .prominentButtonStyle(tint: .black)
+
             Spacer()
-            ActionButton(
-              title: "Know",
-              systemImage: "checkmark.seal.fill",
-              tint: .green) {
-                viewModel.handleKnown()
-                isFlipped = false
-              }
+            
+            Button {
+              viewModel.handleKnown()
+              isFlipped = false
+            } label: {
+              Label("Know", systemImage: "checkmark.circle.fill")
+                .padding(.horizontal,5)
+                .padding(.vertical,13)
+            }
+            .prominentButtonStyle(tint: .black)
           }
-          .opacity(isFlipped ? 1 : 0)
+          .opacity(isFlipped ? 1:0)
           .padding(.bottom, 30)
           .padding(.horizontal, 20)
         }
@@ -60,6 +66,9 @@ extension FlashcardView {
 }
 
 #Preview {
-  FlashcardView.BackView(Word.mock, isFlipped: .constant(true))
-    .environment(FlashcardsViewModel.previewMode)
+  FlashcardView.BackView(
+    Word.mock,
+    isFlipped: .constant(true)
+  )
+  .environment(FlashcardViewModel.previewMode)
 }

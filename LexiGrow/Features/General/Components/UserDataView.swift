@@ -12,18 +12,24 @@ extension GeneralTabScreen {
     @Environment(AuthManager.self) var authManager
     
     var body: some View {
-      VStack(alignment: .leading, spacing: 15) {
-        Text(authManager.currentUser?.username ?? "No username")
-          .fontWeight(.semibold)
-        Text(authManager.currentUser?.email ?? "No email")
-          .foregroundStyle(.secondary)
-      }
-      .font(.subheadline)
+      VStack(alignment: .leading, spacing: 10) {
+        if let user = authManager.currentUser {
+          Text(user.username)
+            .fontWeight(.semibold)
+          Text(user.email)
+            .foregroundStyle(.secondary)
+          Text("\(user.id)")
+            .foregroundStyle(.secondary)
+            .font(.caption)
+        } else {
+          ProgressView()
+        }
+      }.font(.subheadline)
     }
   }
 }
 
 #Preview {
   GeneralTabScreen.UserDataView()
-    .environment(AuthManager())
+    .environment(AuthManager.mock)
 }

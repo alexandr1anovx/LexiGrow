@@ -10,7 +10,7 @@ import SwiftUI
 extension FlashcardView {
   
   struct ProgressBar: View {
-    @Environment(FlashcardsViewModel.self) var viewModel
+    @Environment(FlashcardViewModel.self) var viewModel
     
     var body: some View {
       HStack(spacing: 20) {
@@ -23,7 +23,7 @@ extension FlashcardView {
             .animation(.bouncy, value: viewModel.currentIndex)
           Text("/")
             .foregroundStyle(.secondary)
-          Text("\(viewModel.cards.count)")
+          Text("\(viewModel.words.count)")
             .foregroundStyle(.secondary)
         }
         .font(.footnote)
@@ -36,5 +36,5 @@ extension FlashcardView {
 
 #Preview {
   FlashcardView.ProgressBar()
-    .environment(FlashcardsViewModel.previewMode)
+    .environment(FlashcardViewModel.previewMode)
 }

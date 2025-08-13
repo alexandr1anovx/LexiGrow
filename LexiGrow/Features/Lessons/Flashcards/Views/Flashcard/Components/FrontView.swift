@@ -68,5 +68,5 @@ extension FlashcardView {
     word: Word.mock,
     isTurnedAutomaticAudio: .constant(false)
   )
-  .environment(FlashcardsViewModel.previewMode)
+  .environment(FlashcardViewModel.previewMode)
 }
