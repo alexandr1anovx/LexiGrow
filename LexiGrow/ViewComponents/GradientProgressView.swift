@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct GradientRingProgressView: View {
-  @State private var isAnimating: Bool = false
+struct GradientProgressView: View {
+  @State private var isAnimating = false
   var tint: Color? // blue by default
   
   var body: some View {
@@ -33,5 +33,5 @@ struct GradientRingProgressView: View {
 }
 
 #Preview {
-  GradientRingProgressView()
+  GradientProgressView()
 }

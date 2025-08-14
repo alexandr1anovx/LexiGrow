@@ -9,10 +9,10 @@ import SwiftUI
 
 struct DismissXButton: View {
   var color: Color?
-  var onDismiss: () -> Void
+  var dismissAction: () -> Void
   
   var body: some View {
-    Button(action: onDismiss) {
+    Button(action: dismissAction) {
       Image(systemName: "xmark.circle.fill")
         .symbolRenderingMode(.hierarchical)
         .font(.title2)

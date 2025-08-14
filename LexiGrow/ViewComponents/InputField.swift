@@ -24,8 +24,8 @@ struct InputField: View {
   let type: InputFieldType
   let placeholder: String
   @Binding private var text: String
-  var isMatchPassword: Bool = false
-  @State private var isShownPassword: Bool = false
+  var isMatchPassword = false
+  @State private var showPassword = false
   
   init(
     _ type: InputFieldType,
@@ -56,15 +56,15 @@ struct InputField: View {
   @ViewBuilder
   var passwordInputField: some View {
       HStack {
-        if isShownPassword {
+        if showPassword {
           TextField(placeholder, text: $text)
         } else {
           SecureField(placeholder, text: $text)
         }
         Button {
-          isShownPassword.toggle()
+          showPassword.toggle()
         } label: {
-          Image(systemName: isShownPassword ? "eye" : "eye.slash")
+          Image(systemName: showPassword ? "eye" : "eye.slash")
         }
         .opacity(text.isEmpty ? 0:1)
         .disabled(text.isEmpty)
