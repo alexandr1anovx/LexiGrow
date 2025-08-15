@@ -31,5 +31,5 @@ extension GeneralTabScreen {
 
 #Preview {
   GeneralTabScreen.UserDataView()
-    .environment(AuthManager.mock)
+    .environment(AuthManager.mockObject)
 }

@@ -9,20 +9,19 @@ import SwiftUI
 
 struct GeneralTabScreen: View {
   @Environment(AuthManager.self) private var authManager
-  @State private var isShowingSignOutView: Bool = false
+  @Environment(\.colorScheme) var colorScheme
+  @State private var showSignOutSheet = false
   
   var body: some View {
-    let _ = Self._printChanges()
     NavigationStack {
       Form {
-        // User Data section
         Section {
           UserDataView()
         } footer: {
           HStack(spacing: 5) {
             Text("Would you like to edit your data?")
             NavigationLink {
-              ProfileScreen(authManager: authManager)
+              ProfileScreen()
             } label: {
               Text("Go to Profile.")
                 .font(.footnote)
@@ -30,16 +29,18 @@ struct GeneralTabScreen: View {
             }
           }
         }
-        // Sign Out section
+        NavigationLink("Settings") {
+          SettingsScreen()
+        }
         Section {
           Button("Sign Out") {
-            isShowingSignOutView = true
+            showSignOutSheet = true
           }.tint(.red)
         }
       }
       .navigationTitle("General")
       .navigationBarTitleDisplayMode(.large)
-      .sheet(isPresented: $isShowingSignOutView) {
+      .sheet(isPresented: $showSignOutSheet) {
         SignOutView()
           .presentationDetents([.fraction(0.35)])
           .presentationCornerRadius(50)
@@ -49,5 +50,6 @@ struct GeneralTabScreen: View {
 }
 
 #Preview {
-  GeneralTabScreen().environment(AuthManager())
+  GeneralTabScreen()
+    .environment(AuthManager.mockObject)
 }

@@ -23,11 +23,18 @@ final class LessonsViewModel {
   
   func fetchLessons() async {
     isLoading = true
+    defer { isLoading = false }
     do {
       self.lessons = try await supabaseService.getLessons()
     } catch {
-      errorMessage = "Failed to get lessons: \(error.localizedDescription)"
+      errorMessage = "Failed to get lessons: \(error)"
     }
-    isLoading = false
+  }
+}
+
+extension LessonsViewModel {
+  static var mockObject: LessonsViewModel {
+    let viewModel = LessonsViewModel(supabaseService: .mockObject)
+    return viewModel
   }
 }

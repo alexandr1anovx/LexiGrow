@@ -18,8 +18,8 @@ struct LoginScreen: View {
         VStack(spacing: 30) {
           TypingTextEffect(text: "Login. Welcome to LexiGrow.")
           InputFields(email: $email, password: $password)
-          if let error = authManager.signInError {
-            Text(error)
+          if let error = authManager.error {
+            Text(error.localizedDescription)
               .font(.footnote)
               .foregroundStyle(.red)
               .fontWeight(.medium)
@@ -110,5 +110,5 @@ extension LoginScreen {
 
 #Preview {
   LoginScreen()
-    .environment(AuthManager.mock)
+    .environment(AuthManager.mockObject)
 }

@@ -38,8 +38,8 @@ struct ProfileScreen: View {
       }
       .padding(.horizontal, 20)
       
-      if let error = authManager.updateProfileError {
-        Text(error)
+      if let error = authManager.error {
+        Text(error.localizedDescription)
           .padding()
           .foregroundStyle(.red)
       }
@@ -95,6 +95,6 @@ struct ProfileScreen: View {
 #Preview {
   NavigationView {
     ProfileScreen()
-      .environment(AuthManager.mock)
+      .environment(AuthManager.mockObject)
   }
 }

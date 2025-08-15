@@ -24,8 +24,8 @@ struct RegistrationScreen: View {
           password: $password,
           confirmPassword: $confirmPassword
         )
-        if let error = authManager.signUpError {
-          Text(error)
+        if let error = authManager.error {
+          Text(error.localizedDescription)
             .font(.footnote)
             .foregroundStyle(.red)
             .fontWeight(.medium)
@@ -148,5 +148,5 @@ extension RegistrationScreen {
 
 #Preview {
   RegistrationScreen()
-    .environment(AuthManager.mock)
+    .environment(AuthManager.mockObject)
 }
