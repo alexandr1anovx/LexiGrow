@@ -18,14 +18,16 @@ final class FlashcardViewModel {
   var selectedLevel: Level?
   var selectedTopic: Topic?
   
-  // MARK: - Private properties
+  // MARK: - Private(set) properties
   
   private(set) var words: [Word] = []
-  private(set) var currentIndex: Int = 0
+  private(set) var currentWordIndex: Int = 0
   private(set) var knownWords: [Word] = []
-  private(set) var unknownWords: [Word] = [Word.mock]
+  private(set) var unknownWords: [Word] = []
   private(set) var levels: [Level] = []
   private(set) var topicsProgress: [TopicProgress] = []
+  
+  // MARK: - Private properties
   
   private let supabaseService: SupabaseService
   
@@ -33,35 +35,43 @@ final class FlashcardViewModel {
   
   /// The current word displayed on the card. Returns `nil` if the lesson has not started or there are no more words.
   var currentWord: Word? {
-    guard words.indices.contains(currentIndex) else {
+    guard words.indices.contains(currentWordIndex) else {
       return nil
     }
-    return words[currentIndex]
+    return words[currentWordIndex]
   }
   
   /// The progress of the current lesson as a value from 0.0 to 1.0.
-  var progress: Double {
+  var lessonProgress: Double {
     guard !words.isEmpty else { return 0.0 }
-    let raw = Double(currentIndex + 1) / Double(words.count)
+    let raw = Double(currentWordIndex + 1) / Double(words.count)
     return min(raw, 1.0)
   }
   
-  var resultProgress: Double {
+  var lessonAccuracy: Double {
     guard !words.isEmpty else { return 0.0 }
     let correctAnswers = Double(knownWords.count)
     return correctAnswers / Double(words.count)
   }
   
-  var summaryTitle: String {
-    switch progress {
-    case 0.8...: return "Excellent Work! 🏆"
-    case 0.5..<0.8: return "Good Job! 👍"
-    default: return "Keep Practicing! 💪"
+  var lessonFeedbackTitle: String {
+    switch lessonProgress {
+    case 0.8...: return "Excellent Work!"
+    case 0.5..<0.8: return "Good Job!"
+    default: return "Keep Practicing!"
     }
   }
   
-  var isStartDisabled: Bool {
-    selectedLevel == nil || selectedTopic == nil
+  var lessonFeedbackIconName: String {
+    switch lessonProgress {
+    case 0.8...: return "hands.clap.fill"
+    case 0.5..<0.8: return "face.smiling"
+    default: return "figure.play.circle.fill"
+    }
+  }
+  
+  var canStartLesson: Bool {
+    selectedLevel != nil && selectedTopic != nil
   }
   
   // MARK: - Init
@@ -77,7 +87,7 @@ final class FlashcardViewModel {
   ///
   /// Resets the lesson data and starts loading words for the level and topic selected by the user.
   func startLesson() {
-    currentIndex = 0
+    currentWordIndex = 0
     knownWords = []
     unknownWords = []
     lessonState = .inProgress
@@ -91,7 +101,7 @@ final class FlashcardViewModel {
   func handleKnown() {
     guard let word = currentWord else { return }
     knownWords.append(word)
-    selectNextCard()
+    selectNextWord()
   }
   
   /// Handles the user's action when they mark a word as "unknown".
@@ -101,10 +111,10 @@ final class FlashcardViewModel {
   func handleUnknown() {
     guard let word = currentWord else { return }
     unknownWords.append(word)
-    selectNextCard()
+    selectNextWord()
   }
   
-  func resetLevelAndTopic() {
+  func resetLessonSetupData() {
     selectedLevel = nil
     selectedTopic = nil
   }
@@ -117,7 +127,7 @@ final class FlashcardViewModel {
       do {
         self.levels = try await supabaseService.getLevels()
       } catch {
-        errorMessage = "Failed to get levels: \(error.localizedDescription)"
+        errorMessage = "Failed to get levels: \(error)"
       }
     }
   }
@@ -127,7 +137,7 @@ final class FlashcardViewModel {
   /// Requires that the `selectedLevel` property be set. If successful, fills the `topicsProgress` array.
   /// If an error occurs or the user is not authenticated, updates `errorMessage`.
   func getTopics() {
-    topicsProgress = []
+    //topicsProgress = []
     guard let level = selectedLevel else { return }
     Task {
       do {
@@ -138,7 +148,7 @@ final class FlashcardViewModel {
         )
         topicsProgress = progress
       } catch {
-        errorMessage = "Failed to get topics progress: \(error.localizedDescription)"
+        errorMessage = "Failed to get topics progress: \(error)"
       }
     }
   }
@@ -163,21 +173,23 @@ final class FlashcardViewModel {
     }
   }
   
-  func saveLessonProgress() async {
-    do {
-      try await supabaseService.saveLessonProgress(learnedWords: knownWords)
-    } catch {
-      errorMessage = "Failed to save words: \(error)"
+  func saveLessonProgress() {
+    Task {
+      do {
+        try await supabaseService.saveLessonProgress(learnedWords: knownWords)
+      } catch {
+        errorMessage = "Failed to save words: \(error)"
+      }
     }
   }
   
   // MARK: - Private methods
   
   /// Advances to the next word in the list by incrementing the current index.
-  /// If the end of the list is reached, transitions to the summary screen with animation.
-  private func selectNextCard() {
-    if currentIndex < words.count - 1 {
-      currentIndex += 1
+  /// If the end of the list is reached, transitions to the summary screen.
+  private func selectNextWord() {
+    if currentWordIndex < words.count - 1 {
+      currentWordIndex += 1
     } else {
       lessonState = .summary
     }
@@ -195,8 +207,8 @@ extension FlashcardViewModel {
 // MARK: - Preview Mode
 
 extension FlashcardViewModel {
-  static var previewMode: FlashcardViewModel {
-    let viewModel = FlashcardViewModel(supabaseService: SupabaseService.mock)
+  static var mockObject: FlashcardViewModel {
+    let viewModel = FlashcardViewModel(supabaseService: SupabaseService.mockObject)
     viewModel.selectedLevel = Level.mock
     viewModel.selectedTopic = Topic.mock
     viewModel.words = [Word.mock]

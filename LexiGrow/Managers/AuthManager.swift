@@ -9,10 +9,7 @@ import Foundation
 
 @Observable final class AuthManager {
   var currentUser: AppUser?
-  private(set) var signInError: String?
-  private(set) var signUpError: String?
-  private(set) var signOutError: String?
-  private(set) var updateProfileError: String?
+  private(set) var error: AuthError?
   private(set) var isLoading = false
   private let authService: AuthService
   
@@ -21,21 +18,23 @@ import Foundation
   }
   
   func signIn(email: String, password: String) async {
-    isLoading = true
+    resetState()
     defer { isLoading = false }
+    
     do {
       self.currentUser = try await authService.signIn(
         email: email,
         password: password
       )
     } catch {
-      signInError = "Failed to sign in: \(error)"
+      self.error = error as? AuthError ?? .unknown
     }
   }
   
   func signUp(username: String, email: String, password: String) async {
-    isLoading = true
+    resetState()
     defer { isLoading = false }
+    
     do {
       self.currentUser = try await authService.signUp(
         username: username,
@@ -43,31 +42,33 @@ import Foundation
         password: password
       )
     } catch {
-      signUpError = "Failed to sign up: \(error)"
+      self.error = error as? AuthError ?? .unknown
     }
   }
   
   func signOut() async {
-    isLoading = true
+    resetState()
+    defer { isLoading = false }
+    
     do {
       try await authService.signOut()
       currentUser = nil
     } catch {
-      signOutError = "Failed to sign out: \(error)"
+      self.error = error as? AuthError ?? .unknown
     }
-    isLoading = false
   }
   
   func updateUser(username: String) async {
     guard currentUser != nil else { return }
-    isLoading = true
+    resetState()
+    defer { isLoading = false }
+    
     do {
       let updatedUser = try await authService.updateUser(username: username)
       self.currentUser = updatedUser
     } catch {
-      updateProfileError = "Failed to update user: \(error)"
+      self.error = error as? AuthError ?? .unknown
     }
-    isLoading = false
   }
   
   func refreshUser() async {
@@ -75,10 +76,21 @@ import Foundation
       self.currentUser = try await authService.getCurrentUser()
     } catch {
       currentUser = nil
+      self.error = error as? AuthError ?? .userNotFound
     }
+  }
+  
+  // Method for resetting errors from the UI.
+  func clearError() {
+    self.error = nil
+  }
+  
+  private func resetState() {
+    isLoading = true
+    error = nil
   }
 }
 
 extension AuthManager {
-  static let mock = AuthManager()
+  static let mockObject = AuthManager()
 }

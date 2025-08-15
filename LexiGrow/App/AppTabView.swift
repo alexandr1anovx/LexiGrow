@@ -16,9 +16,8 @@ struct AppTabView: View {
   private let feedbackGenerator = UIImpactFeedbackGenerator(style: .soft)
   
   var body: some View {
-    let _ = Self._printChanges()
     TabView(selection: $selectedTab) {
-      LessonsTabScreen()
+      LessonsScreen()
         .tag(Tab.lessons)
         .tabItem {
           Label("Lessons", systemImage: "book.pages")
@@ -37,7 +36,9 @@ struct AppTabView: View {
 
 #Preview {
   AppTabView()
-    .environment(AuthManager())
-    .environment(FlashcardsViewModel.previewMode)
-    .environment(GuessTheContextViewModel.previewMode)
+    .environment(AuthManager.mockObject)
+    .environment(FlashcardViewModel.mockObject)
+    .environment(StatisticsViewModel.mockObject)
+    .environment(LessonsViewModel.mockObject)
+    .environment(SupabaseService.mockObject)
 }

@@ -9,7 +9,7 @@ import Foundation
 
 @Observable
 @MainActor
-final class StaticticsViewModel {
+final class StatisticsViewModel {
   
   private(set) var errorMessage: String?
   private(set) var isLoading = false
@@ -51,7 +51,14 @@ final class StaticticsViewModel {
       }
       levelProgressData = tempProgressData
     } catch {
-      errorMessage = "Failed to load level progress: \(error.localizedDescription)"
+      errorMessage = "Failed to load level progress: \(error)"
     }
+  }
+}
+
+extension StatisticsViewModel {
+  static var mockObject: StatisticsViewModel {
+    let viewModel = StatisticsViewModel(supabaseService: SupabaseService.mockObject)
+    return viewModel
   }
 }
