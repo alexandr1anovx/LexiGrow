@@ -21,12 +21,16 @@ extension FlashcardView {
     
     var body: some View {
       RoundedRectangle(cornerRadius: 40)
-        .fill(.blue.gradient)
+        .fill(Color.card)
+        .stroke(
+          Color.primary.secondary,
+          lineWidth: 3,
+          antialiased: true
+        )
         .shadow(radius: 3)
         .opacity(isFlipped ? 1:0)
         .overlay {
           Text(word.translation)
-            .foregroundStyle(.white)
             .font(.largeTitle)
             .fontWeight(.semibold)
             .padding(.horizontal)
@@ -43,7 +47,7 @@ extension FlashcardView {
                 .padding(.horizontal,5)
                 .padding(.vertical,13)
             }
-            .prominentButtonStyle(tint: .black)
+            .prominentButtonStyle(tint: .red)
 
             Spacer()
             
@@ -55,7 +59,7 @@ extension FlashcardView {
                 .padding(.horizontal,5)
                 .padding(.vertical,13)
             }
-            .prominentButtonStyle(tint: .black)
+            .prominentButtonStyle(tint: .green)
           }
           .opacity(isFlipped ? 1:0)
           .padding(.bottom, 30)
@@ -70,5 +74,5 @@ extension FlashcardView {
     Word.mock,
     isFlipped: .constant(true)
   )
-  .environment(FlashcardViewModel.previewMode)
+  .environment(FlashcardViewModel.mockObject)
 }

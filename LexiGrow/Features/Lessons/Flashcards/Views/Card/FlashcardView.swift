@@ -1,0 +1,112 @@
+//
+//  FlashcardsView.swift
+//  LexiGrow
+//
+//  Created by Alexander Andrianov on 13.07.2025.
+//
+
+import SwiftUI
+
+struct FlashcardView: View {
+  @Environment(FlashcardViewModel.self) var viewModel
+  @Environment(\.dismiss) var dismiss
+  @State private var isFlipped = false
+  @State private var isTurnedAutomaticAudio = true
+  
+  var body: some View {
+    VStack {
+      if let word = viewModel.currentWord {
+        ProgressBar()
+        Toggle(
+          "Automatic sound playback:",
+          systemImage: "speaker.wave.2.fill",
+          isOn: $isTurnedAutomaticAudio
+        )
+        .font(.subheadline)
+        .foregroundStyle(.secondary)
+        .padding(.horizontal)
+        
+        HStack(spacing: 10) {
+          UnknownWordsView()
+          KnownWordsView()
+        }
+        .padding(.top)
+        .shadow(radius: 3)
+        
+        Group {
+          if !isFlipped {
+            FrontView(
+              word: word,
+              isTurnedAutomaticAudio: $isTurnedAutomaticAudio
+            )
+          } else {
+            BackView(word, isFlipped: $isFlipped)
+          }
+        }
+        .onTapGesture {
+          isFlipped.toggle()
+        }
+        .padding(30)
+        
+        if let error = viewModel.errorMessage {
+          Text(error)
+            .foregroundStyle(.red)
+            .padding(.horizontal)
+        }
+      } else {
+        Text("The data is loading...")
+        GradientProgressView()
+      }
+    }
+  }
+}
+
+extension FlashcardView {
+  
+  struct UnknownWordsView: View {
+    @Environment(FlashcardViewModel.self) var viewModel
+    
+    var body: some View {
+      HStack {
+        Image(systemName: "xmark.circle.fill")
+        Text("\(viewModel.unknownWords.count)")
+          .fontWeight(.semibold)
+          .monospacedDigit()
+          .contentTransition(.numericText())
+          .animation(.bouncy, value: viewModel.currentWordIndex)
+      }
+      .foregroundStyle(.white)
+      .padding(15)
+      .background {
+        RoundedRectangle(cornerRadius: 18)
+          .fill(Color.red)
+      }
+    }
+  }
+  
+  struct KnownWordsView: View {
+    @Environment(FlashcardViewModel.self) var viewModel
+    
+    var body: some View {
+      HStack {
+        Image(systemName: "checkmark.circle.fill")
+        Text("\(viewModel.knownWords.count)")
+          .fontWeight(.semibold)
+          .contentTransition(.numericText())
+          .monospacedDigit()
+          .animation(.bouncy, value: viewModel.currentWordIndex)
+      }
+      .foregroundStyle(.white)
+      .padding(15)
+      .background {
+        RoundedRectangle(cornerRadius: 18)
+          .fill(Color.green)
+      }
+    }
+  }
+}
+
+#Preview {
+  FlashcardView()
+    .environment(FlashcardViewModel.mockObject)
+}
