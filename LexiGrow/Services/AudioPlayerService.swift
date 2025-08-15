@@ -10,10 +10,12 @@ import AVFoundation
 
 final class AudioPlayerService {
   var audioPlayer: AVAudioPlayer?
+  private(set) var errorMessage: String?
   
   func playSound(named fileName: String) {
     guard let soundPath = Bundle.main.path(forResource: fileName, ofType: "mp3") else {
-      print("⚠️ Failed to find '\(fileName).mp3' file.")
+      errorMessage = "Failed to find '\(fileName).mp3' file."
+      print("Failed to find '\(fileName).mp3' file.")
       return
     }
     
@@ -23,7 +25,7 @@ final class AudioPlayerService {
       audioPlayer = try AVAudioPlayer(contentsOf: soundURL)
       audioPlayer?.play()
     } catch {
-      print("⚠️ Failed to play audio: \(error.localizedDescription)")
+      print("Failed to play audio: \(error.localizedDescription)")
     }
   }
 }

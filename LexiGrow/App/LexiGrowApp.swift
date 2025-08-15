@@ -9,16 +9,50 @@ import SwiftUI
 
 @main
 struct LexiGrowApp: App {
-  @State private var authManager = AuthManager()
-  @State private var flashcardViewModel = FlashcardsViewModel()
-  @State private var guessTheContextViewModel = GuessTheContextViewModel()
+  
+  @AppStorage("user_theme") private var userTheme: Theme = .system
+  private let supabaseService = SupabaseService()
+  private let authManager = AuthManager()
+  @State private var lessonsViewModel: LessonsViewModel
+  @State private var statisticsViewModel: StatisticsViewModel
+  @State private var flashcardViewModel: FlashcardViewModel
+  
+  init() {
+    self._lessonsViewModel = State(
+      wrappedValue: LessonsViewModel(
+        supabaseService: supabaseService
+      )
+    )
+    self._statisticsViewModel = State(
+      wrappedValue: StatisticsViewModel(
+        supabaseService: supabaseService
+      )
+    )
+    self._flashcardViewModel = State(
+      wrappedValue: FlashcardViewModel(
+        supabaseService: supabaseService
+      )
+    )
+  }
   
   var body: some Scene {
     WindowGroup {
-      RootView()
-        .environment(authManager)
-        .environment(flashcardViewModel)
-        .environment(guessTheContextViewModel)
+      Group {
+        if authManager.currentUser != nil {
+          AppTabView()
+        } else {
+          LoginScreen()
+        }
+      }
+      .preferredColorScheme(userTheme.colorScheme)
+      .environment(supabaseService)
+      .environment(authManager)
+      .environment(lessonsViewModel)
+      .environment(statisticsViewModel)
+      .environment(flashcardViewModel)
+      .task {
+        await authManager.refreshUser()
+      }
     }
   }
 }

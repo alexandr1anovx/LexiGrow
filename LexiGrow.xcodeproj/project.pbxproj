@@ -7,20 +7,29 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D1C6D9342E1AA5840084D5D3 /* Auth in Frameworks */ = {isa = PBXBuildFile; productRef = D1C6D9332E1AA5840084D5D3 /* Auth */; };
-		D1C6D9362E1AA5840084D5D3 /* Realtime in Frameworks */ = {isa = PBXBuildFile; productRef = D1C6D9352E1AA5840084D5D3 /* Realtime */; };
-		D1C6D9382E1AA5840084D5D3 /* Storage in Frameworks */ = {isa = PBXBuildFile; productRef = D1C6D9372E1AA5840084D5D3 /* Storage */; };
 		D1C6D9432E1ABB8A0084D5D3 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = D1C6D9422E1ABB8A0084D5D3 /* Supabase */; };
-		D1CAE0572E22678F00750D33 /* GoogleGenerativeAI in Frameworks */ = {isa = PBXBuildFile; productRef = D1CAE0562E22678F00750D33 /* GoogleGenerativeAI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		D16774992E04B62600967AC8 /* LexiGrow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LexiGrow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		D1FA1E652E4B651600477A27 /* Exceptions for "LexiGrow" folder in "LexiGrow" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = D16774982E04B62500967AC8 /* LexiGrow */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		D167749B2E04B62600967AC8 /* LexiGrow */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				D1FA1E652E4B651600477A27 /* Exceptions for "LexiGrow" folder in "LexiGrow" target */,
+			);
 			path = LexiGrow;
 			sourceTree = "<group>";
 		};
@@ -31,11 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D1CAE0572E22678F00750D33 /* GoogleGenerativeAI in Frameworks */,
 				D1C6D9432E1ABB8A0084D5D3 /* Supabase in Frameworks */,
-				D1C6D9382E1AA5840084D5D3 /* Storage in Frameworks */,
-				D1C6D9342E1AA5840084D5D3 /* Auth in Frameworks */,
-				D1C6D9362E1AA5840084D5D3 /* Realtime in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -86,11 +91,7 @@
 			);
 			name = LexiGrow;
 			packageProductDependencies = (
-				D1C6D9332E1AA5840084D5D3 /* Auth */,
-				D1C6D9352E1AA5840084D5D3 /* Realtime */,
-				D1C6D9372E1AA5840084D5D3 /* Storage */,
 				D1C6D9422E1ABB8A0084D5D3 /* Supabase */,
-				D1CAE0562E22678F00750D33 /* GoogleGenerativeAI */,
 			);
 			productName = LexiGrow;
 			productReference = D16774992E04B62600967AC8 /* LexiGrow.app */;
@@ -122,7 +123,6 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				D1C6D9322E1AA5840084D5D3 /* XCRemoteSwiftPackageReference "supabase-swift" */,
-				D1CAE0552E22678F00750D33 /* XCRemoteSwiftPackageReference "generative-ai-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D167749A2E04B62600967AC8 /* Products */;
@@ -157,6 +157,8 @@
 /* Begin XCBuildConfiguration section */
 		D16774A52E04B62700967AC8 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = D167749B2E04B62600967AC8 /* LexiGrow */;
+			baseConfigurationReferenceRelativePath = Secrets.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -285,6 +287,7 @@
 				DEVELOPMENT_TEAM = 5C7T379SKG;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = LexiGrow/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -320,6 +323,7 @@
 				DEVELOPMENT_TEAM = 5C7T379SKG;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = LexiGrow/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -376,41 +380,13 @@
 				minimumVersion = 2.5.1;
 			};
 		};
-		D1CAE0552E22678F00750D33 /* XCRemoteSwiftPackageReference "generative-ai-swift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/google/generative-ai-swift";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.5.6;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		D1C6D9332E1AA5840084D5D3 /* Auth */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D1C6D9322E1AA5840084D5D3 /* XCRemoteSwiftPackageReference "supabase-swift" */;
-			productName = Auth;
-		};
-		D1C6D9352E1AA5840084D5D3 /* Realtime */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D1C6D9322E1AA5840084D5D3 /* XCRemoteSwiftPackageReference "supabase-swift" */;
-			productName = Realtime;
-		};
-		D1C6D9372E1AA5840084D5D3 /* Storage */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D1C6D9322E1AA5840084D5D3 /* XCRemoteSwiftPackageReference "supabase-swift" */;
-			productName = Storage;
-		};
 		D1C6D9422E1ABB8A0084D5D3 /* Supabase */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D1C6D9322E1AA5840084D5D3 /* XCRemoteSwiftPackageReference "supabase-swift" */;
 			productName = Supabase;
-		};
-		D1CAE0562E22678F00750D33 /* GoogleGenerativeAI */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D1CAE0552E22678F00750D33 /* XCRemoteSwiftPackageReference "generative-ai-swift" */;
-			productName = GoogleGenerativeAI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

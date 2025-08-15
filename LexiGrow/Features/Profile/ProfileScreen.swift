@@ -8,38 +8,62 @@
 import SwiftUI
 
 struct ProfileScreen: View {
-  @State var viewModel: ProfileViewModel
+  @Environment(AuthManager.self) var authManager
   @FocusState private var inputContent: InputFieldContent?
+  @State private var username: String = ""
+  @State private var email: String = ""
   
-  init(authManager: AuthManager) {
-    _viewModel = State(wrappedValue: ProfileViewModel(authManager: authManager))
+  private var formHasChanges: Bool {
+    guard let user = authManager.currentUser else { return false }
+    let changedUsername = username != user.username
+    let changedEmail = email != user.email
+    return changedUsername || changedEmail
   }
   
   var body: some View {
     VStack {
-      
-      // Input Fields
-      VStack(spacing: 12) {
-        InputField(.standard, "Username", text: $viewModel.username)
+      VStack(spacing: 15) {
+        Image(systemName: "person.crop.circle.fill")
+          .font(.system(size: 80))
+          .foregroundStyle(.gray.secondary)
+          .padding(.bottom)
+        InputField(.standard, "Username", text: $username)
           .focused($inputContent, equals: .username)
           .textInputAutocapitalization(.words)
           .autocorrectionDisabled(true)
-        InputField(.standard, "Email", text: $viewModel.email)
+        InputField(.standard, "Email", text: $email)
           .textInputAutocapitalization(.never)
           .autocorrectionDisabled(true)
           .keyboardType(.emailAddress)
       }
-      .padding(.horizontal)
+      .padding(.horizontal, 20)
       
-      // Save Changes button
-      Button {
-        viewModel.updateUser()
-      } label: {
-        Text("Save changes")
+      if let error = authManager.error {
+        Text(error.localizedDescription)
+          .padding()
+          .foregroundStyle(.red)
       }
-      .opacity(viewModel.formHasChanges ? 1 : 0.5)
-      .padding()
-      .frame(maxWidth: .infinity, alignment: .trailing)
+      
+      if authManager.isLoading {
+        HStack(spacing: 20) {
+          Text("Saving")
+          GradientProgressView(tint: .green)
+        }
+        .padding(20)
+      } else {
+        Button {
+          Task {
+            await authManager.updateUser(username: username)
+          }
+        } label: {
+          Text("Save changes")
+            .frame(maxWidth: .infinity)
+            .padding(11)
+        }
+        .prominentButtonStyle(tint: .green)
+        .disabled(!formHasChanges)
+        .padding()
+      }
       Spacer()
     }
     .padding(.top)
@@ -47,19 +71,30 @@ struct ProfileScreen: View {
     .navigationBarTitleDisplayMode(.large)
     .toolbar {
       ToolbarItem(placement: .topBarTrailing) {
-        Button {
+        Button("Edit") {
           inputContent = .username
-        } label: {
-          Image(systemName: "pencil")
-            .foregroundStyle(.blue)
         }
       }
     }
+    .onAppear {
+      retrieveUserData()
+    }
+  }
+  
+  private func retrieveUserData() {
+    guard let user = authManager.currentUser else {
+      username = "No username"
+      email = "No email"
+      return
+    }
+    username = user.username
+    email = user.email
   }
 }
 
 #Preview {
   NavigationView {
-    ProfileScreen(authManager: AuthManager())
+    ProfileScreen()
+      .environment(AuthManager.mockObject)
   }
 }

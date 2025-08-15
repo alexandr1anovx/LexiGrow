@@ -7,36 +7,34 @@
 
 import Foundation
 
-@MainActor
-@Observable
-final class AuthManager {
+@Observable final class AuthManager {
   var currentUser: AppUser?
-  var isLoading: Bool = false
+  private(set) var error: AuthError?
+  private(set) var isLoading = false
   private let authService: AuthService
   
   init(authService: AuthService = AuthService()) {
     self.authService = authService
-    print("✅ Auth Manager initialized.")
-  }
-  deinit {
-    print("❌ Auth Manager deinitialized.")
   }
   
   func signIn(email: String, password: String) async {
-    isLoading = true
+    resetState()
+    defer { isLoading = false }
+    
     do {
       self.currentUser = try await authService.signIn(
         email: email,
         password: password
       )
     } catch {
-      print("⚠️ AuthManager: Failed to sign in: \(error.localizedDescription)")
+      self.error = error as? AuthError ?? .unknown
     }
-    isLoading = false
   }
   
   func signUp(username: String, email: String, password: String) async {
-    isLoading = true
+    resetState()
+    defer { isLoading = false }
+    
     do {
       self.currentUser = try await authService.signUp(
         username: username,
@@ -44,40 +42,55 @@ final class AuthManager {
         password: password
       )
     } catch {
-      print("⚠️ AuthManager: Failed to sign up: \(error.localizedDescription)")
+      self.error = error as? AuthError ?? .unknown
     }
-    isLoading = false
   }
   
   func signOut() async {
-    isLoading = true
+    resetState()
+    defer { isLoading = false }
+    
     do {
       try await authService.signOut()
       currentUser = nil
     } catch {
-      print("⚠️ AuthManager: Failed to sign out: \(error.localizedDescription)")
+      self.error = error as? AuthError ?? .unknown
     }
-    isLoading = false
   }
   
   func updateUser(username: String) async {
     guard currentUser != nil else { return }
-    isLoading = true
+    resetState()
+    defer { isLoading = false }
+    
     do {
       let updatedUser = try await authService.updateUser(username: username)
       self.currentUser = updatedUser
     } catch {
-      print("⚠️ AuthManager: Failed to update user: \(error.localizedDescription)")
+      self.error = error as? AuthError ?? .unknown
     }
-    isLoading = false
   }
   
   func refreshUser() async {
     do {
       self.currentUser = try await authService.getCurrentUser()
     } catch {
-      print("⚠️ Refresh current user error: \(error.localizedDescription)")
       currentUser = nil
+      self.error = error as? AuthError ?? .userNotFound
     }
   }
+  
+  // Method for resetting errors from the UI.
+  func clearError() {
+    self.error = nil
+  }
+  
+  private func resetState() {
+    isLoading = true
+    error = nil
+  }
+}
+
+extension AuthManager {
+  static let mockObject = AuthManager()
 }

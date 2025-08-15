@@ -8,13 +8,13 @@
 import Foundation
 
 struct AppUser: Codable, Identifiable, Equatable {
-  let id: String
+  let id: UUID
   var username: String
   var email: String
 }
 
 extension AppUser {
   static var mockUser: AppUser {
-    AppUser(id: "1", username: "Alex", email: "address@mail.com")
+    AppUser(id: UUID(), username: "Alex", email: "address@mail.com")
   }
 }

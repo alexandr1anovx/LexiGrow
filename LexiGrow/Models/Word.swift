@@ -7,26 +7,25 @@
 
 import Foundation
 
-struct Word: Identifiable, Hashable, Codable {
-  let id: String
+struct Word: Identifiable, Codable, Hashable {
+  let id: UUID
   let original: String
   let translation: String
   let transcription: String
-  let partOfSpeech: String
-  let level: String
-  let topic: String
   let audioName: String
+  
+  enum CodingKeys: String, CodingKey {
+    case id, original, translation, transcription
+    case audioName = "audio_name"
+  }
 }
 
 extension Word {
-  static let mock: Word = .init(
-    id: "01",
+  static let mock = Word(
+    id: UUID(),
     original: "Bus",
     translation: "Автобус",
     transcription: "ˈbəs",
-    partOfSpeech: "noun",
-    level: "B1.1",
-    topic: "Vehicles",
     audioName: "bus"
   )
 }

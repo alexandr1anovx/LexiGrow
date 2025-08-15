@@ -8,33 +8,31 @@
 import SwiftUI
 
 struct LaunchView: View {
-  @State private var isAnimating: Bool = false
+  @State private var isAnimating = false
   
   var body: some View {
-    Grid(verticalSpacing: 10) {
+    Grid {
       GridRow {
         Text("Lexi")
           .foregroundStyle(isAnimating ? Color.primary : Color.clear)
-          .opacity(isAnimating ? 1 : 0)
+          .opacity(isAnimating ? 1:0)
         Image(systemName: "globe")
-          .foregroundStyle(isAnimating ? .clear : .blue)
-          .symbolEffect(.pulse)
+          .foregroundStyle(isAnimating ? Color.clear : Color.blue)
       }
       Divider()
         .gridCellUnsizedAxes(.horizontal)
       GridRow {
         Image(systemName: "brain.fill")
-          .foregroundStyle(isAnimating ? .clear : .blue)
-          .symbolEffect(.pulse)
+          .foregroundStyle(isAnimating ? Color.clear : Color.blue)
         Text("Grow")
           .foregroundStyle(isAnimating ? Color.primary : Color.clear)
-          .opacity(isAnimating ? 1 : 0)
+          .opacity(isAnimating ? 1:0)
       }
     }
     .font(.title2)
     .fontWeight(.semibold)
     .onAppear {
-      withAnimation(.bouncy(duration: 1).repeatForever(autoreverses: true)) {
+      withAnimation(.spring(duration: 0.8).repeatForever(autoreverses: true)) {
         isAnimating.toggle()
       }
     }

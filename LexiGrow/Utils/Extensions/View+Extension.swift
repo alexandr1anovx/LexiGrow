@@ -22,7 +22,7 @@ extension View {
       .tint(tint)
       .buttonBorderShape(.roundedRectangle(radius: 20))
       .buttonStyle(.borderedProminent)
-      .shadow(radius: 3)
+      .shadow(radius: 2)
   }
   
   func borderedButtonStyle(
@@ -36,7 +36,6 @@ extension View {
       .tint(tint)
       .buttonBorderShape(.roundedRectangle(radius: 20))
       .buttonStyle(.bordered)
-      .shadow(radius: 2)
   }
   
   // MARK: - Input Field Style

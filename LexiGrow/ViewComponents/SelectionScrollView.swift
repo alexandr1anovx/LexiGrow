@@ -1,0 +1,27 @@
+//
+//  SelectionScrollView.swift
+//  LexiGrow
+//
+//  Created by Alexander Andrianov on 15.08.2025.
+//
+
+import SwiftUI
+
+struct SelectionScrollView<Content: View>: View {
+  let label: String
+  @ViewBuilder let content: Content
+  
+  var body: some View {
+    HStack {
+      Text(label)
+        .fontWeight(.medium)
+      ScrollView(.horizontal) {
+        HStack {
+          content
+        }.padding(1)
+      }
+      .scrollIndicators(.hidden)
+      .shadow(radius: 2)
+    }.font(.callout)
+  }
+}

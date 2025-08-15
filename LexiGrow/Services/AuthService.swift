@@ -9,20 +9,12 @@ import Foundation
 import Supabase
 
 struct AuthService {
-  private let client: SupabaseClient
   
-  init() {
-    self.client = SupabaseClient(
-      supabaseURL: URL(string: Constants.projectURLString)!,
-      supabaseKey: Constants.projectAPIKey
-    )
-  }
-  
-  // MARK: - Public Methods
+  // MARK: - Public methods
   
   func signIn(email: String, password: String) async throws -> AppUser {
     do {
-      let session = try await client.auth.signIn(
+      let session = try await supabase.auth.signIn(
         email: email,
         password: password
       )
@@ -34,7 +26,7 @@ struct AuthService {
   
   func signUp(username: String, email: String, password: String) async throws -> AppUser {
     do {
-      let session = try await client.auth.signUp(
+      let session = try await supabase.auth.signUp(
         email: email,
         password: password,
         data: ["username": .string(username)]
@@ -47,14 +39,14 @@ struct AuthService {
   
   func signOut() async throws {
     do {
-      try await client.auth.signOut()
+      try await supabase.auth.signOut()
     } catch {
       throw AuthError.serverError(description: error.localizedDescription)
     }
   }
   
   func updateUser(username: String) async throws -> AppUser {
-    let updatedUser = try await client.auth.update(
+    let updatedUser = try await supabase.auth.update(
       user: UserAttributes(data: ["username": .string(username)])
     )
     return try mapSupabaseUserToAppUser(updatedUser)
@@ -62,14 +54,14 @@ struct AuthService {
   
   func getCurrentUser() async throws -> AppUser {
     do {
-      let session = try await client.auth.session
+      let session = try await supabase.auth.session
       return try mapSupabaseUserToAppUser(session.user)
     } catch {
       throw AuthError.userNotFound
     }
   }
   
-  // MARK: - Private Methods
+  // MARK: - Private methods
   
   private func mapSupabaseUserToAppUser(
     _ supabaseUser: Supabase.User
@@ -87,32 +79,34 @@ struct AuthService {
       username = "No username"
     }
     return AppUser(
-      id: supabaseUser.id.uuidString,
+      id: supabaseUser.id,
       username: username,
       email: email
     )
   }
 }
 
-enum AuthError: Error {
-  case userNotFound
-  case invalidEmail
-  case invalidCredentials(description: String)
-  case serverError(description: String)
-  case unknown
-  
-  var localizedDescription: String {
-    switch self {
-    case .userNotFound: 
-      return "User Not Found"
-    case .invalidEmail:
-      return "Invalid Email"
-    case .invalidCredentials(let description):
-      return "Invalid Credentials: \(description)"
-    case .serverError(let description):
-      return "Server Error: \(description)"
-    case .unknown:
-      return "Unkown Error"
+// MARK: - Auth Error
+
+enum AuthError: Error, LocalizedError {
+    case userNotFound
+    case invalidEmail
+    case invalidCredentials(description: String)
+    case serverError(description: String)
+    case unknown
+    
+    var errorDescription: String? {
+        switch self {
+        case .userNotFound:
+            return "User not found."
+        case .invalidEmail:
+            return "Invalid email format."
+        case .invalidCredentials(let description):
+            return "Invalid credentials: \(description)"
+        case .serverError(let description):
+            return "Server error: \(description)"
+        case .unknown:
+            return "An unknown error occured."
+        }
     }
-  }
 }

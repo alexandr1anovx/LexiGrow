@@ -24,17 +24,17 @@ extension GeneralTabScreen {
               .font(.callout)
               .foregroundStyle(.secondary)
           }
-          Group {
-            if authManager.isLoading {
-              GradientRingProgressView(tint: .red)
-            } else {
-              Button {
-                Task { await authManager.signOut() }
-              } label: {
-                Text("Yes, sign out.")
-                  .padding(12)
-              }.prominentButtonStyle(tint: .red)
-            }
+          if authManager.isLoading {
+            GradientProgressView(tint: .red)
+          } else {
+            Button {
+              Task {
+                await authManager.signOut()
+              }
+            } label: {
+              Text("Confirm")
+                .padding(12)
+            }.prominentButtonStyle(tint: .red)
           }
         }
         .presentationDetents([.fraction(0.35)])

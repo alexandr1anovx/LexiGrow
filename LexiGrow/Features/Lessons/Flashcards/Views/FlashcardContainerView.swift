@@ -9,8 +9,8 @@ import SwiftUI
 
 struct FlashcardContainerView: View {
   @Environment(\.dismiss) var dismiss
-  @Environment(FlashcardsViewModel.self) var viewModel
-  @State private var isShowingFinishPreview: Bool = false
+  @Environment(FlashcardViewModel.self) var viewModel
+  @State private var showFinishSheet = false
   
   var body: some View {
     NavigationView {
@@ -22,21 +22,22 @@ struct FlashcardContainerView: View {
           FlashcardSummaryView()
         }
       }
+      .animation(.easeInOut, value: viewModel.lessonState)
       .navigationTitle("Flashcards")
-      .navigationBarTitleDisplayMode(.large)
+      .navigationBarTitleDisplayMode(viewModel.lessonState == .inProgress ? .large : .inline)
       .toolbar {
         if viewModel.lessonState == .inProgress {
           ToolbarItem(placement: .destructiveAction) {
             DismissXButton {
-              isShowingFinishPreview = true
+              showFinishSheet = true
             }.padding(.top)
           }
         }
       }
-      .sheet(isPresented: $isShowingFinishPreview) {
-        FinishLessonPreview {
+      .sheet(isPresented: $showFinishSheet) {
+        FinishLessonSheet {
           dismiss()
-          viewModel.resetSetupSettings()
+          viewModel.resetLessonSetupData()
         }
         .presentationDetents([.fraction(0.37)])
         .presentationCornerRadius(50)
@@ -47,5 +48,5 @@ struct FlashcardContainerView: View {
 
 #Preview {
   FlashcardContainerView()
-    .environment(FlashcardsViewModel.previewMode)
+    .environment(FlashcardViewModel.mockObject)
 }
