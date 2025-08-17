@@ -21,13 +21,13 @@ extension FlashcardView {
     
     var body: some View {
       RoundedRectangle(cornerRadius: 40)
-        .fill(Color.card)
+        .fill(Color.olive)
         .stroke(
           Color.primary.secondary,
           lineWidth: 3,
           antialiased: true
         )
-        .shadow(radius: 3)
+        .shadow(radius: 2)
         .opacity(isFlipped ? 1:0)
         .overlay {
           Text(word.translation)

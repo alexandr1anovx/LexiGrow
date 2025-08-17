@@ -30,6 +30,7 @@ struct FlashcardSetupView: View {
       VStack(spacing: 12) {
         LevelsView(viewModel: viewModel)
         TopicsView(viewModel: viewModel)
+          .frame(height: 50)
       }
       .padding(.horizontal)
       

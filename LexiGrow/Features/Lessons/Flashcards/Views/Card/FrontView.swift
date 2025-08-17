@@ -17,9 +17,9 @@ extension FlashcardView {
     
     var body: some View {
       RoundedRectangle(cornerRadius: 40)
-        .fill(Color.card)
+        .fill(Color.olive)
         .stroke(
-          Color.primary.secondary,
+          Color.white.secondary,
           lineWidth: 3,
           antialiased: true
         )
@@ -35,7 +35,7 @@ extension FlashcardView {
             Text("[\(word.transcription)]")
               .font(.title2)
               .fontWeight(.semibold)
-              .foregroundStyle(.primary)
+              .foregroundStyle(.white)
             Button {
               audioPlayer.playSound(named: word.audioName)
               isAnimatingSoundIcon.toggle()

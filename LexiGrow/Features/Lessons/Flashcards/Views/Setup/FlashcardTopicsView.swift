@@ -16,22 +16,16 @@ extension FlashcardSetupView {
       SelectionScrollView(label: "Topics:") {
         if viewModel.selectedLevel == nil {
           Text("Select a level above")
-            .padding(16)
-            .foregroundStyle(.white)
-            .background {
-              RoundedRectangle(cornerRadius: 20)
-                .fill(.pink)
-                .stroke(.white, lineWidth: 2, antialiased: true)
-            }
+            .font(.callout)
+            .fontWeight(.medium)
+            .foregroundStyle(.red)
+            
         } else if viewModel.topicsProgress.isEmpty {
           Text("No topics for a level above")
-            .padding(16)
-            .foregroundStyle(.white)
-            .background {
-              RoundedRectangle(cornerRadius: 20)
-                .fill(.pink)
-                .stroke(.white, lineWidth: 2, antialiased: true)
-            }
+            .font(.callout)
+            .fontWeight(.medium)
+            .foregroundStyle(.red)
+            
         } else {
           ForEach(viewModel.topicsProgress, id: \.self) { progressItem in
             TopicButton(

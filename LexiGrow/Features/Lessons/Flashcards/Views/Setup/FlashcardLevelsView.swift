@@ -26,11 +26,10 @@ extension FlashcardSetupView {
               viewModel.selectedTopic = nil // discard the selected topic when the level changes.
             }
           }
-        }
+        }.padding(.leading, 5)
       }
     }
   }
-  
 }
 
 #Preview {

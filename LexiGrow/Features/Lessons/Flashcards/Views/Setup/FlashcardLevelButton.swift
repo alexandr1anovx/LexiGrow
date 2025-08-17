@@ -25,9 +25,10 @@ extension FlashcardSetupView {
             RoundedRectangle(cornerRadius: 20)
               .fill(selectedLevel?.name == name ? .blue : .olive)
               .stroke(
-                .white,
+                selectedLevel?.name == name ? .clear : .white,
                 lineWidth: 2
               )
+              .frame(minWidth: 55)
           }
       }
     }
