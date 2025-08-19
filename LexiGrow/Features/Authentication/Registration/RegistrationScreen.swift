@@ -17,20 +17,27 @@ struct RegistrationScreen: View {
   var body: some View {
     ScrollView {
       VStack(spacing: 30) {
-        TypingTextEffect(text: "Registration in LexiGrow.")
+        Text("Registration in LexiGrow")
+          .font(.title2)
+          .fontWeight(.bold)
+          .fontDesign(.rounded)
+          .foregroundStyle(
+            LinearGradient(
+              colors: [.purple, .pink, .pink],
+              startPoint: .leading,
+              endPoint: .trailing
+            )
+          )
+          .padding(.top)
+        
         InputFields(
           username: $username,
           email: $email,
           password: $password,
           confirmPassword: $confirmPassword
         )
-        if let error = authManager.error {
-          Text(error.localizedDescription)
-            .font(.footnote)
-            .foregroundStyle(.red)
-            .fontWeight(.medium)
-            .padding(.horizontal)
-        }
+        .padding(.horizontal, 15)
+        
         if authManager.isLoading {
           GradientProgressView()
         } else {
@@ -40,6 +47,7 @@ struct RegistrationScreen: View {
             password: $password,
             confirmPassword: $confirmPassword
           )
+          .padding(.horizontal, 15)
         }
         SignInOption()
       }
@@ -55,34 +63,47 @@ extension RegistrationScreen {
     @Binding var email: String
     @Binding var password: String
     @Binding var confirmPassword: String
-    @FocusState private var inputContent: InputFieldContent?
+    @FocusState private var inputContent: TextFieldContent?
     
     var body: some View {
       VStack(spacing: 10) {
-        InputField(.standard, "Username", text: $username)
-          .focused($inputContent, equals: .username)
-          .textInputAutocapitalization(.never)
-          .autocorrectionDisabled(true)
-          .submitLabel(.next)
-          .onSubmit { inputContent = .email }
-        InputField(.standard, "Email", text: $email)
-          .focused($inputContent, equals: .email)
-          .textInputAutocapitalization(.never)
-          .autocorrectionDisabled(true)
-          .keyboardType(.emailAddress)
-          .submitLabel(.next)
-          .onSubmit { inputContent = .password }
-        InputField(.password, "Password", text: $password)
-          .focused($inputContent, equals: .password)
-          .textInputAutocapitalization(.never)
-          .autocorrectionDisabled(true)
-          .submitLabel(.next)
-          .onSubmit { inputContent = .confirmPassword }
-        InputField(
-          .passwordConfirmation,
-          "Confirm Password",
+        DefaultTextField(
+          title: "Username",
+          iconName: "person",
+          text: $username
+        )
+        .focused($inputContent, equals: .username)
+        .textInputAutocapitalization(.never)
+        .autocorrectionDisabled(true)
+        .submitLabel(.next)
+        .onSubmit { inputContent = .email }
+        DefaultTextField(
+          title: "Email",
+          iconName: "at",
+          text: $email
+        )
+        .focused($inputContent, equals: .email)
+        .textInputAutocapitalization(.never)
+        .autocorrectionDisabled(true)
+        .keyboardType(.emailAddress)
+        .submitLabel(.next)
+        .onSubmit { inputContent = .password }
+        SecureTextField(
+          title: "Password",
+          iconName: "lock",
+          text: $password,
+          showToggleIcon: true
+        )
+        .focused($inputContent, equals: .password)
+        .textInputAutocapitalization(.never)
+        .autocorrectionDisabled(true)
+        .submitLabel(.next)
+        .onSubmit { inputContent = .confirmPassword }
+        SecureTextField(
+          title: "Confirm password",
+          iconName: "lock",
           text: $confirmPassword,
-          isMatchPassword: password == confirmPassword
+          showToggleIcon: false
         )
         .focused($inputContent, equals: .confirmPassword)
         .textInputAutocapitalization(.never)
@@ -90,8 +111,6 @@ extension RegistrationScreen {
         .submitLabel(.done)
         .onSubmit { inputContent = nil }
       }
-      .font(.subheadline)
-      .padding(.horizontal, 25)
     }
   }
   
@@ -119,29 +138,27 @@ extension RegistrationScreen {
         }
       } label: {
         Text("Sign Up")
-          .padding(.horizontal,120)
-          .padding(12)
+          .prominentButtonStyle(tint: .pink)
       }
-      .prominentButtonStyle(tint: .blue)
       .disabled(!isValidForm)
+      .opacity(!isValidForm ? 0.5 : 1)
     }
   }
   
   struct SignInOption: View {
     @Environment(\.dismiss) var dismiss
     var body: some View {
-      HStack {
+      HStack(spacing: 5) {
         Text("Already have an account?")
-          .font(.footnote)
           .foregroundStyle(.secondary)
         Button {
           dismiss()
         } label: {
           Text("Sign In.")
-            .font(.subheadline)
             .underline()
         }.tint(.primary)
       }
+      .font(.footnote)
     }
   }
 }

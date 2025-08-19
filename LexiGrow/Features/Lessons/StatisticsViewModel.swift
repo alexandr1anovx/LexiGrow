@@ -20,38 +20,42 @@ final class StatisticsViewModel {
     self.supabaseService = supabaseService
   }
   
-  func fetchLevelProgress() async {
+  func getLevelProgress() async {
     isLoading = true
     defer { isLoading = false }
+    // check if there any progress data so not to make a repeat API call
+    //guard levelProgressData.isEmpty else { return }
+    
     // Temporary array for collecting results
     var tempProgressData: [LevelProgress] = []
-    
-    do {
-      let user = try await supabase.auth.user()
-      let allLevels = try await supabaseService.getLevels()
-      
-      for level in allLevels {
-        let topicProgressList = try await supabaseService.getTopicProgress(
-          levelId: level.id,
-          userId: user.id
-        )
-        // total words for level
-        let totalWords = topicProgressList.reduce(0) { $0 + $1.totalWords }
-        // learned words for level
-        let learnedWords = topicProgressList.reduce(0) { $0 + $1.learnedWords }
+    Task {
+      do {
+        let user = try await supabase.auth.user()
+        let allLevels = try await supabaseService.getLevels()
         
-        let progress = LevelProgress(
-          id: level.id,
-          name: level.name,
-          orderIndex: level.orderIndex,
-          totalWords: totalWords,
-          learnedWords: learnedWords
-        )
-        tempProgressData.append(progress)
+        for level in allLevels {
+          let topicProgressList = try await supabaseService.getTopicProgress(
+            levelId: level.id,
+            userId: user.id
+          )
+          // total words for level
+          let totalWords = topicProgressList.reduce(0) { $0 + $1.totalWords }
+          // learned words for level
+          let learnedWords = topicProgressList.reduce(0) { $0 + $1.learnedWords }
+          
+          let progress = LevelProgress(
+            id: level.id,
+            name: level.name,
+            orderIndex: level.orderIndex,
+            totalWords: totalWords,
+            learnedWords: learnedWords
+          )
+          tempProgressData.append(progress)
+        }
+        levelProgressData = tempProgressData
+      } catch {
+        errorMessage = "Failed to load level progress: \(error)"
       }
-      levelProgressData = tempProgressData
-    } catch {
-      errorMessage = "Failed to load level progress: \(error)"
     }
   }
 }

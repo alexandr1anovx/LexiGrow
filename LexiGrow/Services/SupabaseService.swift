@@ -109,6 +109,15 @@ let supabase = SupabaseClient(
       .upsert(progressArray)
       .execute()
   }
+  
+  func getSentences(for levelId: UUID) async throws -> [Sentence] {
+    let params = ["p_level_id": levelId]
+    let sentences: [Sentence] = try await supabase
+      .rpc("get_sentences_for_level", params: params)
+      .execute()
+      .value
+    return sentences
+  }
 }
 
 extension SupabaseService {

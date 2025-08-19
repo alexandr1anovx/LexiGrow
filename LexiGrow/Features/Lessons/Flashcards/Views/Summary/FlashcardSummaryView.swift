@@ -16,12 +16,13 @@ struct FlashcardSummaryView: View {
       VStack(spacing: 20) {
         Label {
           Text(viewModel.lessonFeedbackTitle)
+            .fontWeight(.bold)
+            .fontDesign(.rounded)
         } icon: {
           Image(systemName: viewModel.lessonFeedbackIconName)
             .foregroundStyle(.orange)
         }
         .font(.title2)
-        .fontWeight(.bold)
         
         ResultsRingView(score: viewModel.lessonAccuracy)
         StatsDetailView()
@@ -46,21 +47,15 @@ struct FlashcardSummaryView: View {
             // view model action
           } label: {
             Label("Repeat unknown words", systemImage: "brain.fill")
-              .frame(maxWidth: .infinity)
-              .padding(12)
+              .prominentButtonStyle(tint: .purple)
           }
-          .padding(.horizontal)
-          .prominentButtonStyle(tint: .purple)
           
           Button {
             viewModel.startLesson()
           } label: {
             Label("Repeat the whole lesson", systemImage: "repeat")
-              .frame(maxWidth: .infinity)
-              .padding(12)
+              .prominentButtonStyle(tint: .pink)
           }
-          .padding(.horizontal)
-          .prominentButtonStyle(tint: .pink)
           
           Button {
             viewModel.saveLessonProgress()
@@ -68,12 +63,8 @@ struct FlashcardSummaryView: View {
             dismiss() // hides the lesson
           } label: {
             Label("Finish lesson", systemImage: "flag.pattern.checkered")
-              .frame(maxWidth: .infinity)
-              .padding(12)
+              .prominentButtonStyle(tint: .blue)
           }
-          .padding(.horizontal)
-          .prominentButtonStyle(tint: .cyan)
-          
         }
       }.padding()
     }

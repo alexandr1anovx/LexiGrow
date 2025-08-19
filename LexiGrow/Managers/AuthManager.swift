@@ -17,6 +17,16 @@ import Foundation
     self.authService = authService
   }
   
+  func requestPasswordReset(for email: String) {
+    Task {
+      do {
+        try await authService.requestPasswordReset(for: email)
+      } catch {
+        print("Error: \(error.localizedDescription)")
+      }
+    }
+  }
+  
   func signIn(email: String, password: String) async {
     resetState()
     defer { isLoading = false }
@@ -47,14 +57,15 @@ import Foundation
   }
   
   func signOut() async {
-    resetState()
-    defer { isLoading = false }
+    isLoading = true
     
     do {
       try await authService.signOut()
+      isLoading = false
       currentUser = nil
     } catch {
       self.error = error as? AuthError ?? .unknown
+      isLoading = false
     }
   }
   
@@ -72,6 +83,8 @@ import Foundation
   }
   
   func refreshUser() async {
+    isLoading = true
+    defer { isLoading = false }
     do {
       self.currentUser = try await authService.getCurrentUser()
     } catch {

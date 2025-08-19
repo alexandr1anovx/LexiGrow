@@ -22,12 +22,11 @@ struct FlashcardContainerView: View {
           FlashcardSummaryView()
         }
       }
-      .animation(.easeInOut, value: viewModel.lessonState)
       .navigationTitle("Flashcards")
       .navigationBarTitleDisplayMode(viewModel.lessonState == .inProgress ? .large : .inline)
       .toolbar {
         if viewModel.lessonState == .inProgress {
-          ToolbarItem(placement: .destructiveAction) {
+          ToolbarItem(placement: .topBarTrailing) {
             DismissXButton {
               showFinishSheet = true
             }.padding(.top)
@@ -39,7 +38,7 @@ struct FlashcardContainerView: View {
           dismiss()
           viewModel.resetLessonSetupData()
         }
-        .presentationDetents([.fraction(0.37)])
+        .presentationDetents([.fraction(0.35)])
         .presentationCornerRadius(50)
       }
     }

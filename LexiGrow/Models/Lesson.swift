@@ -9,7 +9,7 @@ import SwiftUI
 
 enum LessonType: String {
   case flashcards = "Flashcards"
-  case reading = "Reading"
+  case translation = "Translation"
   case unknown
 }
 

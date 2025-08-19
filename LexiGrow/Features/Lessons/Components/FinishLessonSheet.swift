@@ -9,11 +9,12 @@ import SwiftUI
 
 struct FinishLessonSheet: View {
   @Environment(\.dismiss) var dismiss
-  var onDismiss: () -> Void
+  var finishAction: () -> Void
   
   var body: some View {
     NavigationView {
       VStack(spacing: 30) {
+        Spacer()
         VStack(spacing: 15) {
           Text("All progress will be canceled")
             .font(.title2)
@@ -24,17 +25,15 @@ struct FinishLessonSheet: View {
             .foregroundStyle(.gray)
             .multilineTextAlignment(.center)
         }
-        Button {
-          onDismiss() // hides the lesson view
-        } label: {
+        Button(action: finishAction) {
           Text("Yes, finish")
-            .padding(11)
+            .prominentButtonStyle(tint: .red)
         }
-        .prominentButtonStyle(tint: .red)
+        .padding([.horizontal, .bottom], 15)
       }
       .toolbar {
-        ToolbarItem(placement: .destructiveAction) {
-          DismissXButton {
+        ToolbarItem(placement: .topBarTrailing) {
+          DismissXButton(color: .secondary) {
             dismiss() // dismiss the sheet
           }.padding(.top)
         }

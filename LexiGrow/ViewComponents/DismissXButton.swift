@@ -16,7 +16,7 @@ struct DismissXButton: View {
       Image(systemName: "xmark.circle.fill")
         .symbolRenderingMode(.hierarchical)
         .font(.title2)
-        .foregroundStyle(color ?? .red)
+        .foregroundStyle(color ?? .secondary)
     }
   }
 }

@@ -12,6 +12,10 @@ struct AuthService {
   
   // MARK: - Public methods
   
+  func requestPasswordReset(for email: String) async throws {
+    try await supabase.auth.resetPasswordForEmail(email)
+  }
+  
   func signIn(email: String, password: String) async throws -> AppUser {
     do {
       let session = try await supabase.auth.signIn(

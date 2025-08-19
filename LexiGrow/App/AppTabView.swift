@@ -28,6 +28,9 @@ struct AppTabView: View {
           Label("More", systemImage: "water.waves")
         }
     }
+    .onAppear {
+      print("✅ APP TAB VIEW APPEARED")
+    }
     .onChange(of: selectedTab) {
       feedbackGenerator.impactOccurred()
     }

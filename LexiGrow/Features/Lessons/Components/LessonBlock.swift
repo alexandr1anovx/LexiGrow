@@ -15,7 +15,7 @@ struct LessonBlock: View {
   var body: some View {
     ZStack {
       RoundedRectangle(cornerRadius: 30)
-        .fill(.blue.gradient)
+        .fill(.pink.gradient)
         .frame(width: 165, height: 150)
         .offset(x: 0, y: -5)
       

@@ -12,17 +12,15 @@ extension View {
   // MARK: - Button Styles
   
   func prominentButtonStyle(
-    tint: Color,
-    textColor: Color? = .white
+    tint: Color
   ) -> some View {
     self
-      .font(.callout)
-      .fontWeight(.medium)
-      .foregroundStyle(textColor ?? .white)
-      .tint(tint)
-      .buttonBorderShape(.roundedRectangle(radius: 20))
-      .buttonStyle(.borderedProminent)
-      .shadow(radius: 2)
+      .fontWeight(.semibold)
+      .foregroundStyle(.white)
+      .frame(maxWidth: .infinity, minHeight: 55)
+      .background(tint)
+      .cornerRadius(20)
+      .shadow(radius: 3)
   }
   
   func borderedButtonStyle(

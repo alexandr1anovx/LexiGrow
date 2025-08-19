@@ -12,7 +12,7 @@ struct SelectionScrollView<Content: View>: View {
   @ViewBuilder let content: Content
   
   var body: some View {
-    HStack {
+    HStack(spacing: 10) {
       Text(label)
         .fontWeight(.medium)
       ScrollView(.horizontal) {

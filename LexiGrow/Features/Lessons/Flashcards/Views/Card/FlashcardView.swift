@@ -16,7 +16,7 @@ struct FlashcardView: View {
   var body: some View {
     VStack {
       if let word = viewModel.currentWord {
-        ProgressBar()
+        LessonProgressView()
         Toggle(
           "Automatic sound playback:",
           systemImage: "speaker.wave.2.fill",
@@ -27,20 +27,25 @@ struct FlashcardView: View {
         .padding(.horizontal)
         
         HStack(spacing: 10) {
-          UnknownWordsView()
-          KnownWordsView()
+          WordCounterView(
+            systemImage: "xmark.circle.fill",
+            count: viewModel.unknownWords.count,
+            backgroundColor: .red
+          )
+          WordCounterView(
+            systemImage: "checkmark.circle.fill",
+            count: viewModel.knownWords.count,
+            backgroundColor: .green
+          )
         }
         .padding(.top)
-        .shadow(radius: 3)
+        .shadow(radius: 2)
         
         Group {
           if !isFlipped {
-            FrontView(
-              word: word,
-              isTurnedAutomaticAudio: $isTurnedAutomaticAudio
-            )
+            FrontView(word: word, isFlipped: $isFlipped, isTurnedAutomaticAudio: $isTurnedAutomaticAudio)
           } else {
-            BackView(word, isFlipped: $isFlipped)
+            BackView(word: word, isFlipped: $isFlipped)
           }
         }
         .onTapGesture {
@@ -63,13 +68,17 @@ struct FlashcardView: View {
 
 extension FlashcardView {
   
-  struct UnknownWordsView: View {
+  struct WordCounterView: View {
     @Environment(FlashcardViewModel.self) var viewModel
+    
+    let systemImage: String
+    let count: Int
+    let backgroundColor: Color
     
     var body: some View {
       HStack {
-        Image(systemName: "xmark.circle.fill")
-        Text("\(viewModel.unknownWords.count)")
+        Image(systemName: systemImage)
+        Text("\(count)")
           .fontWeight(.semibold)
           .monospacedDigit()
           .contentTransition(.numericText())
@@ -78,29 +87,8 @@ extension FlashcardView {
       .foregroundStyle(.white)
       .padding(15)
       .background {
-        RoundedRectangle(cornerRadius: 18)
-          .fill(Color.red)
-      }
-    }
-  }
-  
-  struct KnownWordsView: View {
-    @Environment(FlashcardViewModel.self) var viewModel
-    
-    var body: some View {
-      HStack {
-        Image(systemName: "checkmark.circle.fill")
-        Text("\(viewModel.knownWords.count)")
-          .fontWeight(.semibold)
-          .contentTransition(.numericText())
-          .monospacedDigit()
-          .animation(.bouncy, value: viewModel.currentWordIndex)
-      }
-      .foregroundStyle(.white)
-      .padding(15)
-      .background {
-        RoundedRectangle(cornerRadius: 18)
-          .fill(Color.green)
+        RoundedRectangle(cornerRadius: 20)
+          .fill(backgroundColor)
       }
     }
   }

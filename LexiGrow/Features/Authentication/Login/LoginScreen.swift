@@ -14,25 +14,31 @@ struct LoginScreen: View {
   
   var body: some View {
     NavigationView {
-      ScrollView {
-        VStack(spacing: 30) {
-          TypingTextEffect(text: "Login. Welcome to LexiGrow.")
-          InputFields(email: $email, password: $password)
-          if let error = authManager.error {
-            Text(error.localizedDescription)
-              .font(.footnote)
-              .foregroundStyle(.red)
-              .fontWeight(.medium)
-              .padding(.horizontal)
-          }
-          if authManager.isLoading {
-            GradientProgressView()
-          } else {
-            SignInButton(email: $email, password: $password)
-          }
+      VStack(spacing: 25) {
+        Text("Welcome to LexiGrow")
+          .font(.title2)
+          .fontWeight(.bold)
+          .padding(.bottom)
+          .fontDesign(.rounded)
+          .foregroundStyle(
+            LinearGradient(
+              colors: [.purple, .pink, .pink],
+              startPoint: .leading,
+              endPoint: .trailing
+            )
+          )
+        InputFields(email: $email, password: $password)
+        if authManager.isLoading {
+          GradientProgressView(tint: .pink)
+        } else {
+          SignInButton(email: $email, password: $password)
+        }
+        HStack {
+          ForgotPasswordOption()
+          Spacer()
           SignUpOption()
-        }.padding(.top,30)
-      }
+        }.padding(.horizontal, 20)
+      }.padding(.top,30)
     }
   }
 }
@@ -42,24 +48,32 @@ extension LoginScreen {
   struct InputFields: View {
     @Binding var email: String
     @Binding var password: String
-    @Environment(AuthManager.self) private var authManager
-    @FocusState private var inputContent: InputFieldContent?
+    @FocusState private var inputContent: TextFieldContent?
     
     var body: some View {
       VStack {
-        InputField(.standard, "Email", text: $email)
-          .focused($inputContent, equals: .email)
-          .textInputAutocapitalization(.never)
-          .autocorrectionDisabled(true)
-          .keyboardType(.emailAddress)
-          .submitLabel(.next)
-          .onSubmit { inputContent = .password }
-        InputField(.password, "Password", text: $password)
-          .focused($inputContent, equals: .password)
-          .submitLabel(.done)
-          .onSubmit { inputContent = nil }
+        DefaultTextField(
+          title: "Email address",
+          iconName: "at",
+          text: $email
+        )
+        .focused($inputContent, equals: .email)
+        .textInputAutocapitalization(.never)
+        .autocorrectionDisabled(true)
+        .keyboardType(.emailAddress)
+        .submitLabel(.next)
+        .onSubmit { inputContent = .password }
+        SecureTextField(
+          title: "Password",
+          iconName: "lock",
+          text: $password,
+          showToggleIcon: false
+        )
+        .focused($inputContent, equals: .password)
+        .submitLabel(.done)
+        .onSubmit { inputContent = nil }
       }
-      .padding(.horizontal, 25)
+      .padding(.horizontal, 15)
     }
   }
   
@@ -79,10 +93,10 @@ extension LoginScreen {
         }
       } label: {
         Text("Sign In")
-          .padding(.horizontal,120)
-          .padding(12)
+          .prominentButtonStyle(tint: .pink)
       }
-      .prominentButtonStyle(tint: .blue)
+      .padding(.horizontal, 15)
+      .opacity(!isValidForm ? 0.5:1)
       .disabled(!isValidForm)
     }
   }
@@ -91,18 +105,29 @@ extension LoginScreen {
     @Environment(AuthManager.self) var authManager
     
     var body: some View {
-      HStack {
-        Text("Don't have have an account?")
-          .font(.footnote)
+      HStack(spacing: 5) {
+        Text("New user?")
           .foregroundStyle(.secondary)
         NavigationLink {
           RegistrationScreen()
         } label: {
-          Text("Sign Up.")
-            .font(.subheadline)
-            .underline()
+          Text("Sign Up")
+            .underline(true)
         }
-        .tint(.primary)
+      }.font(.footnote)
+    }
+  }
+  
+  struct ForgotPasswordOption: View {
+    @Environment(AuthManager.self) var authManager
+    var body: some View {
+      NavigationLink {
+        PasswordResetView()
+      } label: {
+        Text("Forgot password?")
+          .font(.footnote)
+          .foregroundStyle(.secondary)
+          .underline(true)
       }
     }
   }

@@ -9,7 +9,7 @@ import SwiftUI
 
 extension FlashcardView {
   
-  struct ProgressBar: View {
+  struct LessonProgressView: View {
     @Environment(FlashcardViewModel.self) var viewModel
     
     var body: some View {
@@ -33,6 +33,6 @@ extension FlashcardView {
 }
 
 #Preview {
-  FlashcardView.ProgressBar()
+  FlashcardView.LessonProgressView()
     .environment(FlashcardViewModel.mockObject)
 }

@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct GeneralTabScreen: View {
-  @Environment(AuthManager.self) private var authManager
-  @Environment(\.colorScheme) var colorScheme
   @State private var showSignOutSheet = false
   
   var body: some View {
@@ -23,7 +21,7 @@ struct GeneralTabScreen: View {
             NavigationLink {
               ProfileScreen()
             } label: {
-              Text("Go to Profile.")
+              Text("Go to Profile")
                 .font(.footnote)
                 .underline()
             }

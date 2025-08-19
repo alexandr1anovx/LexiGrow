@@ -16,23 +16,13 @@ struct LexiGrowApp: App {
   @State private var lessonsViewModel: LessonsViewModel
   @State private var statisticsViewModel: StatisticsViewModel
   @State private var flashcardViewModel: FlashcardViewModel
+  @State private var translationViewModel: TranslationViewModel
   
   init() {
-    self._lessonsViewModel = State(
-      wrappedValue: LessonsViewModel(
-        supabaseService: supabaseService
-      )
-    )
-    self._statisticsViewModel = State(
-      wrappedValue: StatisticsViewModel(
-        supabaseService: supabaseService
-      )
-    )
-    self._flashcardViewModel = State(
-      wrappedValue: FlashcardViewModel(
-        supabaseService: supabaseService
-      )
-    )
+    self._lessonsViewModel = State(wrappedValue: LessonsViewModel(supabaseService: supabaseService))
+    self._statisticsViewModel = State(wrappedValue: StatisticsViewModel(supabaseService: supabaseService))
+    self._flashcardViewModel = State(wrappedValue: FlashcardViewModel(supabaseService: supabaseService))
+    self._translationViewModel = State(wrappedValue: TranslationViewModel(supabaseService: supabaseService))
   }
   
   var body: some Scene {
@@ -50,8 +40,12 @@ struct LexiGrowApp: App {
       .environment(lessonsViewModel)
       .environment(statisticsViewModel)
       .environment(flashcardViewModel)
+      .environment(translationViewModel)
       .task {
         await authManager.refreshUser()
+      }
+      .task {
+        await lessonsViewModel.getLessons()
       }
     }
   }

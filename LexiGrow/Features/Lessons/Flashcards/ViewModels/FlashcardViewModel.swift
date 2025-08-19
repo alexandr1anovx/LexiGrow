@@ -13,7 +13,6 @@ final class FlashcardViewModel {
   
   // MARK: - Public properties
   
-  var errorMessage: String?
   var lessonState: LessonState = .inProgress
   var selectedLevel: Level?
   var selectedTopic: Topic?
@@ -26,6 +25,7 @@ final class FlashcardViewModel {
   private(set) var unknownWords: [Word] = []
   private(set) var levels: [Level] = []
   private(set) var topicsProgress: [TopicProgress] = []
+  private(set) var errorMessage: String?
   
   // MARK: - Private properties
   
@@ -78,7 +78,6 @@ final class FlashcardViewModel {
   
   init(supabaseService: SupabaseService) {
     self.supabaseService = supabaseService
-    getLevels()
   }
   
   // MARK: - Public methods
@@ -123,6 +122,7 @@ final class FlashcardViewModel {
   ///
   /// If successful, fills in the `levels` property. If an error occurs, updates `errorMessage`.
   func getLevels() {
+    guard levels.isEmpty else { return }
     Task {
       do {
         self.levels = try await supabaseService.getLevels()
@@ -137,7 +137,6 @@ final class FlashcardViewModel {
   /// Requires that the `selectedLevel` property be set. If successful, fills the `topicsProgress` array.
   /// If an error occurs or the user is not authenticated, updates `errorMessage`.
   func getTopics() {
-    //topicsProgress = []
     guard let level = selectedLevel else { return }
     Task {
       do {

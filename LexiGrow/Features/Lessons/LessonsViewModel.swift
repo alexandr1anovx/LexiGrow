@@ -18,12 +18,13 @@ final class LessonsViewModel {
   
   init(supabaseService: SupabaseService) {
     self.supabaseService = supabaseService
-    Task { await fetchLessons() }
   }
   
-  func fetchLessons() async {
+  func getLessons() async {
     isLoading = true
     defer { isLoading = false }
+    // check if there any lessons data so not to make a repeat API call
+    guard lessons.isEmpty else { return }
     do {
       self.lessons = try await supabaseService.getLessons()
     } catch {

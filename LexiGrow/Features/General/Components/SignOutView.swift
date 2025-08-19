@@ -16,6 +16,7 @@ extension GeneralTabScreen {
     var body: some View {
       NavigationView {
         VStack(spacing: 30) {
+          Spacer()
           VStack(spacing: 10) {
             Text("Sign Out")
               .font(.title2)
@@ -25,7 +26,7 @@ extension GeneralTabScreen {
               .foregroundStyle(.secondary)
           }
           if authManager.isLoading {
-            GradientProgressView(tint: .red)
+            GradientProgressView(tint: .pink)
           } else {
             Button {
               Task {
@@ -33,17 +34,16 @@ extension GeneralTabScreen {
               }
             } label: {
               Text("Confirm")
-                .padding(12)
-            }.prominentButtonStyle(tint: .red)
+                .prominentButtonStyle(tint: .red)
+            }
+            .padding([.horizontal, .bottom], 15)
           }
         }
-        .presentationDetents([.fraction(0.35)])
-        .presentationCornerRadius(50)
         .toolbar {
-          ToolbarItem(placement: .destructiveAction) {
+          ToolbarItem(placement: .topBarTrailing) {
             DismissXButton {
               dismiss()
-            }.padding(.top)
+            }
           }
         }
       }
@@ -53,5 +53,5 @@ extension GeneralTabScreen {
 
 #Preview {
   GeneralTabScreen.SignOutView()
-    .environment(AuthManager())
+    .environment(AuthManager.mockObject)
 }
