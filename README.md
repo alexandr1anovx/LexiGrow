@@ -1,13 +1,11 @@
 #  LexiGrow
 
-An iOS app designed to help people learn English.    
+An iOS app designed to help people learn English. **iOS 17+**.  
 
-**features**:
-- Learn vocabulary with translation exercises.  
-- Practice with flashcards to reinforce memory.  
-- Track the number of words you’ve learned.  
-
-**iOS 17+**.  
+✨ **features**:
+- learn vocabulary with translation exercises.  
+- practice with flashcards to reinforce memory.  
+- track the number of words you’ve learned.   
 
 ---
 
