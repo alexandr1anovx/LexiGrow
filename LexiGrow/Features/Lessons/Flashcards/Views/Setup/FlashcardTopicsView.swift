@@ -19,24 +19,21 @@ extension FlashcardSetupView {
             Label("Select a level above", systemImage: "arrow.up.circle.fill")
               .fontWeight(.medium)
               .foregroundStyle(.secondary)
-          } else if viewModel.topicsProgress.isEmpty {
+          } else if viewModel.topics.isEmpty {
             Label("No topics for a level above", systemImage: "minus.circle.fill")
               .fontWeight(.medium)
               .foregroundStyle(.secondary)
           } else {
-            ForEach(viewModel.topicsProgress, id: \.self) { progressItem in
+            ForEach(viewModel.sortedTopics, id: \.self) { topic in
               TopicButton(
-                progress: progressItem,
+                topic: topic,
                 selectedTopic: $viewModel.selectedTopic,
                 activeColor: .pink
               ) {
-                let topicToSelect = Topic(id: progressItem.id, name: progressItem.name)
+                let topicToSelect = Topic(id: topic.id, name: topic.name)
                 viewModel.selectedTopic = (viewModel.selectedTopic == topicToSelect) ? nil : topicToSelect
               }
-              
-              
             }
-            .scrollIndicators(.hidden)
           }
         }
         .onChange(of: viewModel.selectedLevel) {
