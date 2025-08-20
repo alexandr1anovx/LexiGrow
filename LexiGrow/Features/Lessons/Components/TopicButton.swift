@@ -19,9 +19,9 @@ struct TopicButton: View {
   
   var body: some View {
     Button(action: selectAction) {
-      HStack(spacing: 8) {
+      HStack(spacing: 10) {
         Text(topic.name)
-          .font(.callout)
+          .font(.subheadline)
           .fontWeight(.medium)
           .foregroundColor(.white)
         
@@ -54,4 +54,28 @@ struct TopicButton: View {
     .disabled(topic.learnedWords == topic.totalWords)
     .opacity(topic.learnedWords == topic.totalWords ? 0.7 : 1)
   }
+}
+
+#Preview {
+  @Previewable @State var selectedTopic: Topic?
+    
+    let topics: [Topic] = [Topic.mock, Topic.mock]
+    
+    return HStack {
+        ForEach(topics, id: \.self) { topic in
+            TopicButton(
+                topic: TopicProgress(
+                    id: topic.id,
+                    name: topic.name,
+                    totalWords: 20,
+                    learnedWords: 10
+                ),
+                selectedTopic: $selectedTopic,
+                activeColor: .pink,
+                selectAction: {
+                    selectedTopic = topic
+                }
+            )
+        }
+    }
 }

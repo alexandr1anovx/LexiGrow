@@ -15,7 +15,7 @@ struct LevelButton: View {
   var body: some View {
     Button(action: selectAction) {
       Text(name)
-        .font(.callout)
+        .font(.subheadline)
         .fontWeight(.medium)
         .foregroundColor(.white)
         .padding(15)
