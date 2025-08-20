@@ -13,6 +13,8 @@ struct FlashcardSetupView: View {
   let lesson: Lesson // selected lesson
   @Binding var activeLesson: Lesson? // passes the value of the '.fullScreenCover' modifier to the container view.
   
+  @State private var showMenu = false
+  
   var body: some View {
     NavigationView {
       VStack(spacing: 30) {
@@ -52,14 +54,50 @@ struct FlashcardSetupView: View {
         ToolbarItem(placement: .topBarTrailing) {
           DismissXButton {
             dismiss()
-          }
+          }.padding(.top)
+        }
+        ToolbarItem(placement: .topBarLeading) {
+          SortMenuView(viewModel: viewModel)
         }
       }
-      .onAppear { viewModel.getLevels() }
-      .onDisappear { viewModel.resetLessonSetupData() }
+      .onAppear {
+        viewModel.getLevels()
+      }
+      .onDisappear {
+        viewModel.resetLessonSetupData()
+      }
     }
   }
 }
+
+extension FlashcardSetupView {
+  struct SortMenuView: View {
+    @Bindable var viewModel: FlashcardViewModel
+    var body: some View {
+      Menu {
+        Picker("Sort by", selection: $viewModel.sortOption) {
+          ForEach(TopicSortOption.allCases) { option in
+            Label(option.rawValue, systemImage: option.iconName)
+              .tag(option)
+          }
+        }
+      } label: {
+        Image(systemName: "gearshape")
+          .imageScale(.large)
+          .foregroundStyle(.white)
+          .padding(3)
+          .background {
+            RoundedRectangle(cornerRadius: 12)
+              .fill(.black)
+              .shadow(radius: 3)
+          }
+      }
+      .padding(.top, 20)
+      .padding(.leading, 8)
+    }
+  }
+}
+
 
 #Preview {
   FlashcardSetupView(
