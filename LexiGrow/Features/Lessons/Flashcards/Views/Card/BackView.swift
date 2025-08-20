@@ -26,7 +26,8 @@ extension FlashcardView {
           Text(word.translation)
             .font(.largeTitle)
             .fontWeight(.semibold)
-            .padding(.horizontal)
+            .foregroundStyle(.pink)
+            .padding(.horizontal, 10)
             .multilineTextAlignment(.center)
           Spacer()
           Button {
@@ -36,7 +37,6 @@ extension FlashcardView {
             Label("Know", systemImage: "checkmark.circle.fill")
               .prominentButtonStyle(tint: .green)
           }
-          
           Button {
             viewModel.handleUnknown()
             isFlipped = false

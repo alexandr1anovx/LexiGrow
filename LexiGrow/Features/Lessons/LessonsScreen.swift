@@ -156,7 +156,7 @@ struct StatisticsView: View {
           .font(.headline)
         ProgressView(value: data.progress)
           .tint(.green)
-        Text("Learned: \(data.learnedWords) of \(data.totalWords)")
+        Text("Learned: **\(data.learnedWords)** of \(data.totalWords)")
           .font(.caption)
           .foregroundStyle(.secondary)
       }
@@ -164,7 +164,6 @@ struct StatisticsView: View {
     .listStyle(.insetGrouped)
     .listRowSpacing(8)
     .scrollContentBackground(.hidden)
-    //.refreshable { await viewModel.getLevelProgress() }
     .task { await viewModel.getLevelProgress() }
   }
 }
@@ -173,7 +172,7 @@ struct StatisticsView: View {
 
 struct LessonSetupSheet: View {
   @Environment(TranslationViewModel.self) var translationViewModel
-  @Environment(SupabaseService.self) var supabaseService
+  @Environment(FlashcardViewModel.self) var flashcardViewModel
   @Environment(\.dismiss) var dismiss
   let lesson: Lesson
   @Binding var activeLesson: Lesson?
@@ -186,13 +185,10 @@ struct LessonSetupSheet: View {
       case .translation:
         TranslationSetupView(viewModel: translationViewModel, lesson: lesson, activeLesson: $activeLesson)
       case .unknown:
-        VStack {
-          Label("Coming Soon", systemImage: "sparkles")
-          Button("Dismiss") { dismiss() }
-        }
+        EmptyView()
       }
     }
-    .presentationDetents([.fraction(0.48)])
+    .presentationDetents([.fraction(0.5)])
     .presentationCornerRadius(50)
   }
 }

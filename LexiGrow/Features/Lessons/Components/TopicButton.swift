@@ -14,8 +14,7 @@ struct TopicButton: View {
   let selectAction: () -> Void
   
   private var isCompleted: Bool {
-    progress.totalWords > 0
-    && progress.learnedWords == progress.totalWords
+    progress.totalWords > 0 && progress.learnedWords == progress.totalWords
   }
   
   var body: some View {
@@ -52,5 +51,7 @@ struct TopicButton: View {
           )
       }
     }
+    .disabled(progress.learnedWords == progress.totalWords)
+    .opacity(progress.learnedWords == progress.totalWords ? 0.7 : 1)
   }
 }
