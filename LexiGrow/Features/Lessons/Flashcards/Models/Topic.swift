@@ -19,6 +19,12 @@ struct TopicProgress: Codable, Identifiable, Hashable {
   let totalWords: Int
   let learnedWords: Int
   
+  /// Used to sort topics.
+  var progress: Double {
+    guard totalWords > 0 else { return 0.0 }
+    return Double(learnedWords) / Double(totalWords)
+  }
+  
   enum CodingKeys: String, CodingKey {
     case id = "topic_id"
     case name = "topic_name"
