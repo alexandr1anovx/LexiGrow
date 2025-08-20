@@ -5,7 +5,25 @@
 //  Created by Alexander Andrianov on 14.07.2025.
 //
 
-import Foundation
+import SwiftUI
+
+enum TopicSortOption: String, CaseIterable, Identifiable {
+  case defaultOrder = "Default"
+  case uncompletedFirst = "Uncompleted first"
+  case completedFirst = "Completed first"
+  case alphabeticalAZ = "Alphabetical (A-Z)"
+  
+  var id: Self { self }
+  
+  var iconName: String {
+    switch self {
+    case .defaultOrder: return "list.bullet"
+    case .uncompletedFirst: return "xmark.circle.fill"
+    case .completedFirst: return "checkmark.circle.fill"
+    case .alphabeticalAZ: return "textformat.abc"
+    }
+  }
+}
 
 @Observable
 @MainActor
@@ -14,6 +32,7 @@ final class FlashcardViewModel {
   // MARK: - Public properties
   
   var lessonState: LessonState = .inProgress
+  var sortOption: TopicSortOption = .defaultOrder
   var selectedLevel: Level?
   var selectedTopic: Topic?
   
@@ -24,7 +43,7 @@ final class FlashcardViewModel {
   private(set) var knownWords: [Word] = []
   private(set) var unknownWords: [Word] = []
   private(set) var levels: [Level] = []
-  private(set) var topicsProgress: [TopicProgress] = []
+  private(set) var topics: [TopicProgress] = []
   private(set) var errorMessage: String?
   
   // MARK: - Private properties
@@ -32,6 +51,20 @@ final class FlashcardViewModel {
   private let supabaseService: SupabaseService
   
   // MARK: - Computed Properties
+  
+  /// Computed property that returns sorted list of topics.
+  var sortedTopics: [TopicProgress] {
+    switch sortOption {
+    case .defaultOrder:
+      return topics
+    case .uncompletedFirst:
+      return topics.sorted { $0.progress < $1.progress }
+    case .completedFirst:
+      return topics.sorted { $0.progress > $1.progress }
+    case .alphabeticalAZ:
+      return topics.sorted { $0.name < $1.name }
+    }
+  }
   
   /// The current word displayed on the card. Returns `nil` if the lesson has not started or there are no more words.
   var currentWord: Word? {
@@ -90,7 +123,7 @@ final class FlashcardViewModel {
     knownWords = []
     unknownWords = []
     lessonState = .inProgress
-    getWords()
+    getUnlearnedWords()
   }
   
   /// Handles the user's action when they mark a word as "known".
@@ -145,7 +178,7 @@ final class FlashcardViewModel {
           levelId: level.id,
           userId: user.id
         )
-        topicsProgress = progress
+        topics = progress
       } catch {
         errorMessage = "Failed to get topics progress: \(error)"
       }
@@ -168,6 +201,24 @@ final class FlashcardViewModel {
         self.words = fetchedWords
       } catch {
         errorMessage = "Failed to load words: \(error.localizedDescription)"
+      }
+    }
+  }
+
+  func getUnlearnedWords() {
+    guard let level = selectedLevel, let topic = selectedTopic else { return }
+    
+    Task {
+      do {
+        let user = try await supabase.auth.user()
+        let fetchedWords = try await supabaseService.getUnlearnedWords(
+          levelId: level.id,
+          topicId: topic.id,
+          userId: user.id
+        )
+        self.words = fetchedWords.shuffled()
+      } catch {
+        errorMessage = "Failed to load words: \(error)"
       }
     }
   }
