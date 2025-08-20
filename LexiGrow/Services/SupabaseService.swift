@@ -48,6 +48,21 @@ let supabase = SupabaseClient(
     let topics = response
     return topics
   }
+
+  /// Loads only unlearned words for specific lesson and user.
+  func getUnlearnedWords(levelId: UUID, topicId: UUID, userId: UUID) async throws -> [Word] {
+    let params: [String: UUID] = [
+      "p_user_id": userId,
+      "p_level_id": levelId,
+      "p_topic_id": topicId
+    ]
+    let words: [Word] = try await supabase
+      .rpc("get_unlearned_words_for_lesson", params: params)
+      .execute()
+      .value
+    
+    return words
+  }
   
   /// Loads all words for a selected level and topic.
   func getWords(
