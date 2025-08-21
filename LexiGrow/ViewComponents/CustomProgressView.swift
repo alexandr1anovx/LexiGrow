@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-struct GradientProgressView: View {
+struct CustomProgressView: View {
   @State private var isAnimating = false
-  var tint: Color? // blue by default
+  var tint: Color?
   
   var body: some View {
     ZStack {
@@ -28,10 +28,9 @@ struct GradientProgressView: View {
         }
     }
     .frame(width: 20, height: 20)
-    .shadow(radius: 3)
   }
 }
 
 #Preview {
-  GradientProgressView()
+  CustomProgressView()
 }
