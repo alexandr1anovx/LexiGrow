@@ -55,7 +55,7 @@ struct ProfileScreen: View {
       if authManager.isLoading {
         HStack(spacing: 20) {
           Text("Saving")
-          GradientProgressView(tint: .green)
+          CustomProgressView(tint: .green)
         }
         .padding(20)
       } else {

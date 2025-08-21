@@ -130,7 +130,7 @@ extension LessonsScreen {
     var body: some View {
       Group {
         if viewModel.isLoading {
-          GradientProgressView(tint: .pink)
+          CustomProgressView(tint: .pink)
         } else {
           ScrollView {
             LazyVGrid(columns: columns, spacing: 25) {

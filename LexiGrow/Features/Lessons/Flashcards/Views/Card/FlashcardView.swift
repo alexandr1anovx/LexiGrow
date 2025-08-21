@@ -60,7 +60,7 @@ struct FlashcardView: View {
         }
       } else {
         Text("The data is loading...")
-        GradientProgressView()
+        CustomProgressView()
       }
     }
   }

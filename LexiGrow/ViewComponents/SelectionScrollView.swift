@@ -12,16 +12,16 @@ struct SelectionScrollView<Content: View>: View {
   @ViewBuilder let content: Content
   
   var body: some View {
-    HStack(spacing: 10) {
+    HStack(spacing: 15) {
       Text(label)
         .fontWeight(.medium)
       ScrollView(.horizontal) {
         HStack {
           content
-        }.padding(1)
+        }.padding(2)
       }
       .scrollIndicators(.hidden)
       .shadow(radius: 2)
-    }.font(.callout)
+    }
   }
 }

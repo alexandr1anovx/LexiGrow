@@ -89,7 +89,6 @@ final class TranslationViewModel {
     Task {
       do {
         self.levels = try await service.getLevels()
-        print("✅ GET LEVELS method executed!")
       } catch {
         print("⚠️ Failed to get levels: \(error)")
         //errorMessage = "Failed to get levels: \(error)"

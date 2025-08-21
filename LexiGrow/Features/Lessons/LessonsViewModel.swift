@@ -14,9 +14,9 @@ final class LessonsViewModel {
   private(set) var lessons: [Lesson] = []
   private(set) var isLoading = false
   private(set) var errorMessage: String?
-  private let supabaseService: SupabaseService
+  private let supabaseService: SupabaseServiceProtocol
   
-  init(supabaseService: SupabaseService) {
+  init(supabaseService: SupabaseServiceProtocol) {
     self.supabaseService = supabaseService
   }
   
@@ -35,7 +35,7 @@ final class LessonsViewModel {
 
 extension LessonsViewModel {
   static var mockObject: LessonsViewModel {
-    let viewModel = LessonsViewModel(supabaseService: .mockObject)
+    let viewModel = LessonsViewModel(supabaseService: MockSupabaseService())
     return viewModel
   }
 }

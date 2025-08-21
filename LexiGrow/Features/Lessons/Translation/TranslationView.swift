@@ -47,11 +47,6 @@ struct TranslationView: View {
     }
     .padding()
     .navigationTitle("Переклад речень")
-//    .onAppear {
-//      Task {
-//        await viewModel.startLesson()
-//      }
-//    }
   }
   
   var borderColor: Color {

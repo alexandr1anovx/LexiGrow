@@ -58,24 +58,23 @@ struct TopicButton: View {
 
 #Preview {
   @Previewable @State var selectedTopic: Topic?
-    
-  let topics: [Topic] = [Topic.mockAppearance]
-    
-    return HStack {
-        ForEach(topics, id: \.self) { topic in
-            TopicButton(
-                topic: TopicProgress(
-                    id: topic.id,
-                    name: topic.name,
-                    totalWords: 20,
-                    learnedWords: 10
-                ),
-                selectedTopic: $selectedTopic,
-                activeColor: .pink,
-                selectAction: {
-                    selectedTopic = topic
-                }
-            )
+  let topics: [Topic] = [.mockAppearance]
+  
+  HStack {
+    ForEach(topics, id: \.self) { topic in
+      TopicButton(
+        topic: TopicProgress(
+          id: topic.id,
+          name: topic.name,
+          totalWords: 20,
+          learnedWords: 15
+        ),
+        selectedTopic: $selectedTopic,
+        activeColor: .pink,
+        selectAction: {
+          selectedTopic = topic
         }
+      )
     }
+  }
 }
