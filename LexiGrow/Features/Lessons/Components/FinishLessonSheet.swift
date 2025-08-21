@@ -27,13 +27,13 @@ struct FinishLessonSheet: View {
         }
         Button(action: finishAction) {
           Text("Yes, finish")
-            .prominentButtonStyle(tint: .red)
+            .prominentButtonStyle(tint: .pink)
         }
-        .padding([.horizontal, .bottom], 15)
+        .padding([.horizontal, .bottom], 20)
       }
       .toolbar {
         ToolbarItem(placement: .topBarTrailing) {
-          DismissXButton(color: .secondary) {
+          DismissXButton {
             dismiss() // dismiss the sheet
           }.padding(.top)
         }

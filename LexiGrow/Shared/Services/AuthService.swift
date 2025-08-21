@@ -91,7 +91,8 @@ struct AuthService: AuthServiceProtocol {
     return AppUser(
       id: supabaseUser.id,
       username: username,
-      email: email
+      email: email,
+      emailConfirmed: supabaseUser.emailConfirmedAt != nil
     )
   }
 }
@@ -99,24 +100,24 @@ struct AuthService: AuthServiceProtocol {
 // MARK: - Auth Error
 
 enum AuthError: Error, LocalizedError {
-    case userNotFound
-    case invalidEmail
-    case invalidCredentials(description: String)
-    case serverError(description: String)
-    case unknown
-    
-    var errorDescription: String? {
-        switch self {
-        case .userNotFound:
-            return "User not found."
-        case .invalidEmail:
-            return "Invalid email format."
-        case .invalidCredentials(let description):
-            return "Invalid credentials: \(description)"
-        case .serverError(let description):
-            return "Server error: \(description)"
-        case .unknown:
-            return "An unknown error occured."
-        }
+  case userNotFound
+  case invalidEmail
+  case invalidCredentials(description: String)
+  case serverError(description: String)
+  case unknown
+  
+  var errorDescription: String? {
+    switch self {
+    case .userNotFound:
+      return "User not found."
+    case .invalidEmail:
+      return "Invalid email format."
+    case .invalidCredentials(let description):
+      return "Invalid credentials: \(description)"
+    case .serverError(let description):
+      return "Server error: \(description)"
+    case .unknown:
+      return "An unknown error occured."
     }
+  }
 }

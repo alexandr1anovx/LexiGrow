@@ -7,10 +7,18 @@
 
 import Foundation
 
+enum AuthState {
+  case unauthenticated
+  case waitingForEmailConfirmation
+  case authenticated
+}
+
 @Observable final class AuthManager {
   var currentUser: AppUser?
+  private(set) var authState: AuthState = .unauthenticated
   private(set) var error: AuthError?
   private(set) var isLoading = false
+  
   private let authService: AuthService
   
   init(authService: AuthService = AuthService()) {
@@ -32,12 +40,22 @@ import Foundation
     defer { isLoading = false }
     
     do {
+      /*
       self.currentUser = try await authService.signIn(
         email: email,
         password: password
       )
+      */
+      let user = try await authService.signIn(
+        email: email,
+        password: password
+      )
+      self.authState = user.emailConfirmed ? .authenticated : .waitingForEmailConfirmation
+      self.currentUser = user
+      
     } catch {
       self.error = error as? AuthError ?? .unknown
+      self.authState = .unauthenticated
     }
   }
   
@@ -46,11 +64,18 @@ import Foundation
     defer { isLoading = false }
     
     do {
-      self.currentUser = try await authService.signUp(
+      let user = try await authService.signUp(
         username: username,
         email: email,
         password: password
       )
+      if user.emailConfirmed == false {
+        self.authState = .waitingForEmailConfirmation
+        self.currentUser = user
+      } else {
+        self.authState = .authenticated
+        self.currentUser = user
+      }
     } catch {
       self.error = error as? AuthError ?? .unknown
     }
@@ -58,9 +83,9 @@ import Foundation
   
   func signOut() async {
     isLoading = true
-    
     do {
       try await authService.signOut()
+      authState = .unauthenticated
       isLoading = false
       currentUser = nil
     } catch {
@@ -82,20 +107,29 @@ import Foundation
     }
   }
   
+//  func refreshUser() async {
+//    isLoading = true
+//    defer { isLoading = false }
+//    do {
+//      self.currentUser = try await authService.getCurrentUser()
+//    } catch {
+//      currentUser = nil
+//      self.error = error as? AuthError ?? .userNotFound
+//    }
+//  }
+  
   func refreshUser() async {
     isLoading = true
     defer { isLoading = false }
     do {
-      self.currentUser = try await authService.getCurrentUser()
+      let user = try await authService.getCurrentUser()
+      self.currentUser = user
+      self.authState = user.emailConfirmed ? .authenticated : .waitingForEmailConfirmation
     } catch {
       currentUser = nil
       self.error = error as? AuthError ?? .userNotFound
+      self.authState = .unauthenticated
     }
-  }
-  
-  // Method for resetting errors from the UI.
-  func clearError() {
-    self.error = nil
   }
   
   private func resetState() {

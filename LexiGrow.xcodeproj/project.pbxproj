@@ -18,7 +18,7 @@
 		D1FA1E652E4B651600477A27 /* Exceptions for "LexiGrow" folder in "LexiGrow" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				Resources/Info.plist,
 			);
 			target = D16774982E04B62500967AC8 /* LexiGrow */;
 		};
@@ -287,7 +287,7 @@
 				DEVELOPMENT_TEAM = 5C7T379SKG;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = LexiGrow/Info.plist;
+				INFOPLIST_FILE = LexiGrow/Resources/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -323,7 +323,7 @@
 				DEVELOPMENT_TEAM = 5C7T379SKG;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = LexiGrow/Info.plist;
+				INFOPLIST_FILE = LexiGrow/Resources/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

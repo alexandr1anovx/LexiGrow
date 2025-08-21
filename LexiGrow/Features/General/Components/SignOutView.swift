@@ -25,19 +25,19 @@ extension GeneralTabScreen {
               .font(.callout)
               .foregroundStyle(.secondary)
           }
-          if authManager.isLoading {
-            GradientProgressView(tint: .pink)
-          } else {
-            Button {
-              Task {
-                await authManager.signOut()
+          Button {
+            Task { await authManager.signOut() }
+          } label: {
+            Group {
+              if authManager.isLoading {
+                CustomProgressView(tint: .white)
+              } else {
+                Text("Yes, sign out")
               }
-            } label: {
-              Text("Confirm")
-                .prominentButtonStyle(tint: .red)
             }
-            .padding([.horizontal, .bottom], 15)
+            .prominentButtonStyle(tint: .pink)
           }
+          .padding([.horizontal, .bottom], 20)
         }
         .toolbar {
           ToolbarItem(placement: .topBarTrailing) {

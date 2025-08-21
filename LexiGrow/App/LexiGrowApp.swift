@@ -28,10 +28,20 @@ struct LexiGrowApp: App {
   var body: some Scene {
     WindowGroup {
       Group {
-        if authManager.currentUser != nil {
-          AppTabView()
-        } else {
+        /*
+         if authManager.currentUser != nil {
+         AppTabView()
+         } else {
+         LoginScreen()
+         }
+         */
+        switch authManager.authState {
+        case .unauthenticated:
           LoginScreen()
+        case .waitingForEmailConfirmation:
+          EmailConfirmationScreen()
+        case .authenticated:
+          MainTabView()
         }
       }
       .preferredColorScheme(userTheme.colorScheme)
@@ -49,4 +59,64 @@ struct LexiGrowApp: App {
       }
     }
   }
+}
+
+struct EmailConfirmationScreen: View {
+  @Environment(AuthManager.self) var authManager
+  @State private var showAlert = false
+  @State private var alertTitle = ""
+  @State private var alertMessage = ""
+  
+  var body: some View {
+    VStack(spacing: 20) {
+      VStack(spacing: 20) {
+        
+        Image(systemName: "envelope.badge")
+          .font(.system(size: 40))
+          .foregroundStyle(.primary)
+        
+        Text("Confirm your email")
+          .font(.title)
+          .fontWeight(.semibold)
+        
+        Text("We have sent a confirmation email to your address. Please check your inbox.")
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
+          .multilineTextAlignment(.center)
+          .padding(.horizontal)
+      }
+      .padding(.bottom, 25)
+      
+      Button {
+        alertTitle = "Letter sent"
+        alertMessage = "We have resent the confirmation letter to your email address."
+        showAlert = true
+      } label: {
+        Text("Resend")
+          .prominentButtonStyle(tint: .pink)
+      }
+      
+      Button {
+        Task { await authManager.refreshUser() }
+      } label: {
+        Label("Refresh", systemImage: "arrow.clockwise.circle")
+          .foregroundStyle(.accent)
+          .prominentButtonStyle(tint: Color(.systemGray5))
+      }
+      
+      Spacer()
+    }
+    .padding()
+    .alert(isPresented: $showAlert) {
+      Alert(
+        title: Text(alertTitle),
+        message: Text(alertMessage),
+        dismissButton: .default(Text("OK"))
+      )
+    }
+  }
+}
+
+#Preview {
+  EmailConfirmationScreen()
 }

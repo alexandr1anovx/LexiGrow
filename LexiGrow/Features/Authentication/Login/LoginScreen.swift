@@ -28,11 +28,7 @@ struct LoginScreen: View {
             )
           )
         InputFields(email: $email, password: $password)
-        if authManager.isLoading {
-          GradientProgressView(tint: .pink)
-        } else {
-          SignInButton(email: $email, password: $password)
-        }
+        SignInButton(email: $email, password: $password)
         HStack {
           ForgotPasswordOption()
           Spacer()
@@ -92,11 +88,17 @@ extension LoginScreen {
           password = ""
         }
       } label: {
-        Text("Sign In")
-          .prominentButtonStyle(tint: .pink)
+        Group {
+          if authManager.isLoading {
+            CustomProgressView(tint: .white)
+          } else {
+            Text("Sign In")
+          }
+        }
+        .prominentButtonStyle(tint: .pink)
       }
       .padding(.horizontal, 15)
-      .opacity(!isValidForm ? 0.5:1)
+      .opacity(!isValidForm ? 0.5 : 1)
       .disabled(!isValidForm)
     }
   }

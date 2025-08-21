@@ -28,7 +28,6 @@ struct RegistrationScreen: View {
               endPoint: .trailing
             )
           )
-          .padding(.top)
         
         InputFields(
           username: $username,
@@ -38,17 +37,12 @@ struct RegistrationScreen: View {
         )
         .padding(.horizontal, 15)
         
-        if authManager.isLoading {
-          GradientProgressView()
-        } else {
-          SignUpButton(
-            username: $username,
-            email: $email,
-            password: $password,
-            confirmPassword: $confirmPassword
-          )
-          .padding(.horizontal, 15)
-        }
+        SignUpButton(
+          username: $username,
+          email: $email,
+          password: $password,
+          confirmPassword: $confirmPassword
+        )
         SignInOption()
       }
       .padding(.top)
@@ -137,11 +131,18 @@ extension RegistrationScreen {
           confirmPassword = ""
         }
       } label: {
-        Text("Sign Up")
-          .prominentButtonStyle(tint: .pink)
+        Group {
+          if authManager.isLoading {
+            CustomProgressView(tint: .white)
+          } else {
+            Text("Sign Up")
+          }
+        }
+        .prominentButtonStyle(tint: .pink)
       }
       .disabled(!isValidForm)
       .opacity(!isValidForm ? 0.5 : 1)
+      .padding(.horizontal, 15)
     }
   }
   

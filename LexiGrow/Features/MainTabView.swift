@@ -11,7 +11,7 @@ enum Tab {
   case lessons, general
 }
 
-struct AppTabView: View {
+struct MainTabView: View {
   @State private var selectedTab: Tab = .lessons
   private let feedbackGenerator = UIImpactFeedbackGenerator(style: .soft)
   
@@ -38,7 +38,7 @@ struct AppTabView: View {
 }
 
 #Preview {
-  AppTabView()
+  MainTabView()
     .environment(AuthManager.mockObject)
     .environment(FlashcardViewModel.mockObject)
     .environment(StatisticsViewModel.mockObject)
