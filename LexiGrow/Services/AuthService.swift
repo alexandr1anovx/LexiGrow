@@ -8,13 +8,16 @@
 import Foundation
 import Supabase
 
-struct AuthService {
-  
-  // MARK: - Public methods
-  
-  func requestPasswordReset(for email: String) async throws {
-    try await supabase.auth.resetPasswordForEmail(email)
-  }
+protocol AuthServiceProtocol {
+  func signIn(email: String, password: String) async throws -> AppUser
+  func signUp(username: String, email: String, password: String) async throws -> AppUser
+  func signOut() async throws
+  func updateUser(username: String) async throws -> AppUser
+  func getCurrentUser() async throws -> AppUser
+  func requestPasswordReset(for email: String) async throws
+}
+
+struct AuthService: AuthServiceProtocol {
   
   func signIn(email: String, password: String) async throws -> AppUser {
     do {
@@ -65,12 +68,15 @@ struct AuthService {
     }
   }
   
+  func requestPasswordReset(for email: String) async throws {
+    try await supabase.auth.resetPasswordForEmail(email)
+  }
+  
   // MARK: - Private methods
   
   private func mapSupabaseUserToAppUser(
     _ supabaseUser: Supabase.User
   ) throws -> AppUser {
-    
     guard let email = supabaseUser.email else {
       throw AuthError.invalidEmail
     }

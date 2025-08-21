@@ -13,9 +13,20 @@ let supabase = SupabaseClient(
   supabaseKey: Constants.supabaseAPIKey
 )
 
-@Observable final class SupabaseService {
+protocol SupabaseServiceProtocol {
+  func getLessons() async throws -> [Lesson]
+  func getLevels() async throws -> [Level]
+  func getTopics(for levelId: UUID) async throws -> [Topic]
+  func getTopicProgress(levelId: UUID, userId: UUID) async throws -> [TopicProgress]
+  func getUnlearnedWords(levelId: UUID, topicId: UUID, userId: UUID) async throws -> [Word]
+  func getSentences(for levelId: UUID) async throws -> [Sentence]
+  // func getWords(levelId: UUID, topicId: UUID) async throws -> [Word]
+  func markWordAsLearned(wordId: UUID) async throws
+  func saveLessonProgress(learnedWords: [Word]) async throws
   
-  // MARK: - GET methods
+}
+
+@Observable final class SupabaseService: SupabaseServiceProtocol {
   
   func getLessons() async throws -> [Lesson] {
     let lessons: [Lesson] = try await supabase
@@ -48,7 +59,7 @@ let supabase = SupabaseClient(
     let topics = response
     return topics
   }
-
+  
   /// Loads only unlearned words for specific lesson and user.
   func getUnlearnedWords(levelId: UUID, topicId: UUID, userId: UUID) async throws -> [Word] {
     let params: [String: UUID] = [
@@ -60,10 +71,10 @@ let supabase = SupabaseClient(
       .rpc("get_unlearned_words_for_lesson", params: params)
       .execute()
       .value
-    
     return words
   }
   
+  /*
   /// Loads all words for a selected level and topic.
   func getWords(
     levelId: UUID,
@@ -79,13 +90,11 @@ let supabase = SupabaseClient(
       .value
     return words
   }
+  */
   
   /// Loads progress for all topics for a specific level and user.
   /// Calls the RPC-function 'get_level_progress' on the server.
-  func getTopicProgress(
-    levelId: UUID,
-    userId: UUID
-  ) async throws -> [TopicProgress] {
+  func getTopicProgress(levelId: UUID, userId: UUID) async throws -> [TopicProgress] {
     let params: [String: UUID] = [
       "p_level_id": levelId,
       "p_user_id": userId
@@ -106,9 +115,7 @@ let supabase = SupabaseClient(
     )
     try await supabase
       .from("user_progress")
-    // Using .upsert() for insertion.
-    // It prevents an error, if the user learns the same word twice.
-    // If the record already exist, nothing will happen.
+    // Using .upsert() for insertion prevents an error, if the user learns the same word twice. If the record already exist, nothing will happen.
       .upsert(progress)
       .execute()
   }
