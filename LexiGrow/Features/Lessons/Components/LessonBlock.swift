@@ -61,5 +61,5 @@ struct LessonBlock: View {
 }
 
 #Preview {
-  LessonBlock(lesson: Lesson.mock)
+  LessonBlock(lesson: Lesson.flashcards)
 }

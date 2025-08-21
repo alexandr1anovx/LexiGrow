@@ -45,5 +45,5 @@ extension FlashcardSetupView {
 }
 
 #Preview {
-  FlashcardSetupView.TopicsView(viewModel: FlashcardViewModel(supabaseService: SupabaseService.mockObject))
+  FlashcardSetupView.TopicsView(viewModel: FlashcardViewModel(supabaseService: MockSupabaseService()))
 }

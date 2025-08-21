@@ -101,8 +101,8 @@ extension FlashcardSetupView {
 
 #Preview {
   FlashcardSetupView(
-    lesson: Lesson.mock,
-    activeLesson: .constant(.mock)
+    lesson: Lesson.flashcards,
+    activeLesson: .constant(.flashcards)
   )
   .environment(FlashcardViewModel.mockObject)
 }

@@ -59,7 +59,7 @@ struct TopicButton: View {
 #Preview {
   @Previewable @State var selectedTopic: Topic?
     
-    let topics: [Topic] = [Topic.mock, Topic.mock]
+  let topics: [Topic] = [Topic.mockAppearance]
     
     return HStack {
         ForEach(topics, id: \.self) { topic in

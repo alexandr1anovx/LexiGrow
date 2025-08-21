@@ -59,7 +59,7 @@ extension FlashcardView {
 
 #Preview {
   FlashcardView.FrontView(
-    word: Word.mock,
+    word: Word.mock1,
     isFlipped: .constant(false),
     isTurnedAutomaticAudio: .constant(false)
   )

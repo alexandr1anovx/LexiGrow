@@ -35,7 +35,7 @@ struct LevelButton: View {
 #Preview {
   LevelButton(
     name: "A2",
-    selectedLevel: .constant(Level.mock),
+    selectedLevel: .constant(Level.mockB1),
     selectAction: {}
   )
 }

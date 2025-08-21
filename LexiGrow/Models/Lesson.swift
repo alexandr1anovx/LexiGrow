@@ -32,11 +32,18 @@ struct Lesson: Identifiable, Codable, Hashable {
 }
 
 extension Lesson {
-  static let mock = Lesson(
+  static let flashcards = Lesson(
     id: UUID(),
     name: "Flashcards",
-    description: "Learn words with spaced repetition.",
+    description: "Flashcards description",
     iconName: "rectangle.stack.fill",
+    isLocked: false
+  )
+  static let reading = Lesson(
+    id: UUID(),
+    name: "Reading",
+    description: "Reading description",
+    iconName: "book.closed",
     isLocked: true
   )
 }

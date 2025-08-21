@@ -58,7 +58,7 @@ struct TranslationSetupView: View {
 #Preview {
   TranslationSetupView(
     viewModel: TranslationViewModel.mockObject,
-    lesson: Lesson.mock,
-    activeLesson: .constant(Lesson.mock)
+    lesson: Lesson.flashcards,
+    activeLesson: .constant(Lesson.flashcards)
   )
 }

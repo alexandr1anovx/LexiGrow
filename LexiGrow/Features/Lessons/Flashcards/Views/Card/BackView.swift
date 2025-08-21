@@ -54,7 +54,7 @@ extension FlashcardView {
 
 #Preview {
   FlashcardView.BackView(
-    word: Word.mock,
+    word: Word.mock1,
     isFlipped: .constant(true)
   )
   .environment(FlashcardViewModel.mockObject)

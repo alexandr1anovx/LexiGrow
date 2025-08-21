@@ -32,5 +32,6 @@ struct LevelProgress: Identifiable {
 }
 
 extension Level {
-  static let mock = Level(id: UUID(), name: "B1.1", orderIndex: 1)
+  static let mockB1 = Level(id: UUID(), name: "B1", orderIndex: 1)
+  static let mockB2 = Level(id: UUID(), name: "B2", orderIndex: 2)
 }

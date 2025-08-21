@@ -48,7 +48,7 @@ final class FlashcardViewModel {
   
   // MARK: - Private properties
   
-  private let supabaseService: SupabaseService
+  private let supabaseService: SupabaseServiceProtocol
   
   // MARK: - Computed Properties
   
@@ -109,7 +109,7 @@ final class FlashcardViewModel {
   
   // MARK: - Init
   
-  init(supabaseService: SupabaseService) {
+  init(supabaseService: SupabaseServiceProtocol) {
     self.supabaseService = supabaseService
   }
   
@@ -185,6 +185,7 @@ final class FlashcardViewModel {
     }
   }
   
+  /*
   /// Loads the list of words for the selected level and topic.
   ///
   /// Requires that the `selectedLevel` and `selectedTopic` properties be set. If successful, fills the `words` array, preparing to start the lesson. If an error occurs, updates `errorMessage`.
@@ -204,6 +205,7 @@ final class FlashcardViewModel {
       }
     }
   }
+  */
 
   func getUnlearnedWords() {
     guard let level = selectedLevel, let topic = selectedTopic else { return }
@@ -259,9 +261,9 @@ extension FlashcardViewModel {
 extension FlashcardViewModel {
   static var mockObject: FlashcardViewModel {
     let viewModel = FlashcardViewModel(supabaseService: SupabaseService.mockObject)
-    viewModel.selectedLevel = Level.mock
-    viewModel.selectedTopic = Topic.mock
-    viewModel.words = [Word.mock]
+    viewModel.selectedLevel = Level.mockB1
+    viewModel.selectedTopic = Topic.mockAppearance
+    viewModel.words = [Word.mock1]
     return viewModel
   }
 }
