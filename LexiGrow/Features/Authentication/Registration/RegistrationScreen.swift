@@ -155,7 +155,7 @@ extension RegistrationScreen {
         Button {
           dismiss()
         } label: {
-          Text("Sign In.")
+          Text("Sign In")
             .underline()
         }.tint(.primary)
       }

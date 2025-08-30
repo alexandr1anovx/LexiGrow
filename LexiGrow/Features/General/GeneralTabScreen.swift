@@ -36,7 +36,7 @@ struct GeneralTabScreen: View {
           }.tint(.red)
         }
       }
-      .navigationTitle("General")
+      .navigationTitle("More")
       .navigationBarTitleDisplayMode(.large)
       .sheet(isPresented: $showSignOutSheet) {
         SignOutView()

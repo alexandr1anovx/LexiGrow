@@ -18,9 +18,6 @@ extension GeneralTabScreen {
             .fontWeight(.semibold)
           Text(user.email)
             .foregroundStyle(.secondary)
-          Text("\(user.id)")
-            .foregroundStyle(.secondary)
-            .font(.caption)
         } else {
           ProgressView()
         }
