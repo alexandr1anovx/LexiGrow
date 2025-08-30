@@ -2,24 +2,31 @@
 
 An iOS app designed to help people learn English.  
 
-**features**:
-- learn vocabulary with translation exercises.  
+**features**:  
 - practice with flashcards to reinforce memory.  
 - track the number of words you’ve learned.
 
-**iOS 17+**  
+**iOS 18+**  
 
 ---
 
 ## screenshots:
-[view on Google Drive](https://apple.com)
+<p align="center">
+   <img src="./Screenshots/LogIn.png" width="250" />
+   <img src="./Screenshots/Registration.png" width="250" />
+   <img src="./Screenshots/ResetPassword.png" width="250" />
+   <img src="./Screenshots/LessonSetup.png" width="250" />
+   <img src="./Screenshots/Card_Original.png" width="250" />
+   <img src="./Screenshots/Card_Translation.png" width="250" />
+   <img src="./Screenshots/LessonSummary.png" width="250" />
+   <img src="./Screenshots/Statistics.png" width="250" />
+   <img src="./Screenshots/MoreScreen.png" width="250" />
+</p>
 
 ---
 
 ## tech stack:  
-- SwiftUI  
-- Supabase  
-- Async/Await  
+- SwiftUI, MVVM, Supabase, AVFoundation, async/await.
 
 ---
 
