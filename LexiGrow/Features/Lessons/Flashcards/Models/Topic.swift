@@ -7,19 +7,14 @@
 
 import Foundation
 
+/// A model that matches the result of RPC function 'get_topic_progress'
 struct Topic: Codable, Identifiable, Hashable {
-  let id: UUID
-  let name: String
-}
-
-/// A model that matches the result of RPC function 'get_level_progress'
-struct TopicProgress: Codable, Identifiable, Hashable {
   let id: UUID
   let name: String
   let totalWords: Int
   let learnedWords: Int
   
-  /// Used to sort topics
+  /// Topic progress. Used for sorting options.
   var progress: Double {
     guard totalWords > 0 else { return 0.0 }
     return Double(learnedWords) / Double(totalWords)
@@ -33,12 +28,20 @@ struct TopicProgress: Codable, Identifiable, Hashable {
   }
 }
 
-extension Topic {
-  static let mockAppearance = Topic(id: UUID(), name: "Appearance")
-}
-
-extension TopicProgress {
-  static let mock1 = TopicProgress(id: UUID(), name: "Daily Life", totalWords: 20, learnedWords: 0)
-  static let mock2 = TopicProgress(id: UUID(), name: "Eating", totalWords: 20, learnedWords: 10)
-  static let mock3 = TopicProgress(id: UUID(), name: "Appearance", totalWords: 20, learnedWords: 20)
+enum TopicSortOption: String, CaseIterable, Identifiable {
+  case defaultOrder = "Default"
+  case uncompletedFirst = "Uncompleted first"
+  case completedFirst = "Completed first"
+  case alphabeticalAZ = "Alphabetical (A-Z)"
+  
+  var id: Self { self }
+  
+  var iconName: String {
+    switch self {
+    case .defaultOrder: return "list.bullet"
+    case .uncompletedFirst: return "xmark.circle.fill"
+    case .completedFirst: return "checkmark.circle.fill"
+    case .alphabeticalAZ: return "textformat.abc"
+    }
+  }
 }
