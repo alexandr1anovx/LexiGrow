@@ -48,10 +48,10 @@ class MockAuthService: AuthServiceProtocol {
 
 class MockSupabaseService: SupabaseServiceProtocol {
   var shouldSucceed = true
-  var lessons: [Lesson] = [.flashcards, .reading]
+  var lessons: [Lesson] = [.mockFlashcards, .mockReading]
   var levels: [Level] = [.mockB1, .mockB2]
-  var topics: [Topic] = [.mockAppearance]
-  var topicsProgress: [TopicProgress] = [.mock1, .mock2, .mock3]
+  var topics: [Topic] = [.mock1, .mock2, .mock3]
+  var topicsProgress: [Topic] = [.mock1, .mock2, .mock3]
   var words: [Word] = [.mock1, .mock2]
   var mockUnlearnedWords: [Word] = [.mock3]
   
@@ -70,12 +70,12 @@ class MockSupabaseService: SupabaseServiceProtocol {
     throw AuthError.serverError(description: "Mock error")
   }
   
-  func getTopicProgress(levelId: UUID, userId: UUID) async throws -> [TopicProgress] {
+  func getTopics(levelId: UUID, userId: UUID) async throws -> [Topic] {
     if shouldSucceed { return topicsProgress }
     throw AuthError.serverError(description: "Mock error")
   }
   
-  func getUnlearnedWords(levelId: UUID, topicId: UUID, userId: UUID) async throws -> [Word] {
+  func getWords(levelId: UUID, topicId: UUID, userId: UUID) async throws -> [Word] {
     if shouldSucceed { return mockUnlearnedWords }
     throw AuthError.serverError(description: "Mock error")
   }

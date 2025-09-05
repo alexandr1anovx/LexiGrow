@@ -16,17 +16,16 @@ let supabase = SupabaseClient(
 protocol SupabaseServiceProtocol {
   func getLessons() async throws -> [Lesson]
   func getLevels() async throws -> [Level]
-  func getTopics(for levelId: UUID) async throws -> [Topic]
-  func getTopicProgress(levelId: UUID, userId: UUID) async throws -> [TopicProgress]
-  func getUnlearnedWords(levelId: UUID, topicId: UUID, userId: UUID) async throws -> [Word]
+  func getTopics(levelId: UUID, userId: UUID) async throws -> [Topic]
+  func getWords(levelId: UUID, topicId: UUID, userId: UUID) async throws -> [Word]
   func getSentences(for levelId: UUID) async throws -> [Sentence]
-  // func getWords(levelId: UUID, topicId: UUID) async throws -> [Word]
   func markWordAsLearned(wordId: UUID) async throws
   func saveLessonProgress(learnedWords: [Word]) async throws
   
 }
 
-@Observable final class SupabaseService: SupabaseServiceProtocol {
+@Observable
+final class SupabaseService: SupabaseServiceProtocol {
   
   func getLessons() async throws -> [Lesson] {
     let lessons: [Lesson] = try await supabase
@@ -48,20 +47,9 @@ protocol SupabaseServiceProtocol {
     return levels
   }
   
-  /// Loads all topics for a selected level.
-  func getTopics(for levelId: UUID) async throws -> [Topic] {
-    let response: [Topic] = try await supabase
-      .from("level_topics")
-      .select("topics(*)")
-      .eq("level_id", value: levelId)
-      .execute()
-      .value
-    let topics = response
-    return topics
-  }
-  
-  /// Loads only unlearned words for specific lesson and user.
-  func getUnlearnedWords(levelId: UUID, topicId: UUID, userId: UUID) async throws -> [Word] {
+  /// Loads words for specific lesson and user.
+  /// If some words have already been learned, they are not included in the array.
+  func getWords(levelId: UUID, topicId: UUID, userId: UUID) async throws -> [Word] {
     let params: [String: UUID] = [
       "p_user_id": userId,
       "p_level_id": levelId,
@@ -74,36 +62,27 @@ protocol SupabaseServiceProtocol {
     return words
   }
   
-  /*
-  /// Loads all words for a selected level and topic.
-  func getWords(
-    levelId: UUID,
-    topicId: UUID
-  ) async throws -> [Word] {
-    let params = [
-      "p_level_id": levelId,
-      "p_topic_id": topicId
-    ]
-    let words: [Word] = try await supabase
-      .rpc("get_words_for_lesson", params: params)
-      .execute()
-      .value
-    return words
-  }
-  */
-  
   /// Loads progress for all topics for a specific level and user.
-  /// Calls the RPC-function 'get_level_progress' on the server.
-  func getTopicProgress(levelId: UUID, userId: UUID) async throws -> [TopicProgress] {
+  /// Calls the RPC-function 'get_topic_progress' on the server.
+  func getTopics(levelId: UUID, userId: UUID) async throws -> [Topic] {
     let params: [String: UUID] = [
       "p_level_id": levelId,
       "p_user_id": userId
     ]
-    let progressList: [TopicProgress] = try await supabase
-      .rpc("get_level_progress", params: params)
+    let progressList: [Topic] = try await supabase
+      .rpc("get_topic_progress", params: params)
       .execute()
       .value
     return progressList
+  }
+  
+  func getSentences(for levelId: UUID) async throws -> [Sentence] {
+    let params = ["p_level_id": levelId]
+    let sentences: [Sentence] = try await supabase
+      .rpc("get_sentences_for_level", params: params)
+      .execute()
+      .value
+    return sentences
   }
   
   func markWordAsLearned(wordId: UUID) async throws {
@@ -115,7 +94,8 @@ protocol SupabaseServiceProtocol {
     )
     try await supabase
       .from("user_progress")
-    // Using .upsert() for insertion prevents an error, if the user learns the same word twice. If the record already exist, nothing will happen.
+    // Using .upsert() for insertion prevents an error, if the user learns the same word twice.
+    // If the record already exist, nothing will happen.
       .upsert(progress)
       .execute()
   }
@@ -130,15 +110,6 @@ protocol SupabaseServiceProtocol {
       .from("user_progress")
       .upsert(progressArray)
       .execute()
-  }
-  
-  func getSentences(for levelId: UUID) async throws -> [Sentence] {
-    let params = ["p_level_id": levelId]
-    let sentences: [Sentence] = try await supabase
-      .rpc("get_sentences_for_level", params: params)
-      .execute()
-      .value
-    return sentences
   }
 }
 

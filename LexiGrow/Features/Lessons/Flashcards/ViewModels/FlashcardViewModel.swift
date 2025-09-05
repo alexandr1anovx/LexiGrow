@@ -7,24 +7,6 @@
 
 import SwiftUI
 
-enum TopicSortOption: String, CaseIterable, Identifiable {
-  case defaultOrder = "Default"
-  case uncompletedFirst = "Uncompleted first"
-  case completedFirst = "Completed first"
-  case alphabeticalAZ = "Alphabetical (A-Z)"
-  
-  var id: Self { self }
-  
-  var iconName: String {
-    switch self {
-    case .defaultOrder: return "list.bullet"
-    case .uncompletedFirst: return "xmark.circle.fill"
-    case .completedFirst: return "checkmark.circle.fill"
-    case .alphabeticalAZ: return "textformat.abc"
-    }
-  }
-}
-
 @Observable
 @MainActor
 final class FlashcardViewModel {
@@ -43,7 +25,7 @@ final class FlashcardViewModel {
   private(set) var knownWords: [Word] = []
   private(set) var unknownWords: [Word] = []
   private(set) var levels: [Level] = []
-  private(set) var topics: [TopicProgress] = []
+  private(set) var topics: [Topic] = []
   private(set) var errorMessage: String?
   
   // MARK: - Private properties
@@ -53,7 +35,7 @@ final class FlashcardViewModel {
   // MARK: - Computed Properties
   
   /// Computed property that returns sorted list of topics.
-  var sortedTopics: [TopicProgress] {
+  var sortedTopics: [Topic] {
     switch sortOption {
     case .defaultOrder:
       return topics
@@ -130,7 +112,7 @@ final class FlashcardViewModel {
   ///
   /// Immediately moves to the next card, adds the word to the local `knownWords` set,
   /// and starts a background task to save the progress on the server.
-  func handleKnown() {
+  func handleKnownWord() {
     guard let word = currentWord else { return }
     knownWords.append(word)
     selectNextWord()
@@ -140,7 +122,7 @@ final class FlashcardViewModel {
   ///
   /// Adds the word to the local `unknownWords` set for statistics within the current session
   /// and moves on to the next card.
-  func handleUnknown() {
+  func handleUnknownWord() {
     guard let word = currentWord else { return }
     unknownWords.append(word)
     selectNextWord()
@@ -169,12 +151,12 @@ final class FlashcardViewModel {
   ///
   /// Requires that the `selectedLevel` property be set. If successful, fills the `topicsProgress` array.
   /// If an error occurs or the user is not authenticated, updates `errorMessage`.
-  func getTopics() {
+  func getTopicsWithProgress() {
     guard let level = selectedLevel else { return }
     Task {
       do {
         let user = try await supabase.auth.user()
-        let progress = try await supabaseService.getTopicProgress(
+        let progress = try await supabaseService.getTopics(
           levelId: level.id,
           userId: user.id
         )
@@ -184,36 +166,13 @@ final class FlashcardViewModel {
       }
     }
   }
-  
-  /*
-  /// Loads the list of words for the selected level and topic.
-  ///
-  /// Requires that the `selectedLevel` and `selectedTopic` properties be set. If successful, fills the `words` array, preparing to start the lesson. If an error occurs, updates `errorMessage`.
-  func getWords() {
-    guard let level = selectedLevel, let topic = selectedTopic else {
-      return
-    }
-    Task {
-      do {
-        let fetchedWords = try await supabaseService.getWords(
-          levelId: level.id,
-          topicId: topic.id
-        )
-        self.words = fetchedWords
-      } catch {
-        errorMessage = "Failed to load words: \(error.localizedDescription)"
-      }
-    }
-  }
-  */
 
   func getUnlearnedWords() {
     guard let level = selectedLevel, let topic = selectedTopic else { return }
-    
     Task {
       do {
         let user = try await supabase.auth.user()
-        let fetchedWords = try await supabaseService.getUnlearnedWords(
+        let fetchedWords = try await supabaseService.getWords(
           levelId: level.id,
           topicId: topic.id,
           userId: user.id
@@ -230,7 +189,8 @@ final class FlashcardViewModel {
       do {
         try await supabaseService.saveLessonProgress(learnedWords: knownWords)
       } catch {
-        errorMessage = "Failed to save words: \(error)"
+        print("Failed to save lesson progress: \(error)")
+        errorMessage = "Failed to save lesson progress: \(error)"
       }
     }
   }
@@ -262,7 +222,7 @@ extension FlashcardViewModel {
   static var mockObject: FlashcardViewModel {
     let viewModel = FlashcardViewModel(supabaseService: SupabaseService.mockObject)
     viewModel.selectedLevel = Level.mockB1
-    viewModel.selectedTopic = Topic.mockAppearance
+    viewModel.selectedTopic = Topic.mock1
     viewModel.words = [Word.mock1]
     return viewModel
   }
