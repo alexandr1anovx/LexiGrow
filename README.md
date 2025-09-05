@@ -2,7 +2,7 @@
 
 An iOS app designed to help people learn English.  
 
-**features**:  
+**Features**  
 - practice with flashcards to reinforce memory.  
 - track the number of words you’ve learned.
 
@@ -10,7 +10,7 @@ An iOS app designed to help people learn English.
 
 ---
 
-## screenshots:
+## Screenshots
 <p align="center">
    <img src="./Screenshots/LogIn.png" width="250" />
    <img src="./Screenshots/Registration.png" width="250" />
@@ -25,12 +25,16 @@ An iOS app designed to help people learn English.
 
 ---
 
-## tech stack:  
-- SwiftUI, MVVM, Supabase, AVFoundation, async/await.
+## Tech Stack  
+- SwiftUI
+- MVVM
+- Supabase
+- AVFoundation
+- async/await
 
 ---
 
-## installation:  
+## Installation  
 
    ```bash
    git clone https://github.com/alexandr1anov/LexiGrow.git
