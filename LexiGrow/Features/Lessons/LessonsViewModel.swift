@@ -34,8 +34,8 @@ final class LessonsViewModel {
 }
 
 extension LessonsViewModel {
-  static var mockObject: LessonsViewModel {
+  static var mockObject: LessonsViewModel = {
     let viewModel = LessonsViewModel(supabaseService: MockSupabaseService())
     return viewModel
-  }
+  }()
 }

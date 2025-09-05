@@ -23,8 +23,6 @@ final class StatisticsViewModel {
   func getLevelProgress() async {
     isLoading = true
     defer { isLoading = false }
-    // check if there any progress data so not to make a repeat API call
-    //guard levelProgressData.isEmpty else { return }
     
     // Temporary array for collecting results
     var tempProgressData: [LevelProgress] = []
@@ -61,8 +59,8 @@ final class StatisticsViewModel {
 }
 
 extension StatisticsViewModel {
-  static var mockObject: StatisticsViewModel {
+  static var mockObject: StatisticsViewModel = {
     let viewModel = StatisticsViewModel(supabaseService: SupabaseService.mockObject)
     return viewModel
-  }
+  }()
 }
