@@ -30,20 +30,3 @@ struct Lesson: Identifiable, Codable, Hashable {
     return LessonType(rawValue: self.name) ?? .unknown
   }
 }
-
-extension Lesson {
-  static let flashcards = Lesson(
-    id: UUID(),
-    name: "Flashcards",
-    description: "Flashcards description",
-    iconName: "rectangle.stack.fill",
-    isLocked: false
-  )
-  static let reading = Lesson(
-    id: UUID(),
-    name: "Reading",
-    description: "Reading description",
-    iconName: "book.closed",
-    isLocked: true
-  )
-}

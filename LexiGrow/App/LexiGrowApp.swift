@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct LexiGrowApp: App {
@@ -28,13 +29,6 @@ struct LexiGrowApp: App {
   var body: some Scene {
     WindowGroup {
       Group {
-        /*
-         if authManager.currentUser != nil {
-         AppTabView()
-         } else {
-         LoginScreen()
-         }
-         */
         switch authManager.authState {
         case .unauthenticated:
           LoginScreen()
@@ -58,6 +52,8 @@ struct LexiGrowApp: App {
         await lessonsViewModel.getLessons()
       }
     }
+    // a model container for the LevelProgress (the same as the PersistentController in core data).
+    .modelContainer(for: LevelProgress.self)
   }
 }
 
@@ -68,42 +64,40 @@ struct EmailConfirmationScreen: View {
   @State private var alertMessage = ""
   
   var body: some View {
-    VStack(spacing: 20) {
+    VStack(spacing: 30) {
       VStack(spacing: 20) {
-        
         Image(systemName: "envelope.badge")
           .font(.system(size: 40))
           .foregroundStyle(.primary)
-        
         Text("Confirm your email")
           .font(.title)
           .fontWeight(.semibold)
-        
-        Text("We have sent a confirmation email to your address. Please check your inbox.")
+        Text("We have sent a confirmation link to your email address. Please check your inbox.")
           .font(.subheadline)
           .foregroundStyle(.secondary)
           .multilineTextAlignment(.center)
           .padding(.horizontal)
       }
-      .padding(.bottom, 25)
       
-      Button {
-        alertTitle = "Letter sent"
-        alertMessage = "We have resent the confirmation letter to your email address."
-        showAlert = true
-      } label: {
-        Text("Resend")
-          .prominentButtonStyle(tint: .pink)
+      VStack(spacing: 15) {
+        // Resend Button
+        Button {
+          alertTitle = "Letter sent"
+          alertMessage = "We have resent the confirmation letter to your email address."
+          showAlert = true
+        } label: {
+          Text("Resend")
+            .prominentButtonStyle(tint: .pink)
+        }
+        // Refresh Button
+        Button {
+          Task { await authManager.refreshUser() }
+        } label: {
+          Label("Refresh", systemImage: "arrow.clockwise.circle")
+            .foregroundStyle(.accent)
+            .prominentButtonStyle(tint: Color(.systemGray5))
+        }
       }
-      
-      Button {
-        Task { await authManager.refreshUser() }
-      } label: {
-        Label("Refresh", systemImage: "arrow.clockwise.circle")
-          .foregroundStyle(.accent)
-          .prominentButtonStyle(tint: Color(.systemGray5))
-      }
-      
       Spacer()
     }
     .padding()
@@ -119,4 +113,5 @@ struct EmailConfirmationScreen: View {
 
 #Preview {
   EmailConfirmationScreen()
+    .environment(AuthManager.mockObject)
 }

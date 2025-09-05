@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TopicButton: View {
-  let topic: TopicProgress
+  let topic: Topic
   @Binding var selectedTopic: Topic?
   let activeColor: Color
   let selectAction: () -> Void
@@ -58,12 +58,12 @@ struct TopicButton: View {
 
 #Preview {
   @Previewable @State var selectedTopic: Topic?
-  let topics: [Topic] = [.mockAppearance]
+  let topics: [Topic] = [.mock1, .mock2, .mock3]
   
   HStack {
     ForEach(topics, id: \.self) { topic in
       TopicButton(
-        topic: TopicProgress(
+        topic: Topic(
           id: topic.id,
           name: topic.name,
           totalWords: 20,

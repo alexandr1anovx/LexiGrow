@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct LessonsScreen: View {
   @Environment(AuthManager.self) var authManager
@@ -147,10 +148,12 @@ extension LessonsScreen {
 }
 
 struct StatisticsView: View {
+  @Query(sort: \LevelProgress.orderIndex) private var levelProgressData: [LevelProgress]
+  @Environment(\.modelContext) private var modelContext
   @Environment(StatisticsViewModel.self) var viewModel
   
   var body: some View {
-    List(viewModel.levelProgressData) { data in
+    List(levelProgressData) { data in
       VStack(alignment: .leading, spacing: 8) {
         Text(data.name)
           .font(.headline)
@@ -164,7 +167,14 @@ struct StatisticsView: View {
     .listStyle(.insetGrouped)
     .listRowSpacing(8)
     .scrollContentBackground(.hidden)
-    .task { await viewModel.getLevelProgress() }
+    .overlay {
+      if viewModel.isLoading && levelProgressData.isEmpty {
+        ProgressView()
+      }
+    }
+    .task {
+      await viewModel.syncProgress(context: modelContext)
+    }
   }
 }
 

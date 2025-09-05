@@ -31,14 +31,14 @@ extension FlashcardView {
             .multilineTextAlignment(.center)
           Spacer()
           Button {
-            viewModel.handleKnown()
+            viewModel.handleKnownWord()
             isFlipped = false
           } label: {
             Label("Know", systemImage: "checkmark.circle.fill")
               .prominentButtonStyle(tint: .green)
           }
           Button {
-            viewModel.handleUnknown()
+            viewModel.handleUnknownWord()
             isFlipped = false
           } label: {
             Label("Don't know", systemImage: "xmark.circle.fill")

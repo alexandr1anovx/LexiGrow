@@ -25,13 +25,3 @@ struct UserProgress: Codable {
     case learnedAt = "learned_at"
   }
 }
-
-
-extension AppUser {
-  static var mockUser = AppUser(
-    id: UUID(),
-    username: "Alex",
-    email: "address@mail.com",
-    emailConfirmed: true
-  )
-}

@@ -30,14 +30,19 @@ extension FlashcardSetupView {
                 selectedTopic: $viewModel.selectedTopic,
                 activeColor: .pink
               ) {
-                let topicToSelect = Topic(id: topic.id, name: topic.name)
+                let topicToSelect = Topic(
+                  id: topic.id,
+                  name: topic.name,
+                  totalWords: topic.totalWords,
+                  learnedWords: topic.learnedWords
+                )
                 viewModel.selectedTopic = (viewModel.selectedTopic == topicToSelect) ? nil : topicToSelect
               }
             }
           }
         }
         .onChange(of: viewModel.selectedLevel) {
-          viewModel.getTopics()
+          viewModel.getTopicsWithProgress()
         }
       }
     }

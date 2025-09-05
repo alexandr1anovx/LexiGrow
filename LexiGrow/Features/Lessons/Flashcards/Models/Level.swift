@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftData
 
 struct Level: Codable, Identifiable, Hashable {
   let id: UUID
@@ -18,20 +19,30 @@ struct Level: Codable, Identifiable, Hashable {
   }
 }
 
-struct LevelProgress: Identifiable {
-  let id: UUID
-  let name: String
-  let orderIndex: Int
-  let totalWords: Int
-  let learnedWords: Int
+@Model
+final class LevelProgress {
+  @Attribute(.unique)
+  var id: UUID
+  var name: String
+  var orderIndex: Int
+  var totalWords: Int
+  var learnedWords: Int
   
   var progress: Double {
     guard totalWords > 0 else { return 0.0 }
     return Double(learnedWords) / Double(totalWords)
   }
-}
-
-extension Level {
-  static let mockB1 = Level(id: UUID(), name: "B1", orderIndex: 1)
-  static let mockB2 = Level(id: UUID(), name: "B2", orderIndex: 2)
+  
+  init(id: UUID, name: String, orderIndex: Int, totalWords: Int, learnedWords: Int) {
+    self.id = id
+    self.name = name
+    self.orderIndex = orderIndex
+    self.totalWords = totalWords
+    self.learnedWords = learnedWords
+  }
+  
+  enum CodingKeys: String, CodingKey {
+    case id, name, totalWords, learnedWords
+    case orderIndex = "order_index"
+  }
 }
