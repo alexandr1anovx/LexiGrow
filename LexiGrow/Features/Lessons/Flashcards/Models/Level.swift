@@ -40,9 +40,4 @@ final class LevelProgress {
     self.totalWords = totalWords
     self.learnedWords = learnedWords
   }
-  
-  enum CodingKeys: String, CodingKey {
-    case id, name, totalWords, learnedWords
-    case orderIndex = "order_index"
-  }
 }

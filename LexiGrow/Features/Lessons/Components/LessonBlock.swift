@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct LessonBlock: View {
-  let lesson: Lesson
+  let lesson: LessonEntity
   @State var counter: Int = 0
   @State var origin: CGPoint = .zero
   
@@ -42,7 +42,7 @@ struct LessonBlock: View {
       }
       
       VStack(spacing: 15) {
-        Text(lesson.name)
+        Text(lesson.title)
           .fontWeight(.bold)
           .fontDesign(.monospaced)
           .padding(.horizontal)
@@ -61,5 +61,5 @@ struct LessonBlock: View {
 }
 
 #Preview {
-  LessonBlock(lesson: Lesson.mockFlashcards)
+  LessonBlock(lesson: LessonEntity.mockObject)
 }

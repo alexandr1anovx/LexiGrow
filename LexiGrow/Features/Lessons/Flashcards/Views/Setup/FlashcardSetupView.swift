@@ -10,8 +10,8 @@ import SwiftUI
 struct FlashcardSetupView: View {
   @Environment(\.dismiss) private var dismiss // hides setup sheet
   @Environment(FlashcardViewModel.self) var viewModel
-  let lesson: Lesson // selected lesson
-  @Binding var activeLesson: Lesson? // passes the value of the '.fullScreenCover' modifier to the container view.
+  let lesson: LessonEntity // selected lesson
+  @Binding var activeLesson: LessonEntity? // passes the value of the '.fullScreenCover' modifier to the container view.
   
   @State private var showMenu = false
   
@@ -21,10 +21,10 @@ struct FlashcardSetupView: View {
         Spacer()
         // Title
         VStack(spacing: 8) {
-          Label(lesson.name, systemImage: lesson.iconName)
+          Label(lesson.title, systemImage: lesson.iconName)
             .font(.title)
             .fontWeight(.bold)
-          Text(lesson.description)
+          Text(lesson.subtitle)
             .font(.footnote)
             .foregroundStyle(.secondary)
         }
@@ -100,9 +100,9 @@ extension FlashcardSetupView {
 
 
 #Preview {
-  FlashcardSetupView(
-    lesson: Lesson.mockFlashcards,
-    activeLesson: .constant(.mockFlashcards)
-  )
-  .environment(FlashcardViewModel.mockObject)
+//  FlashcardSetupView(
+//    lesson: Lesson.mockFlashcards,
+//    activeLesson: .constant(.mockFlashcards)
+//  )
+//  .environment(FlashcardViewModel.mockObject)
 }
