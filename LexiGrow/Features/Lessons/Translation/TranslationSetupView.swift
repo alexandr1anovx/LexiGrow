@@ -10,18 +10,18 @@ import SwiftUI
 struct TranslationSetupView: View {
   @Bindable var viewModel: TranslationViewModel
   @Environment(\.dismiss) var dismiss
-  let lesson: Lesson
-  @Binding var activeLesson: Lesson?
+  let lesson: LessonEntity
+  @Binding var activeLesson: LessonEntity?
   
   var body: some View {
     VStack(spacing: 35) {
       Spacer()
       
       VStack(spacing: 8) {
-        Label(lesson.name, systemImage: lesson.iconName)
+        Label(lesson.title, systemImage: lesson.iconName)
           .font(.title)
           .fontWeight(.bold)
-        Text(lesson.description)
+        Text(lesson.subtitle)
           .font(.footnote)
           .foregroundStyle(.secondary)
       }
@@ -58,7 +58,7 @@ struct TranslationSetupView: View {
 #Preview {
   TranslationSetupView(
     viewModel: TranslationViewModel.mockObject,
-    lesson: Lesson.mockFlashcards,
-    activeLesson: .constant(Lesson.mockFlashcards)
+    lesson: .mockObject,
+    activeLesson: .constant(.mockObject)
   )
 }

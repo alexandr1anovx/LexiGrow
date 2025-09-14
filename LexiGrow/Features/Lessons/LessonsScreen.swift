@@ -9,10 +9,11 @@ import SwiftUI
 import SwiftData
 
 struct LessonsScreen: View {
+  @Environment(\.modelContext) var modelContext
   @Environment(AuthManager.self) var authManager
   @Environment(LessonsViewModel.self) var viewModel
-  @State private var selectedLesson: Lesson? // for sheet
-  @State private var activeLesson: Lesson? // for .fullScreenCover
+  @State private var selectedLesson: LessonEntity? // for sheet
+  @State private var activeLesson: LessonEntity? // for .fullScreenCover
   @State private var displayMode: DisplayMode = .lessons
   
   var body: some View {
@@ -40,7 +41,7 @@ struct LessonsScreen: View {
       LessonContainerView(lesson: lesson)
     }
     .task {
-      await viewModel.getLessons()
+      await viewModel.syncData(context: modelContext)
     }
   }
 }
@@ -120,7 +121,7 @@ extension LessonsScreen {
 extension LessonsScreen {
   
   struct GridView: View {
-    @Binding var selectedLesson: Lesson?
+    @Binding var selectedLesson: LessonEntity?
     @Environment(LessonsViewModel.self) var viewModel
     
     private let columns: [GridItem] = [
@@ -184,8 +185,8 @@ struct LessonSetupSheet: View {
   @Environment(TranslationViewModel.self) var translationViewModel
   @Environment(FlashcardViewModel.self) var flashcardViewModel
   @Environment(\.dismiss) var dismiss
-  let lesson: Lesson
-  @Binding var activeLesson: Lesson?
+  let lesson: LessonEntity
+  @Binding var activeLesson: LessonEntity?
   
   var body: some View {
     Group {
@@ -207,7 +208,7 @@ struct LessonSetupSheet: View {
 struct LessonContainerView: View {
   @Environment(TranslationViewModel.self) var viewModel
   @Environment(\.dismiss) var dismiss
-  let lesson: Lesson
+  let lesson: LessonEntity
   
   var body: some View {
     switch lesson.type {

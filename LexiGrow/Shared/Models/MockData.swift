@@ -35,15 +35,15 @@ extension Word {
 extension Lesson {
   static let mockFlashcards = Lesson(
     id: UUID(),
-    name: "Flashcards",
-    description: "Flashcards description",
+    title: "Flashcards",
+    subtitle: "Flashcards description",
     iconName: "rectangle.stack.fill",
     isLocked: false
   )
   static let mockReading = Lesson(
     id: UUID(),
-    name: "Reading",
-    description: "Reading description",
+    title: "Reading",
+    subtitle: "Reading description",
     iconName: "book.closed",
     isLocked: true
   )
