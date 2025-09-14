@@ -1,4 +1,2 @@
 Secrets.xcconfig
-
-*.xcuserstate
-xcuserdata/
+**/xcuserdata/
