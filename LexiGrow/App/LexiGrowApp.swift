@@ -48,12 +48,10 @@ struct LexiGrowApp: App {
       .task {
         await authManager.refreshUser()
       }
-      .task {
-        await lessonsViewModel.getLessons()
-      }
     }
-    // a model container for the LevelProgress (the same as the PersistentController in core data).
-    .modelContainer(for: LevelProgress.self)
+    // SwiftData model container
+    // (the same as the PersistentController in CoreData)
+    .modelContainer(for: [LessonEntity.self, LevelProgress.self])
   }
 }
 
