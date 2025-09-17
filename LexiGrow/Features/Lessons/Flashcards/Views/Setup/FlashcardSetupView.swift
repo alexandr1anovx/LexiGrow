@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct FlashcardSetupView: View {
-  @Environment(\.dismiss) private var dismiss // hides setup sheet
+  @Environment(\.dismiss) private var dismiss
   @Environment(FlashcardViewModel.self) var viewModel
-  let lesson: LessonEntity // selected lesson
-  @Binding var activeLesson: LessonEntity? // passes the value of the '.fullScreenCover' modifier to the container view.
-  
+  let lesson: LessonEntity
+  /// Passes the value of the '.fullScreenCover' modifier to the container view.
+  @Binding var activeLesson: LessonEntity?
   @State private var showMenu = false
   
   var body: some View {
@@ -46,7 +46,7 @@ struct FlashcardSetupView: View {
           Label("Start lesson", systemImage: "play.circle.fill")
             .prominentButtonStyle(tint: .pink)
         }
-        .padding([.horizontal, .bottom], 25)
+        .padding(.horizontal, 25)
         .disabled(!viewModel.canStartLesson)
         .opacity(!viewModel.canStartLesson ? 0.5 : 1)
       }
@@ -54,7 +54,7 @@ struct FlashcardSetupView: View {
         ToolbarItem(placement: .topBarTrailing) {
           DismissXButton {
             dismiss()
-          }.padding(.top)
+          }
         }
         ToolbarItem(placement: .topBarLeading) {
           SortMenuView(viewModel: viewModel)
@@ -64,7 +64,7 @@ struct FlashcardSetupView: View {
         viewModel.getLevels()
       }
       .onDisappear {
-        viewModel.resetLessonSetupData()
+        viewModel.resetSetupData()
       }
     }
   }
@@ -82,18 +82,21 @@ extension FlashcardSetupView {
           }
         }
       } label: {
-        Image(systemName: "gearshape")
-          .imageScale(.large)
-          .foregroundStyle(.white)
-          .padding(3)
-          .background {
-            RoundedRectangle(cornerRadius: 12)
-              .fill(.black)
-              .shadow(radius: 3)
-          }
+        if #available(iOS 26, *) {
+          Image(systemName: "gearshape")
+            .imageScale(.large)
+        } else {
+          Image(systemName: "gearshape")
+            .imageScale(.large)
+            .foregroundStyle(.white)
+            .padding(3)
+            .background {
+              RoundedRectangle(cornerRadius: 12)
+                .fill(.black)
+                .shadow(radius: 3)
+            }
+        }
       }
-      .padding(.top, 20)
-      .padding(.leading, 8)
     }
   }
 }

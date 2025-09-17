@@ -29,14 +29,14 @@ struct FlashcardContainerView: View {
           ToolbarItem(placement: .topBarTrailing) {
             DismissXButton {
               showFinishSheet = true
-            }.padding(.top)
+            }
           }
         }
       }
       .sheet(isPresented: $showFinishSheet) {
         FinishLessonSheet {
           dismiss()
-          viewModel.resetLessonSetupData()
+          viewModel.resetSetupData()
         }
         .presentationDetents([.fraction(0.35)])
         .presentationCornerRadius(50)

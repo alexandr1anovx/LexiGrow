@@ -18,7 +18,7 @@ extension FlashcardView {
       ZStack {
         RoundedRectangle(cornerRadius: 40)
           .fill(.thinMaterial)
-          .stroke(Color.white, lineWidth: 3, antialiased: true)
+          .stroke(.white, lineWidth: 2, antialiased: true)
           .shadow(radius: 2)
         
         VStack {
@@ -44,10 +44,8 @@ extension FlashcardView {
             Label("Don't know", systemImage: "xmark.circle.fill")
               .prominentButtonStyle(tint: .red)
           }
-        }
-        .padding([.horizontal, .bottom], 20)
+        }.padding([.horizontal, .bottom], 20)
       }
-      .opacity(isFlipped ? 1:0)
     }
   }
 }

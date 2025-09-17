@@ -23,11 +23,11 @@ struct SelectableButton: View {
         .foregroundColor(.white)
         .padding(15)
         .frame(minWidth: 55)
-        .background(
+        .background {
           RoundedRectangle(cornerRadius: 20)
             .fill(selectedContent == content ? activeColor : inactiveColor)
             .stroke(selectedContent == content ? .clear : .white, lineWidth: 2, antialiased: true)
-        )
+        }
     }
     .animation(.easeInOut, value: selectedContent)
   }
@@ -38,7 +38,7 @@ struct SelectableButton: View {
 //  @Binding var selectedContent: Value?
 //  let activeColor: Color
 //  let action: () -> Void
-//  
+//
 //  var body: some View {
 //    Button {
 //      action()

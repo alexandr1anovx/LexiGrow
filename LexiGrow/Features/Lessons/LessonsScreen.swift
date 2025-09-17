@@ -136,9 +136,12 @@ extension LessonsScreen {
         } else {
           ScrollView {
             LazyVGrid(columns: columns, spacing: 25) {
-              ForEach(viewModel.lessons) { lesson in
+              ForEach(viewModel.lessons, id: \.id) { lesson in
                 LessonBlock(lesson: lesson)
-                  .onTapGesture { selectedLesson = lesson }
+                  .onTapGesture {
+                    selectedLesson = lesson
+                    print(selectedLesson!)
+                  }
               }
             }.padding()
           }
@@ -183,7 +186,7 @@ struct StatisticsView: View {
 
 struct LessonSetupSheet: View {
   @Environment(TranslationViewModel.self) var translationViewModel
-  @Environment(FlashcardViewModel.self) var flashcardViewModel
+  //@Environment(FlashcardViewModel.self) var flashcardViewModel
   @Environment(\.dismiss) var dismiss
   let lesson: LessonEntity
   @Binding var activeLesson: LessonEntity?

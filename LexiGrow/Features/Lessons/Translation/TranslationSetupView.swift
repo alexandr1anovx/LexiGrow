@@ -26,7 +26,7 @@ struct TranslationSetupView: View {
           .foregroundStyle(.secondary)
       }
       
-      SelectionScrollView(label: "Levels:") {
+      ScrollView(.horizontal) {
         ForEach(viewModel.levels, id: \.self) { level in
           LevelButton(
             name: level.name,
