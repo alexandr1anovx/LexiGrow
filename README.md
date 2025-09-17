@@ -26,12 +26,13 @@ An iOS app designed to help people learn English.
 ---
 
 ## Tech Stack  
-- SwiftUI
 - MVVM
+- SwiftUI
+- SwiftData
 - Supabase
 - AVFoundation
 - async/await
-
+  
 ---
 
 ## Installation  
