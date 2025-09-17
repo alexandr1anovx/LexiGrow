@@ -20,30 +20,71 @@ final class StatisticsViewModel {
     self.supabaseService = supabaseService
   }
   
+  /// Synchronizes progress. It fetches remote progress, compares it to local SwiftData,
+  /// and only writes to SwiftData if there are changes (insert/update/delete).
+  /// If there are no differences, it leaves the local store untouched.
   func syncProgress(context: ModelContext) async {
     isLoading = true
     defer { isLoading = false }
     do {
-      let descriptor = FetchDescriptor<LevelProgress>()
-      let localData = try context.fetch(descriptor)
+      // Load current local snapshot
+      let localDescriptor = FetchDescriptor<LevelProgress>()
+      let localData = try context.fetch(localDescriptor)
+      let localById = Dictionary(uniqueKeysWithValues: localData.map { ($0.id, $0) })
       
-      if localData.isEmpty {
-        print("Local data is empty. Fetching from Supabase.")
-        let remoteProgressData = try await fetchRemoteProgress()
-        for remoteLevel in remoteProgressData {
-          context.insert(remoteLevel)
+      // Compute remote snapshot
+      let remoteData = try await fetchRemoteProgress()
+      let remoteById = Dictionary(uniqueKeysWithValues: remoteData.map { ($0.id, $0) })
+      
+      // Detect differences
+      var hasChanges = false
+      
+      // Upsert: insert new or update changed
+      for remote in remoteData {
+        if let local = localById[remote.id] {
+          // Compare fields
+          if local.name != remote.name ||
+              local.orderIndex != remote.orderIndex ||
+              local.totalWords != remote.totalWords ||
+              local.learnedWords != remote.learnedWords {
+            // Update local
+            local.name = remote.name
+            local.orderIndex = remote.orderIndex
+            local.totalWords = remote.totalWords
+            local.learnedWords = remote.learnedWords
+            hasChanges = true
+          }
+        } else {
+          // Insert missing
+          context.insert(remote)
+          hasChanges = true
         }
+      }
+      
+      // Optional: remove local records that no longer exist remotely
+      // (If your domain guarantees levels are stable, you can keep or remove this.)
+      for local in localData {
+        if remoteById[local.id] == nil {
+          context.delete(local)
+          hasChanges = true
+        }
+      }
+      
+      if hasChanges {
         try context.save()
-        print("Local data successfully saved.")
         errorMessage = nil
+        print("✅ Synced progress: changes detected and saved.")
       } else {
-        print("Local data already exists. Skipping network fetch.")
+        print("✅ Synced progress: no changes detected; using local data.")
       }
     } catch {
       errorMessage = "Failed to sync progress: \(error)"
+      print("❌ Failed to sync progress: \(error)")
     }
   }
   
+  /// Always computes the latest progress from Supabase for all levels.
+  /// Callers decide whether to persist based on comparison with local data.
   func fetchRemoteProgress() async throws -> [LevelProgress] {
     isLoading = true
     defer { isLoading = false }
@@ -82,3 +123,4 @@ extension StatisticsViewModel {
     return viewModel
   }()
 }
+

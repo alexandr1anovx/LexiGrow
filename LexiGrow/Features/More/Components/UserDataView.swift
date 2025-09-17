@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-extension GeneralTabScreen {
+extension MoreScreen {
   struct UserDataView: View {
     @Environment(AuthManager.self) var authManager
     
@@ -27,6 +27,6 @@ extension GeneralTabScreen {
 }
 
 #Preview {
-  GeneralTabScreen.UserDataView()
+  MoreScreen.UserDataView()
     .environment(AuthManager.mockObject)
 }

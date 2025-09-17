@@ -25,27 +25,11 @@ enum AuthState {
     self.authService = authService
   }
   
-  func requestPasswordReset(for email: String) {
-    Task {
-      do {
-        try await authService.requestPasswordReset(for: email)
-      } catch {
-        print("Error: \(error.localizedDescription)")
-      }
-    }
-  }
-  
   func signIn(email: String, password: String) async {
     resetState()
     defer { isLoading = false }
     
     do {
-      /*
-      self.currentUser = try await authService.signIn(
-        email: email,
-        password: password
-      )
-      */
       let user = try await authService.signIn(
         email: email,
         password: password
@@ -81,16 +65,28 @@ enum AuthState {
     }
   }
   
-  func signOut() async {
+  func signOut() {
     isLoading = true
-    do {
-      try await authService.signOut()
-      authState = .unauthenticated
-      isLoading = false
-      currentUser = nil
-    } catch {
-      self.error = error as? AuthError ?? .unknown
-      isLoading = false
+    Task {
+      do {
+        try await authService.signOut()
+        authState = .unauthenticated
+        isLoading = false
+        currentUser = nil
+      } catch {
+        self.error = error as? AuthError ?? .unknown
+        isLoading = false
+      }
+    }
+  }
+  
+  func requestPasswordReset(for email: String) {
+    Task {
+      do {
+        try await authService.requestPasswordReset(for: email)
+      } catch {
+        print("Error: \(error.localizedDescription)")
+      }
     }
   }
   
@@ -106,17 +102,6 @@ enum AuthState {
       self.error = error as? AuthError ?? .unknown
     }
   }
-  
-//  func refreshUser() async {
-//    isLoading = true
-//    defer { isLoading = false }
-//    do {
-//      self.currentUser = try await authService.getCurrentUser()
-//    } catch {
-//      currentUser = nil
-//      self.error = error as? AuthError ?? .userNotFound
-//    }
-//  }
   
   func refreshUser() async {
     isLoading = true

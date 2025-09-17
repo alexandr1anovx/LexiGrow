@@ -50,8 +50,8 @@ struct PasswordResetView: View {
         Text("Send Reset Link")
           .prominentButtonStyle(tint: .pink)
       }
-      .disabled(!isEmailValid() || isLoading)
-      .opacity(!isEmailValid() ? 0.5 : 1)
+      .disabled(!isEmailValid || isLoading)
+      .opacity(!isEmailValid ? 0.5 : 1)
       
       Spacer()
     }
@@ -69,42 +69,43 @@ struct PasswordResetView: View {
   
   /// Checks if the entered email has a valid format.
   /// - Returns: A boolean indicating if the email is valid.
-  private func isEmailValid() -> Bool {
+  private var isEmailValid: Bool {
     let emailFormat = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
     let emailPredicate = NSPredicate(format:"SELF MATCHES %@", emailFormat)
     return emailPredicate.evaluate(with: email)
   }
   
   /// Handles the password reset logic.
-  private func resetPassword() async {
-    guard isEmailValid() else {
-      alertTitle = "Invalid Email"
-      alertMessage = "Please enter a valid email address."
-      showAlert = true
-      return
-    }
-    
-    isLoading = true
-    defer { isLoading = false }
-    
-    do {
-      // try await supabase.auth.resetPasswordForEmail(email)
-      
-      // Simulating a network request for demonstration purposes.
-      try await Task.sleep(nanoseconds: 2_000_000_000)
-      
-      alertTitle = "Check Your Email"
-      alertMessage = "A password reset link has been sent to \(email)."
-      showAlert = true
-    } catch {
-      alertTitle = "Error"
-      alertMessage = error.localizedDescription
-      showAlert = true
-    }
-  }
+//  private func resetPassword() async {
+//    guard isEmailValid() else {
+//      alertTitle = "Invalid Email"
+//      alertMessage = "Please enter a valid email address."
+//      showAlert = true
+//      return
+//    }
+//    
+//    isLoading = true
+//    defer { isLoading = false }
+//    
+//    do {
+//      // try await supabase.auth.resetPasswordForEmail(email)
+//      
+//      // Simulating a network request for demonstration purposes.
+//      try await Task.sleep(nanoseconds: 2_000_000_000)
+//      
+//      alertTitle = "Check Your Email"
+//      alertMessage = "A password reset link has been sent to \(email)."
+//      showAlert = true
+//    } catch {
+//      alertTitle = "Error"
+//      alertMessage = error.localizedDescription
+//      showAlert = true
+//    }
+//  }
 }
 // MARK: - Preview
 
 #Preview {
   PasswordResetView()
+    .environment(AuthManager.mockObject)
 }
