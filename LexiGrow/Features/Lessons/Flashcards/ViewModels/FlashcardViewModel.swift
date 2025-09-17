@@ -105,7 +105,7 @@ final class FlashcardViewModel {
     knownWords = []
     unknownWords = []
     lessonState = .inProgress
-    getUnlearnedWords()
+    getWords()
   }
   
   /// Handles the user's action when they mark a word as "known".
@@ -120,15 +120,14 @@ final class FlashcardViewModel {
   
   /// Handles the user's action when they mark a word as "unknown".
   ///
-  /// Adds the word to the local `unknownWords` set for statistics within the current session
-  /// and moves on to the next card.
+  /// Adds the word to the local `unknownWords` set for statistics within the current session and moves on to the next card.
   func handleUnknownWord() {
     guard let word = currentWord else { return }
     unknownWords.append(word)
     selectNextWord()
   }
   
-  func resetLessonSetupData() {
+  func resetSetupData() {
     selectedLevel = nil
     selectedTopic = nil
   }
@@ -151,7 +150,7 @@ final class FlashcardViewModel {
   ///
   /// Requires that the `selectedLevel` property be set. If successful, fills the `topicsProgress` array.
   /// If an error occurs or the user is not authenticated, updates `errorMessage`.
-  func getTopicsWithProgress() {
+  func getTopics() {
     guard let level = selectedLevel else { return }
     Task {
       do {
@@ -167,7 +166,11 @@ final class FlashcardViewModel {
     }
   }
 
-  func getUnlearnedWords() {
+  /// Loads unlearned words for the selected level and topic, shuffling the result.
+  ///
+  /// Requires `selectedLevel` and `selectedTopic`. On success assigns to `words`;
+  /// on failure sets `errorMessage`. Runs asynchronously on the main actor.
+  func getWords() {
     guard let level = selectedLevel, let topic = selectedTopic else { return }
     Task {
       do {
@@ -189,8 +192,8 @@ final class FlashcardViewModel {
       do {
         try await supabaseService.saveLessonProgress(learnedWords: knownWords)
       } catch {
-        print("Failed to save lesson progress: \(error)")
         errorMessage = "Failed to save lesson progress: \(error)"
+        print("Failed to save lesson progress: \(error)")
       }
     }
   }
@@ -219,11 +222,11 @@ extension FlashcardViewModel {
 // MARK: - Preview Mode
 
 extension FlashcardViewModel {
-  static var mockObject: FlashcardViewModel {
-    let viewModel = FlashcardViewModel(supabaseService: SupabaseService.mockObject)
+  static var mockObject: FlashcardViewModel = {
+    let viewModel = FlashcardViewModel(supabaseService: MockSupabaseService())
     viewModel.selectedLevel = Level.mockB1
     viewModel.selectedTopic = Topic.mock1
     viewModel.words = [Word.mock1]
     return viewModel
-  }
+  }()
 }

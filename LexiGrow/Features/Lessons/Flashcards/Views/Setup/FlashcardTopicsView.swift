@@ -8,42 +8,49 @@
 import SwiftUI
 
 extension FlashcardSetupView {
-  
   struct TopicsView: View {
     @Bindable var viewModel: FlashcardViewModel
     
     var body: some View {
-      SelectionScrollView(label: "Topics:") {
-        Group {
-          if viewModel.selectedLevel == nil {
-            Label("Select a level above", systemImage: "arrow.up.circle.fill")
-              .fontWeight(.medium)
-              .foregroundStyle(.secondary)
-          } else if viewModel.topics.isEmpty {
-            Label("No topics for a level above", systemImage: "minus.circle.fill")
-              .fontWeight(.medium)
-              .foregroundStyle(.secondary)
-          } else {
-            ForEach(viewModel.sortedTopics, id: \.self) { topic in
-              TopicButton(
-                topic: topic,
-                selectedTopic: $viewModel.selectedTopic,
-                activeColor: .pink
-              ) {
-                let topicToSelect = Topic(
-                  id: topic.id,
-                  name: topic.name,
-                  totalWords: topic.totalWords,
-                  learnedWords: topic.learnedWords
-                )
-                viewModel.selectedTopic = (viewModel.selectedTopic == topicToSelect) ? nil : topicToSelect
+      HStack {
+        Text("Topics:")
+          .font(.subheadline)
+          .fontWeight(.medium)
+        
+        if viewModel.selectedLevel == nil {
+          Text("Select a level above")
+            .fontWeight(.medium)
+            .foregroundStyle(.gray)
+        } else if viewModel.topics.isEmpty {
+          Text("No topics for a level above")
+            .fontWeight(.medium)
+            .foregroundStyle(.secondary)
+        } else {
+          ScrollView(.horizontal) {
+            HStack(spacing: 12) {
+              ForEach(viewModel.sortedTopics, id: \.id) { topic in
+                TopicButton(
+                  topic: topic,
+                  selectedTopic: $viewModel.selectedTopic,
+                  activeColor: .pink
+                ) {
+                  let topicToSelect = Topic(
+                    id: topic.id,
+                    name: topic.name,
+                    totalWords: topic.totalWords,
+                    learnedWords: topic.learnedWords
+                  )
+                  viewModel.selectedTopic = (viewModel.selectedTopic == topicToSelect) ? nil : topicToSelect
+                }
               }
-            }
-          }
+            }.padding(8)
+          }.shadow(radius: 2)
         }
-        .onChange(of: viewModel.selectedLevel) {
-          viewModel.getTopicsWithProgress()
-        }
+      }
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .padding(.leading, 8)
+      .onChange(of: viewModel.selectedLevel) {
+        viewModel.getTopics()
       }
     }
   }

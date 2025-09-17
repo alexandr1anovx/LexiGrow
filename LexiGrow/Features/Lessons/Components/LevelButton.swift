@@ -23,7 +23,7 @@ struct LevelButton: View {
           RoundedRectangle(cornerRadius: 20)
             .fill(selectedLevel?.name == name ? .pink : .black)
             .stroke(
-              selectedLevel?.name == name ? .clear : .white,
+              selectedLevel?.name == name ? .clear : Color(.systemGray5),
               lineWidth: 2
             )
             .frame(minWidth: 55)

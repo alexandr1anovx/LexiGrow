@@ -59,7 +59,7 @@ struct FlashcardSummaryView: View {
           
           Button {
             viewModel.saveLessonProgress()
-            viewModel.resetLessonSetupData()
+            viewModel.resetSetupData()
             dismiss() // hides the lesson
           } label: {
             Label("Finish lesson", systemImage: "flag.pattern.checkered")

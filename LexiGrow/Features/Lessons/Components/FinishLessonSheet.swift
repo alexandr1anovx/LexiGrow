@@ -25,17 +25,30 @@ struct FinishLessonSheet: View {
             .foregroundStyle(.gray)
             .multilineTextAlignment(.center)
         }
-        Button(action: finishAction) {
-          Text("Yes, finish")
-            .prominentButtonStyle(tint: .pink)
+        
+        if #available (iOS 26, *) {
+          Button(action: finishAction) {
+            Text("Yes, finish")
+              .padding(10)
+              .frame(maxWidth: .infinity)
+              .fontWeight(.medium)
+          }
+          .padding(.horizontal)
+          .tint(.pink)
+          .buttonStyle(.glassProminent)
+        } else {
+          Button(action: finishAction) {
+            Text("Yes, finish")
+              .prominentButtonStyle(tint: .pink)
+          }
+          .padding(.horizontal)
         }
-        .padding([.horizontal, .bottom], 20)
       }
       .toolbar {
         ToolbarItem(placement: .topBarTrailing) {
           DismissXButton {
-            dismiss() // dismiss the sheet
-          }.padding(.top)
+            dismiss()
+          }
         }
       }
     }

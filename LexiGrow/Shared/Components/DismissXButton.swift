@@ -13,10 +13,14 @@ struct DismissXButton: View {
   
   var body: some View {
     Button(action: dismissAction) {
-      Image(systemName: "xmark.circle.fill")
-        .symbolRenderingMode(.hierarchical)
-        .font(.title2)
-        .foregroundStyle(color ?? .secondary)
+      if #available(iOS 26, *) {
+        Image(systemName: "xmark.circle.fill")
+      } else {
+        Image(systemName: "xmark.circle.fill")
+          .symbolRenderingMode(.hierarchical)
+          .font(.title2)
+          .foregroundStyle(color ?? .secondary)
+      }
     }
   }
 }
