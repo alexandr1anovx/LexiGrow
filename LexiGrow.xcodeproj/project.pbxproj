@@ -38,6 +38,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Resources/Info.plist,
+				Secrets.xcconfig,
 			);
 			target = D16774982E04B62500967AC8 /* LexiGrow */;
 		};

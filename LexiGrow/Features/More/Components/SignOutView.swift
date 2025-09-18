@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-extension GeneralTabScreen {
+extension MoreScreen {
   
   struct SignOutView: View {
     @Environment(AuthManager.self) var authManager
@@ -26,7 +26,7 @@ extension GeneralTabScreen {
               .foregroundStyle(.secondary)
           }
           Button {
-            Task { await authManager.signOut() }
+            authManager.signOut()
           } label: {
             Group {
               if authManager.isLoading {
@@ -37,7 +37,7 @@ extension GeneralTabScreen {
             }
             .prominentButtonStyle(tint: .pink)
           }
-          .padding([.horizontal, .bottom], 20)
+          .padding(.horizontal, 20)
         }
         .toolbar {
           ToolbarItem(placement: .topBarTrailing) {
@@ -52,6 +52,6 @@ extension GeneralTabScreen {
 }
 
 #Preview {
-  GeneralTabScreen.SignOutView()
+  MoreScreen.SignOutView()
     .environment(AuthManager.mockObject)
 }

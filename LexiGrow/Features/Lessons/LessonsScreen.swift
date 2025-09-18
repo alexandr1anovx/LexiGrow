@@ -31,14 +31,14 @@ struct LessonsScreen: View {
           StatisticsView()
             .tag(DisplayMode.statistics)
         }
-        .tabViewStyle(.page)
+        .tabViewStyle(.page(indexDisplayMode: .never))
       }
     }
-    .sheet(item: $selectedLesson) { lesson in
-      LessonSetupSheet(lesson: lesson, activeLesson: $activeLesson)
+    .sheet(item: $selectedLesson) {
+      LessonSetupSheet(lesson: $0, activeLesson: $activeLesson)
     }
-    .fullScreenCover(item: $activeLesson) { lesson in
-      LessonContainerView(lesson: lesson)
+    .fullScreenCover(item: $activeLesson) {
+      LessonContainerView(lesson: $0)
     }
     .task {
       await viewModel.syncData(context: modelContext)
@@ -46,9 +46,10 @@ struct LessonsScreen: View {
   }
 }
 
-// MARK: - Display Mode
-
-extension LessonsScreen {
+private extension LessonsScreen {
+  
+  // MARK: Display Mode
+  
   enum DisplayMode: String, Identifiable, CaseIterable {
     case lessons = "Lessons"
     case statistics = "Statistics"
@@ -61,11 +62,8 @@ extension LessonsScreen {
       }
     }
   }
-}
-
-// MARK: - Subviews
-
-extension LessonsScreen {
+  
+  // MARK: Display Mode Selector
   
   struct DisplayModeSelector: View {
     @Binding var displayMode: DisplayMode
@@ -94,6 +92,8 @@ extension LessonsScreen {
     }
   }
   
+  // MARK: Mode Button
+  
   /// Stylized button for mode selector
   struct ModeButton: View {
     let title: String
@@ -113,12 +113,8 @@ extension LessonsScreen {
       }
     }
   }
-}
-
-
-// MARK: - Grid of Lessons
-
-extension LessonsScreen {
+  
+  // MARK: Lessons Grid View
   
   struct GridView: View {
     @Binding var selectedLesson: LessonEntity?
@@ -186,7 +182,6 @@ struct StatisticsView: View {
 
 struct LessonSetupSheet: View {
   @Environment(TranslationViewModel.self) var translationViewModel
-  //@Environment(FlashcardViewModel.self) var flashcardViewModel
   @Environment(\.dismiss) var dismiss
   let lesson: LessonEntity
   @Binding var activeLesson: LessonEntity?

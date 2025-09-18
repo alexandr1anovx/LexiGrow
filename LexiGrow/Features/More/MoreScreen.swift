@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct GeneralTabScreen: View {
+struct MoreScreen: View {
   @State private var showSignOutSheet = false
   
   var body: some View {
@@ -48,6 +48,6 @@ struct GeneralTabScreen: View {
 }
 
 #Preview {
-  GeneralTabScreen()
+  MoreScreen()
     .environment(AuthManager.mockObject)
 }

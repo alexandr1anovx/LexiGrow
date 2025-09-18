@@ -22,7 +22,7 @@ struct MainTabView: View {
         .tabItem {
           Label("Lessons", systemImage: "book.pages")
         }
-      GeneralTabScreen()
+      MoreScreen()
         .tag(Tab.general)
         .tabItem {
           Label("More", systemImage: "water.waves")
