@@ -38,7 +38,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Resources/Info.plist,
-				Secrets.xcconfig,
 			);
 			target = D16774982E04B62500967AC8 /* LexiGrow */;
 		};
@@ -279,7 +278,7 @@
 		D16774A52E04B62700967AC8 /* Debug configuration for PBXProject "LexiGrow" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReferenceAnchor = D167749B2E04B62600967AC8 /* LexiGrow */;
-			baseConfigurationReferenceRelativePath = Secrets.xcconfig;
+			baseConfigurationReferenceRelativePath = Resources/Secrets.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
