@@ -20,13 +20,13 @@ final class FlashcardViewModel {
   
   // MARK: - Private(set) properties
   
-  private(set) var words: [Word] = []
-  private(set) var currentWordIndex: Int = 0
-  private(set) var knownWords: [Word] = []
-  private(set) var unknownWords: [Word] = []
-  private(set) var levels: [Level] = []
-  private(set) var topics: [Topic] = []
-  private(set) var errorMessage: String?
+  var words: [Word] = []
+  var currentWordIndex: Int = 0
+  var knownWords: [Word] = []
+  var unknownWords: [Word] = []
+  var levels: [Level] = []
+  var topics: [Topic] = []
+  var errorMessage: String?
   
   // MARK: - Private properties
   
@@ -207,6 +207,7 @@ final class FlashcardViewModel {
       currentWordIndex += 1
     } else {
       lessonState = .summary
+      currentWordIndex = words.count
     }
   }
 }
