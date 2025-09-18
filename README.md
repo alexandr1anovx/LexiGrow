@@ -6,7 +6,7 @@ An iOS app designed to help people learn English.
 - practice with flashcards to reinforce memory.  
 - track the number of words you’ve learned.
 
-**iOS 18+**  
+**iOS 18.6+**  
 
 ---
 
@@ -32,7 +32,7 @@ An iOS app designed to help people learn English.
 - Supabase
 - AVFoundation
 - async/await
-  
+- XCTest
 ---
 
 ## Installation  
