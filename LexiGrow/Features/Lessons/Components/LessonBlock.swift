@@ -9,8 +9,6 @@ import SwiftUI
 
 struct LessonBlock: View {
   let lesson: LessonEntity
-  //@State var counter: Int = 0
-  //@State var origin: CGPoint = .zero
   
   var body: some View {
     ZStack {
@@ -40,7 +38,6 @@ struct LessonBlock: View {
           .frame(width: 175, height: 150)
           .shadow(radius: 3)
       }
-      
       VStack(spacing: 15) {
         Text(lesson.title)
           .fontWeight(.bold)
@@ -50,13 +47,6 @@ struct LessonBlock: View {
       }
       .foregroundColor(.white)
     }
-    //.modifier(RippleEffect(at: origin, trigger: counter))
-//    .onPressingChanged { point in
-//      if let point {
-//        origin = point
-//        counter += 1
-//      }
-//    }
   }
 }
 

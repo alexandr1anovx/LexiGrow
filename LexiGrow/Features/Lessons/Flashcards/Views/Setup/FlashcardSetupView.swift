@@ -20,12 +20,12 @@ struct FlashcardSetupView: View {
       VStack(spacing: 30) {
         Spacer()
         // Title
-        VStack(spacing: 8) {
+        VStack(spacing: 10) {
           Label(lesson.title, systemImage: lesson.iconName)
             .font(.title)
             .fontWeight(.bold)
           Text(lesson.subtitle)
-            .font(.footnote)
+            .font(.subheadline)
             .foregroundStyle(.secondary)
         }
         
@@ -38,17 +38,25 @@ struct FlashcardSetupView: View {
         .padding(.horizontal)
         
         // Start button
-        Button {
-          viewModel.startLesson()
-          activeLesson = lesson
-          dismiss()
-        } label: {
-          Label("Start lesson", systemImage: "play.circle.fill")
-            .prominentButtonStyle(tint: .pink)
+        if #available(iOS 26.0, *) {
+          Button {
+            viewModel.startLesson()
+            activeLesson = lesson
+            dismiss()
+          } label: {
+            Label("Start lesson", systemImage: "play.circle.fill")
+              .padding(10)
+              .fontWeight(.medium)
+              .frame(maxWidth: .infinity)
+          }
+          .tint(.pink)
+          .buttonStyle(.glassProminent)
+          .padding(.horizontal, 25)
+          .disabled(!viewModel.canStartLesson)
+          .opacity(!viewModel.canStartLesson ? 0.3 : 1)
+        } else {
+          // Fallback on earlier versions
         }
-        .padding(.horizontal, 25)
-        .disabled(!viewModel.canStartLesson)
-        .opacity(!viewModel.canStartLesson ? 0.5 : 1)
       }
       .toolbar {
         ToolbarItem(placement: .topBarTrailing) {

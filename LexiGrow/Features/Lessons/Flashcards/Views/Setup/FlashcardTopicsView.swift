@@ -27,7 +27,7 @@ extension FlashcardSetupView {
             .foregroundStyle(.secondary)
         } else {
           ScrollView(.horizontal) {
-            HStack(spacing: 12) {
+            HStack(spacing: 5) {
               ForEach(viewModel.sortedTopics, id: \.id) { topic in
                 TopicButton(
                   topic: topic,
@@ -44,7 +44,9 @@ extension FlashcardSetupView {
                 }
               }
             }.padding(8)
-          }.shadow(radius: 2)
+          }
+          .scrollIndicators(.hidden)
+          .shadow(radius: 2)
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)

@@ -63,7 +63,7 @@ private extension LessonsScreen {
     }
   }
   
-  // MARK: Display Mode Selector
+  // MARK: - Display Mode Selector
   
   struct DisplayModeSelector: View {
     @Binding var displayMode: DisplayMode
@@ -86,13 +86,13 @@ private extension LessonsScreen {
       .background {
         RoundedRectangle(cornerRadius: 25)
           .fill(.thinMaterial)
-          .shadow(radius: 3)
+          .shadow(radius: 2)
       }
       .padding(.vertical)
     }
   }
   
-  // MARK: Mode Button
+  // MARK: - Mode Button
   
   /// Stylized button for mode selector
   struct ModeButton: View {
@@ -114,7 +114,7 @@ private extension LessonsScreen {
     }
   }
   
-  // MARK: Lessons Grid View
+  // MARK: - Lessons Grid View
   
   struct GridView: View {
     @Binding var selectedLesson: LessonEntity?
@@ -153,27 +153,50 @@ struct StatisticsView: View {
   @Environment(StatisticsViewModel.self) var viewModel
   
   var body: some View {
-    List(levelProgressData) { data in
-      VStack(alignment: .leading, spacing: 8) {
-        Text(data.name)
-          .font(.headline)
-        ProgressView(value: data.progress)
-          .tint(.green)
-        Text("Learned: **\(data.learnedWords)** of \(data.totalWords)")
-          .font(.caption)
-          .foregroundStyle(.secondary)
-      }
+    List(levelProgressData) {
+      Cell(
+        title: $0.name,
+        progress: $0.progress,
+        learnedWords: $0.learnedWords,
+        totalWords: $0.totalWords
+      )
+    }
+    .refreshable {
+      await viewModel.syncProgress(context: modelContext)
     }
     .listStyle(.insetGrouped)
-    .listRowSpacing(8)
-    .scrollContentBackground(.hidden)
     .overlay {
-      if viewModel.isLoading && levelProgressData.isEmpty {
+      if viewModel.isLoading {
         ProgressView()
       }
     }
-    .task {
-      await viewModel.syncProgress(context: modelContext)
+  }
+}
+
+extension StatisticsView {
+  struct Cell: View {
+    let title: String
+    let progress: Double
+    let learnedWords: Int
+    let totalWords: Int
+    var body: some View {
+      VStack(alignment: .leading, spacing: 8) {
+        Text(title)
+          .font(.headline)
+        ProgressView(value: progress)
+          .progressViewStyle(.linear)
+          .tint(.green)
+        HStack(spacing: 3) {
+          Text("Learned:")
+          Text("\(learnedWords)")
+            .foregroundStyle(.accent)
+            .fontWeight(.semibold)
+          Text("of")
+          Text("\(totalWords)")
+        }
+        .font(.caption)
+        .foregroundStyle(.secondary)
+      }
     }
   }
 }

@@ -16,7 +16,7 @@ struct FinishLessonSheet: View {
       VStack(spacing: 30) {
         Spacer()
         VStack(spacing: 15) {
-          Text("All progress will be canceled")
+          Text("All progress will be cancelled")
             .font(.title2)
             .fontWeight(.bold)
           Text("Are you sure you want to finish the lesson?")

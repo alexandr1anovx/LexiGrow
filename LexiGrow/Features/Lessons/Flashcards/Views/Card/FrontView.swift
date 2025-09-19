@@ -10,7 +10,7 @@ import SwiftUI
 extension FlashcardView {
   
   struct FrontView: View {
-    @State private var isAnimatingSoundIcon = false
+    @State private var animateSoundIcon = false
     let word: Word
     @Binding var isFlipped: Bool
     @Binding var isTurnedAutomaticAudio: Bool
@@ -20,7 +20,11 @@ extension FlashcardView {
       ZStack {
         RoundedRectangle(cornerRadius: 40)
           .fill(.thinMaterial)
-          .stroke(Color.white, lineWidth: 3, antialiased: true)
+          .stroke(
+            Color(.systemGray5),
+            lineWidth: 2,
+            antialiased: true
+          )
           .shadow(radius: 2)
         
         VStack(spacing: 15) {
@@ -33,19 +37,34 @@ extension FlashcardView {
           Text("[\(word.transcription)]")
             .font(.title2)
             .fontWeight(.semibold)
-          Button {
-            audioPlayer.playSound(named: word.audioName)
-            isAnimatingSoundIcon.toggle()
-          } label: {
-            Image(systemName: "speaker.wave.2.fill")
-              .symbolEffect(.bounce, value: isAnimatingSoundIcon)
-              .foregroundStyle(Color(.systemBackground))
-              .font(.title3)
-              .padding(11)
-              .background(.primary)
-              .clipShape(.circle)
+          
+          if #available(iOS 26, *) {
+            Button {
+              audioPlayer.playSound(named: word.audioName)
+              animateSoundIcon.toggle()
+            } label: {
+              Image(systemName: "speaker.wave.2.fill")
+                .symbolEffect(.bounce, value: animateSoundIcon)
+                .font(.title3)
+                .padding(5)
+            }
+            .buttonStyle(.glass)
+            .padding(.top)
+          } else {
+            Button {
+              audioPlayer.playSound(named: word.audioName)
+              animateSoundIcon.toggle()
+            } label: {
+              Image(systemName: "speaker.wave.2.fill")
+                .symbolEffect(.bounce, value: animateSoundIcon)
+                .foregroundStyle(Color(.systemBackground))
+                .font(.title3)
+                .padding(5)
+                .background(.primary)
+                .clipShape(.circle)
+            }
+            .padding(.top)
           }
-          .padding(.top)
         }
       }
       .onAppear {

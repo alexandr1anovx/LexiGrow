@@ -34,6 +34,7 @@ extension FlashcardSetupView {
           }
           .padding(8)
         }
+        .scrollIndicators(.hidden)
         .shadow(radius: 2)
       }
       .frame(maxWidth: .infinity, alignment: .leading)

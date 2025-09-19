@@ -23,6 +23,16 @@ extension View {
       .shadow(radius: 3)
   }
   
+  func modernLabelStyle(textColor: Color = .primary) -> some View {
+    self
+      .fontWeight(.medium)
+      .fontDesign(.monospaced)
+      .padding(11)
+      .frame(maxWidth: .infinity)
+      .foregroundStyle(textColor)
+  }
+  
+  
   func borderedButtonStyle(
     tint: Color,
     textColor: Color? = nil

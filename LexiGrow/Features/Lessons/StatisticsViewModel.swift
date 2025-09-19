@@ -14,9 +14,9 @@ final class StatisticsViewModel {
   
   private(set) var errorMessage: String?
   private(set) var isLoading = false
-  private let supabaseService: SupabaseService
+  private let supabaseService: SupabaseServiceProtocol
   
-  init(supabaseService: SupabaseService) {
+  init(supabaseService: SupabaseServiceProtocol) {
     self.supabaseService = supabaseService
   }
   
@@ -119,8 +119,7 @@ final class StatisticsViewModel {
 
 extension StatisticsViewModel {
   static var mockObject: StatisticsViewModel = {
-    let viewModel = StatisticsViewModel(supabaseService: SupabaseService.mockObject)
+    let viewModel = StatisticsViewModel(supabaseService: MockSupabaseService())
     return viewModel
   }()
 }
-

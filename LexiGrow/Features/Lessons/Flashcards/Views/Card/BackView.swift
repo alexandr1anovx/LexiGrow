@@ -18,7 +18,11 @@ extension FlashcardView {
       ZStack {
         RoundedRectangle(cornerRadius: 40)
           .fill(.thinMaterial)
-          .stroke(.white, lineWidth: 2, antialiased: true)
+          .stroke(
+            Color(.systemGray5),
+            lineWidth: 2,
+            antialiased: true
+          )
           .shadow(radius: 2)
         
         VStack {

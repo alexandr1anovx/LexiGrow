@@ -70,7 +70,7 @@ extension LessonEntity {
     id: UUID(),
     title: "Flashcards",
     subtitle: "Subtitle",
-    iconName: "house",
+    iconName: "tray.badge.fill",
     isLocked: false
   )
 }

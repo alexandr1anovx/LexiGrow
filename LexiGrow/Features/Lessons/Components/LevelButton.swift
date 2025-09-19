@@ -20,7 +20,7 @@ struct LevelButton: View {
         .foregroundColor(.white)
         .padding(15)
         .background {
-          RoundedRectangle(cornerRadius: 20)
+          Capsule()
             .fill(selectedLevel?.name == name ? .pink : .black)
             .stroke(
               selectedLevel?.name == name ? .clear : Color(.systemGray5),

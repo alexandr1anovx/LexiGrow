@@ -18,6 +18,37 @@ struct TopicButton: View {
   }
   
   var body: some View {
+//    Button(action: selectAction) {
+//      HStack(spacing: 10) {
+//        Text(topic.name)
+//          .font(.subheadline)
+//          .fontWeight(.medium)
+//          .foregroundStyle(selectedTopic?.id == topic.id ? .pink : .primary)
+//        
+//        HStack(spacing:0) {
+//          Text("\(topic.learnedWords)")
+//            .foregroundStyle(.white)
+//          Text("/")
+//            .foregroundStyle(.white)
+//          Text("\(topic.totalWords)")
+//            .foregroundStyle(.white)
+//        }
+//        .font(.caption)
+//        .fontWeight(.semibold)
+//        .padding(7)
+//        .background {
+//          RoundedRectangle(cornerRadius: 10)
+//            .fill(topic.learnedWords == topic.totalWords ? .green : .purple.opacity(0.8))
+//        }
+//      }.padding(5)
+////      .padding(12)
+//      
+//    }
+//    
+//    .buttonStyle(.glass)
+//    
+//    .disabled(topic.learnedWords == topic.totalWords)
+//    .opacity(topic.learnedWords == topic.totalWords ? 0.7 : 1)
     Button(action: selectAction) {
       HStack(spacing: 10) {
         Text(topic.name)
@@ -43,10 +74,10 @@ struct TopicButton: View {
       }
       .padding(12)
       .background {
-        RoundedRectangle(cornerRadius: 20)
+        Capsule()
           .fill(selectedTopic?.id == topic.id ? .pink : .black)
           .stroke(
-            selectedTopic?.id == topic.id ? .clear : .white,
+            selectedTopic?.id == topic.id ? .clear : Color(.systemGray5),
             lineWidth: 2
           )
       }
@@ -59,22 +90,28 @@ struct TopicButton: View {
 #Preview {
   @Previewable @State var selectedTopic: Topic?
   let topics: [Topic] = [.mock1, .mock2, .mock3]
-  
-  HStack {
-    ForEach(topics, id: \.self) { topic in
-      TopicButton(
-        topic: Topic(
-          id: topic.id,
-          name: topic.name,
-          totalWords: 20,
-          learnedWords: 15
-        ),
-        selectedTopic: $selectedTopic,
-        activeColor: .pink,
-        selectAction: {
-          selectedTopic = topic
+  VStack {
+    ScrollView(.horizontal) {
+      HStack {
+        ForEach(topics, id: \.self) { topic in
+          TopicButton(
+            topic: Topic(
+              id: topic.id,
+              name: topic.name,
+              totalWords: 20,
+              learnedWords: 15
+            ),
+            selectedTopic: $selectedTopic,
+            activeColor: .pink,
+            selectAction: {
+              selectedTopic = topic
+            }
+          )
         }
-      )
+      }
+      .padding(4)
     }
+    .scrollIndicators(.hidden)
   }
+  
 }

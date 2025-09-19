@@ -225,9 +225,10 @@ extension FlashcardViewModel {
 extension FlashcardViewModel {
   static var mockObject: FlashcardViewModel = {
     let viewModel = FlashcardViewModel(supabaseService: MockSupabaseService())
-    viewModel.selectedLevel = Level.mockB1
-    viewModel.selectedTopic = Topic.mock1
-    viewModel.words = [Word.mock1]
+    viewModel.selectedLevel = .mockB1
+    viewModel.topics = [.mock1, .mock2]
+    viewModel.words = [.mock1]
+    viewModel.unknownWords = [.mock3, .mock2]
     return viewModel
   }()
 }
