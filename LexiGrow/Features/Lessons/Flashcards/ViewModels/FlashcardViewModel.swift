@@ -31,6 +31,7 @@ final class FlashcardViewModel {
   // MARK: - Private properties
   
   private let supabaseService: SupabaseServiceProtocol
+  private let speechService: SpeechServiceProtocol
   
   // MARK: - Computed Properties
   
@@ -91,8 +92,12 @@ final class FlashcardViewModel {
   
   // MARK: - Init
   
-  init(supabaseService: SupabaseServiceProtocol) {
+  init(
+    supabaseService: SupabaseServiceProtocol,
+    speechService: SpeechServiceProtocol = SpeechService.shared
+  ) {
     self.supabaseService = supabaseService
+    self.speechService = speechService
   }
   
   // MARK: - Public methods
@@ -198,6 +203,21 @@ final class FlashcardViewModel {
     }
   }
   
+  // MARK: - Speech
+  
+  func speakOriginal() {
+    guard let word = currentWord else { return }
+    speechService.languageCode = "en-US"
+    speechService.speak(text: word.original)
+  }
+  func speakCurrentWord(auto: Bool) {
+    guard auto else { return }
+    speakOriginal()
+  }
+  func stopSpeech(immediately: Bool = false) {
+    speechService.stop(immediately: immediately)
+  }
+  
   // MARK: - Private methods
   
   /// Advances to the next word in the list by incrementing the current index.
@@ -228,7 +248,7 @@ extension FlashcardViewModel {
     viewModel.selectedLevel = .mockB1
     viewModel.topics = [.mock1, .mock2]
     viewModel.words = [.mock1]
-    viewModel.unknownWords = [.mock3, .mock2]
+    viewModel.unknownWords = [.mock1, .mock2]
     return viewModel
   }()
 }
