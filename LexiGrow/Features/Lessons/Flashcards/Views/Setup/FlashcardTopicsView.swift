@@ -16,13 +16,12 @@ extension FlashcardSetupView {
         Text("Topics:")
           .font(.subheadline)
           .fontWeight(.medium)
-        
         if viewModel.selectedLevel == nil {
           Text("Select a level above")
             .fontWeight(.medium)
             .foregroundStyle(.gray)
         } else if viewModel.topics.isEmpty {
-          Text("No topics for a level above")
+          Text("No topics yet")
             .fontWeight(.medium)
             .foregroundStyle(.secondary)
         } else {
@@ -59,5 +58,5 @@ extension FlashcardSetupView {
 }
 
 #Preview {
-  FlashcardSetupView.TopicsView(viewModel: FlashcardViewModel(supabaseService: MockSupabaseService()))
+  FlashcardSetupView.TopicsView(viewModel: .mockObject)
 }

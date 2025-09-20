@@ -62,7 +62,6 @@ extension FlashcardSetupView {
               selectedLevel = nil
             } else {
               selectedLevel = level
-//              selectedTopic = nil // discard the selected topic when the level changes.
             }
           }
         }

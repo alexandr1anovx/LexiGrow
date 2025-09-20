@@ -53,7 +53,7 @@ class MockSupabaseService: SupabaseServiceProtocol {
   var topics: [Topic] = [.mock1, .mock2, .mock3]
   var topicsProgress: [Topic] = [.mock1, .mock2, .mock3]
   var words: [Word] = [.mock1, .mock2]
-  var mockUnlearnedWords: [Word] = [.mock3]
+  var mockUnlearnedWords: [Word] = [.mock1]
   
   func getLessons() async throws -> [Lesson] {
     if shouldSucceed { return lessons }

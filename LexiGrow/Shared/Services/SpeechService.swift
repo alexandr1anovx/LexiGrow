@@ -28,7 +28,7 @@ final class SpeechService: NSObject, SpeechServiceProtocol {
   
   // MARK: - Init
   
-  init(languageCode: String = "en-US", rate: Float = 0.3, pitch: Float = 0.5) {
+  init(languageCode: String = "en-US", rate: Float = 0.2, pitch: Float = 0.5) {
     self.languageCode = languageCode
     self.rate = rate
     self.pitch = pitch

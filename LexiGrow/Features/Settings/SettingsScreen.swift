@@ -8,34 +8,41 @@
 import SwiftUI
 
 struct SettingsScreen: View {
-  @AppStorage("user_theme") private var userTheme: Theme = .system
+  @AppStorage("app_scheme") private var appScheme: Theme = .system
+  @State private var isExpandedSchemePanel = true
   private let feedbackGenerator = UIImpactFeedbackGenerator(style: .soft)
-  @State private var isExpanded = true
   
   var body: some View {
     Form {
       Section("Appearance") {
-        DisclosureGroup("Color Scheme", isExpanded: $isExpanded) {
+        DisclosureGroup("Color Scheme", isExpanded: $isExpandedSchemePanel) {
           HStack(spacing: 15) {
             ForEach(Theme.allCases) { theme in
-              Text(theme.rawValue)
-                .frame(minWidth: 60)
-                .foregroundStyle(userTheme == theme ? Color(.systemBackground) : Color.primary)
-                .padding(10)
-                .background(userTheme == theme ? Color.primary : Color.clear)
-                .clipShape(.rect(cornerRadius: 20))
-                .onTapGesture {
-                  userTheme = theme
-                  feedbackGenerator.impactOccurred()
-                }
+              Button {
+                appScheme = theme
+                feedbackGenerator.impactOccurred()
+              } label: {
+                Text(theme.rawValue)
+                  .frame(minWidth: 60)
+                  .foregroundStyle(appScheme == theme ? Color(.systemBackground) : Color.primary)
+                  .padding(10)
+                  .background(appScheme == theme ? Color.primary : Color.clear)
+                  .clipShape(.rect(cornerRadius: 20))
+              }
             }
           }
         }
       }
+      NavigationLink {
+        PreferencesView()
+      } label: {
+        Text("Preferences")
+      }
     }
   }
 }
-
 #Preview {
-  SettingsScreen()
+  NavigationView {
+    SettingsScreen()
+  }
 }

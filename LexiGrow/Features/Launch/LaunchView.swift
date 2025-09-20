@@ -17,13 +17,13 @@ struct LaunchView: View {
           .foregroundStyle(isAnimating ? Color.primary : Color.clear)
           .opacity(isAnimating ? 1:0)
         Image(systemName: "globe")
-          .foregroundStyle(isAnimating ? Color.clear : Color.blue)
+          .foregroundStyle(isAnimating ? Color.clear : Color.pink)
       }
       Divider()
         .gridCellUnsizedAxes(.horizontal)
       GridRow {
         Image(systemName: "brain.fill")
-          .foregroundStyle(isAnimating ? Color.clear : Color.blue)
+          .foregroundStyle(isAnimating ? Color.clear : Color.pink)
         Text("Grow")
           .foregroundStyle(isAnimating ? Color.primary : Color.clear)
           .opacity(isAnimating ? 1:0)

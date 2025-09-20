@@ -18,37 +18,6 @@ struct TopicButton: View {
   }
   
   var body: some View {
-//    Button(action: selectAction) {
-//      HStack(spacing: 10) {
-//        Text(topic.name)
-//          .font(.subheadline)
-//          .fontWeight(.medium)
-//          .foregroundStyle(selectedTopic?.id == topic.id ? .pink : .primary)
-//        
-//        HStack(spacing:0) {
-//          Text("\(topic.learnedWords)")
-//            .foregroundStyle(.white)
-//          Text("/")
-//            .foregroundStyle(.white)
-//          Text("\(topic.totalWords)")
-//            .foregroundStyle(.white)
-//        }
-//        .font(.caption)
-//        .fontWeight(.semibold)
-//        .padding(7)
-//        .background {
-//          RoundedRectangle(cornerRadius: 10)
-//            .fill(topic.learnedWords == topic.totalWords ? .green : .purple.opacity(0.8))
-//        }
-//      }.padding(5)
-////      .padding(12)
-//      
-//    }
-//    
-//    .buttonStyle(.glass)
-//    
-//    .disabled(topic.learnedWords == topic.totalWords)
-//    .opacity(topic.learnedWords == topic.totalWords ? 0.7 : 1)
     Button(action: selectAction) {
       HStack(spacing: 10) {
         Text(topic.name)
@@ -56,7 +25,7 @@ struct TopicButton: View {
           .fontWeight(.medium)
           .foregroundColor(.white)
         
-        HStack(spacing:0) {
+        HStack(spacing: 0) {
           Text("\(topic.learnedWords)")
             .foregroundStyle(topic.learnedWords != topic.totalWords ? .orange : .white)
           Text("/")
@@ -93,7 +62,7 @@ struct TopicButton: View {
   VStack {
     ScrollView(.horizontal) {
       HStack {
-        ForEach(topics, id: \.self) { topic in
+        ForEach(topics, id: \.id) { topic in
           TopicButton(
             topic: Topic(
               id: topic.id,
@@ -108,10 +77,7 @@ struct TopicButton: View {
             }
           )
         }
-      }
-      .padding(4)
-    }
-    .scrollIndicators(.hidden)
+      }.padding(4)
+    }.scrollIndicators(.hidden)
   }
-  
 }

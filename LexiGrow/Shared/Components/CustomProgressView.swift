@@ -22,10 +22,11 @@ struct CustomProgressView: View {
           style: StrokeStyle(lineWidth: 5, lineCap: .round)
         )
         .rotationEffect(.degrees(isAnimating ? 360 : 0))
-        .animation(.linear(duration: 1).repeatForever(autoreverses: false), value: isAnimating)
-        .onAppear {
-          isAnimating = true
-        }
+        .animation(
+          .linear(duration: 1).repeatForever(autoreverses: false),
+          value: isAnimating
+        )
+        .onAppear { isAnimating = true }
     }
     .frame(width: 20, height: 20)
   }

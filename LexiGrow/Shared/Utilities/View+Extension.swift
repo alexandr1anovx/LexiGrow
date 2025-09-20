@@ -11,9 +11,7 @@ extension View {
   
   // MARK: - Button Styles
   
-  func prominentButtonStyle(
-    tint: Color
-  ) -> some View {
+  func prominentButtonStyle(tint: Color) -> some View {
     self
       .fontWeight(.semibold)
       .foregroundStyle(.white)
@@ -30,20 +28,6 @@ extension View {
       .padding(11)
       .frame(maxWidth: .infinity)
       .foregroundStyle(textColor)
-  }
-  
-  
-  func borderedButtonStyle(
-    tint: Color,
-    textColor: Color? = nil
-  ) -> some View {
-    self
-      .font(.callout)
-      .fontWeight(.medium)
-      .foregroundStyle(textColor ?? .white)
-      .tint(tint)
-      .buttonBorderShape(.roundedRectangle(radius: 20))
-      .buttonStyle(.bordered)
   }
   
   // MARK: - Input Field Style

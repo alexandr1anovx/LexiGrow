@@ -11,7 +11,7 @@ import SwiftData
 @main
 struct LexiGrowApp: App {
   
-  @AppStorage("user_theme") private var userTheme: Theme = .system
+  @AppStorage("app_scheme") private var appScheme: Theme = .system
   private let supabaseService = SupabaseService()
   private let authManager = AuthManager()
   @State private var lessonsViewModel: LessonsViewModel
@@ -38,7 +38,7 @@ struct LexiGrowApp: App {
           MainTabView()
         }
       }
-      .preferredColorScheme(userTheme.colorScheme)
+      .preferredColorScheme(appScheme.colorScheme)
       .environment(supabaseService)
       .environment(authManager)
       .environment(lessonsViewModel)

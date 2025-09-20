@@ -134,10 +134,7 @@ private extension LessonsScreen {
             LazyVGrid(columns: columns, spacing: 25) {
               ForEach(viewModel.lessons, id: \.id) { lesson in
                 LessonBlock(lesson: lesson)
-                  .onTapGesture {
-                    selectedLesson = lesson
-                    print(selectedLesson!)
-                  }
+                  .onTapGesture { selectedLesson = lesson }
               }
             }.padding()
           }
@@ -161,14 +158,9 @@ struct StatisticsView: View {
         totalWords: $0.totalWords
       )
     }
+    .listStyle(.insetGrouped)
     .refreshable {
       await viewModel.syncProgress(context: modelContext)
-    }
-    .listStyle(.insetGrouped)
-    .overlay {
-      if viewModel.isLoading {
-        ProgressView()
-      }
     }
   }
 }
@@ -249,8 +241,8 @@ struct LessonContainerView: View {
 #Preview {
   LessonsScreen()
     .environment(FlashcardViewModel.mockObject)
-    .environment(StatisticsViewModel(supabaseService: SupabaseService.mockObject))
-    .environment(LessonsViewModel(supabaseService: SupabaseService.mockObject))
+    .environment(StatisticsViewModel.mockObject)
+    .environment(LessonsViewModel.mockObject)
     .environment(SupabaseService.mockObject)
     .environment(AuthManager.mockObject)
     .environment(TranslationViewModel.mockObject)

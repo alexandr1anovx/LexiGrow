@@ -12,10 +12,4 @@ struct Word: Identifiable, Codable, Hashable {
   let original: String
   let translation: String
   let transcription: String
-  let audioName: String
-  
-  enum CodingKeys: String, CodingKey {
-    case id, original, translation, transcription
-    case audioName = "audio_name"
-  }
 }

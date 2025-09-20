@@ -11,7 +11,7 @@ struct FlashcardView: View {
   @Environment(FlashcardViewModel.self) var viewModel
   @Environment(\.dismiss) var dismiss
   @State private var isFlipped = false
-  @State private var isTurnedAutomaticAudio = true
+  @AppStorage("automatic_sound_playback") private var isTurnedAudioPlayback: Bool = false
   
   var body: some View {
     VStack {
@@ -20,7 +20,7 @@ struct FlashcardView: View {
         Toggle(
           "Automatic sound playback:",
           systemImage: "speaker.wave.2.fill",
-          isOn: $isTurnedAutomaticAudio
+          isOn: $isTurnedAudioPlayback
         )
         .font(.subheadline)
         .foregroundStyle(.secondary)
@@ -43,7 +43,7 @@ struct FlashcardView: View {
         
         Group {
           if !isFlipped {
-            FrontView(word: word, isFlipped: $isFlipped, isTurnedAutomaticAudio: $isTurnedAutomaticAudio)
+            FrontView(word: word, isFlipped: $isFlipped, isTurnedAudioPlayback: $isTurnedAudioPlayback)
           } else {
             BackView(word: word, isFlipped: $isFlipped)
           }
@@ -52,6 +52,12 @@ struct FlashcardView: View {
           isFlipped.toggle()
         }
         .padding(30)
+        .onChange(of: viewModel.currentWordIndex) { _, _ in
+          viewModel.speakCurrentWord(auto: isTurnedAudioPlayback)
+        }
+        .onAppear {
+          viewModel.speakCurrentWord(auto: isTurnedAudioPlayback)
+        }
         
         if let error = viewModel.errorMessage {
           Text(error)
@@ -59,8 +65,7 @@ struct FlashcardView: View {
             .padding(.horizontal)
         }
       } else {
-        Text("The data is loading...")
-        CustomProgressView()
+        ProgressView("The data is loading...")
       }
     }
   }

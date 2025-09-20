@@ -62,6 +62,7 @@ struct TranslationView: View {
 }
 
 #Preview {
-  TranslationView(viewModel: TranslationViewModel(supabaseService: SupabaseService.mockObject))
-  .environment(TranslationViewModel.mockObject)
+  TranslationView(
+    viewModel: TranslationViewModel.mockObject
+  )
 }

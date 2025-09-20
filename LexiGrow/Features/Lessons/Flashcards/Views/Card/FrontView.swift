@@ -10,11 +10,11 @@ import SwiftUI
 extension FlashcardView {
   
   struct FrontView: View {
+    @Environment(FlashcardViewModel.self) var viewModel
     @State private var animateSoundIcon = false
     let word: Word
     @Binding var isFlipped: Bool
-    @Binding var isTurnedAutomaticAudio: Bool
-    private let audioPlayer = AudioPlayerService()
+    @Binding var isTurnedAudioPlayback: Bool
     
     var body: some View {
       ZStack {
@@ -40,7 +40,8 @@ extension FlashcardView {
           
           if #available(iOS 26, *) {
             Button {
-              audioPlayer.playSound(named: word.audioName)
+              viewModel.speakOriginal()
+              //audioPlayer.playSound(named: word.audioName)
               animateSoundIcon.toggle()
             } label: {
               Image(systemName: "speaker.wave.2.fill")
@@ -52,7 +53,8 @@ extension FlashcardView {
             .padding(.top)
           } else {
             Button {
-              audioPlayer.playSound(named: word.audioName)
+              viewModel.speakOriginal()
+              //audioPlayer.playSound(named: word.audioName)
               animateSoundIcon.toggle()
             } label: {
               Image(systemName: "speaker.wave.2.fill")
@@ -67,11 +69,11 @@ extension FlashcardView {
           }
         }
       }
-      .onAppear {
-        if isTurnedAutomaticAudio {
-          audioPlayer.playSound(named: word.audioName)
-        }
-      }
+//      .onAppear {
+//        if isTurnedAutomaticAudio {
+//          audioPlayer.playSound(named: word.audioName)
+//        }
+//      }
     }
   }
 }
@@ -80,7 +82,7 @@ extension FlashcardView {
   FlashcardView.FrontView(
     word: Word.mock1,
     isFlipped: .constant(false),
-    isTurnedAutomaticAudio: .constant(false)
+    isTurnedAudioPlayback: .constant(false)
   )
   .environment(FlashcardViewModel.mockObject)
 }

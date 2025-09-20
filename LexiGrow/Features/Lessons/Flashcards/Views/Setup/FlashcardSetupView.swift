@@ -53,7 +53,7 @@ struct FlashcardSetupView: View {
           .buttonStyle(.glassProminent)
           .padding(.horizontal, 25)
           .disabled(!viewModel.canStartLesson)
-          .opacity(!viewModel.canStartLesson ? 0.3 : 1)
+          .opacity(!viewModel.canStartLesson ? 0.5 : 1)
         } else {
           // Fallback on earlier versions
         }
@@ -81,12 +81,14 @@ struct FlashcardSetupView: View {
 extension FlashcardSetupView {
   struct SortMenuView: View {
     @Bindable var viewModel: FlashcardViewModel
+    @AppStorage("topic_sort_option") private var topicSortOption: TopicSortOption = .defaultOrder
+    
     var body: some View {
       Menu {
         Picker("Sort by", selection: $viewModel.sortOption) {
-          ForEach(TopicSortOption.allCases) { option in
-            Label(option.rawValue, systemImage: option.iconName)
-              .tag(option)
+          ForEach(TopicSortOption.allCases) {
+            Label($0.rawValue, systemImage: $0.iconName)
+              .tag($0)
           }
         }
       } label: {
@@ -103,6 +105,19 @@ extension FlashcardSetupView {
                 .fill(.black)
                 .shadow(radius: 3)
             }
+        }
+      }
+      .onAppear {
+        viewModel.sortOption = topicSortOption
+      }
+      .onChange(of: topicSortOption) { _, newValue in
+        if viewModel.sortOption != newValue {
+          viewModel.sortOption = newValue
+        }
+      }
+      .onChange(of: viewModel.sortOption) { _, newValue in
+        if topicSortOption != newValue {
+          topicSortOption = newValue
         }
       }
     }
