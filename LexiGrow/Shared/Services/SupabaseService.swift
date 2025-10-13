@@ -6,12 +6,6 @@
 //
 
 import Foundation
-import Supabase
-
-let supabase = SupabaseClient(
-  supabaseURL: URL(string: Constants.supabaseURL)!,
-  supabaseKey: Constants.supabaseAPIKey
-)
 
 protocol SupabaseServiceProtocol {
   func getLessons() async throws -> [Lesson]
@@ -21,14 +15,14 @@ protocol SupabaseServiceProtocol {
   func getSentences(for levelId: UUID) async throws -> [Sentence]
   func markWordAsLearned(wordId: UUID) async throws
   func saveLessonProgress(learnedWords: [Word]) async throws
-  
 }
 
 @Observable
 final class SupabaseService: SupabaseServiceProtocol {
   
+  /// Loads the list of all lessons from the database, sorted by lock status.
   func getLessons() async throws -> [Lesson] {
-    let lessons: [Lesson] = try await supabase
+    let lessons: [Lesson] = try await SupabaseManager.shared.client
       .from("lessons")
       .select()
       .order("is_locked")
@@ -37,8 +31,9 @@ final class SupabaseService: SupabaseServiceProtocol {
     return lessons
   }
   
+  /// Loads the list of all levels, sorted by their order index.
   func getLevels() async throws -> [Level] {
-    let levels: [Level] = try await supabase
+    let levels: [Level] = try await SupabaseManager.shared.client
       .from("levels")
       .select()
       .order("order_index")
@@ -47,66 +42,78 @@ final class SupabaseService: SupabaseServiceProtocol {
     return levels
   }
   
-  /// Loads words for specific lesson and user.
-  /// If some words have already been learned, they are not included in the array.
+  /// Loads words for a specific lesson and user, excluding words already learned.
+  /// - Parameters:
+  ///   - levelId: The level identifier.
+  ///   - topicId: The topic (lesson) identifier.
+  ///   - userId: The current user's identifier.
+  /// - Returns: An array of unlearned words `[Word]`.
   func getWords(levelId: UUID, topicId: UUID, userId: UUID) async throws -> [Word] {
     let params: [String: UUID] = [
       "p_user_id": userId,
       "p_level_id": levelId,
       "p_topic_id": topicId
     ]
-    let words: [Word] = try await supabase
+    let words: [Word] = try await SupabaseManager.shared.client
       .rpc("get_unlearned_words_for_lesson", params: params)
       .execute()
       .value
     return words
   }
   
-  /// Loads progress for all topics for a specific level and user.
-  /// Calls the RPC-function 'get_topic_progress' on the server.
+  /// Loads topics and their learning progress for a specific level and user.
+  /// - Parameters:
+  ///   - levelId: The level identifier for which topics are loaded.
+  ///   - userId: The current user's identifier used to compute progress.
+  /// - Returns: An array of topics `[Topic]` with progress information.
   func getTopics(levelId: UUID, userId: UUID) async throws -> [Topic] {
     let params: [String: UUID] = [
       "p_level_id": levelId,
       "p_user_id": userId
     ]
-    let progressList: [Topic] = try await supabase
+    let progressList: [Topic] = try await SupabaseManager.shared.client
       .rpc("get_topic_progress", params: params)
       .execute()
       .value
     return progressList
   }
   
+  /// Asynchronously loads a list of sentences for the specified level.
+  /// - Parameter levelId: The level identifier for which sentences are needed.
+  /// - Returns: An array of sentences `[Sentence]`.
   func getSentences(for levelId: UUID) async throws -> [Sentence] {
     let params = ["p_level_id": levelId]
-    let sentences: [Sentence] = try await supabase
+    let sentences: [Sentence] = try await SupabaseManager.shared.client
       .rpc("get_sentences_for_level", params: params)
       .execute()
       .value
     return sentences
   }
   
+  /// Marks a single word as learned for the current user.
+  /// - Parameter wordId: The identifier of the word to mark as learned.
   func markWordAsLearned(wordId: UUID) async throws {
-    let user = try await supabase.auth.user()
+    let user = try await SupabaseManager.shared.client.auth.user()
     let progress = UserProgress(
       userId: user.id,
       wordId: wordId,
       learnedAt: Date.now
     )
-    try await supabase
+    try await SupabaseManager.shared.client
       .from("user_progress")
-    // Using .upsert() for insertion prevents an error, if the user learns the same word twice.
-    // If the record already exist, nothing will happen.
-      .upsert(progress)
+      .upsert(progress) // .upsert() prevents an error if the user learns the same word twice.
       .execute()
   }
   
+  /// Saves progress for an array of words learned during a lesson.
+  /// - Parameter learnedWords: An array of words `[Word]` that were learned.
   func saveLessonProgress(learnedWords: [Word]) async throws {
     guard !learnedWords.isEmpty else { return }
-    let user = try await supabase.auth.user()
+    let user = try await SupabaseManager.shared.client.auth.user()
     let progressArray = learnedWords.map { word in
       UserProgress(userId: user.id, wordId: word.id, learnedAt: Date())
     }
-    try await supabase
+    try await SupabaseManager.shared.client
       .from("user_progress")
       .upsert(progressArray)
       .execute()
