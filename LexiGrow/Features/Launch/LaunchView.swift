@@ -8,33 +8,41 @@
 import SwiftUI
 
 struct LaunchView: View {
-  @State private var isAnimating = false
-  
-  var body: some View {
-    Grid {
-      GridRow {
-        Text("Lexi")
-          .foregroundStyle(isAnimating ? Color.primary : Color.clear)
-          .opacity(isAnimating ? 1:0)
-        Image(systemName: "globe")
-          .foregroundStyle(isAnimating ? Color.clear : Color.pink)
-      }
-      Divider()
-        .gridCellUnsizedAxes(.horizontal)
-      GridRow {
-        Image(systemName: "brain.fill")
-          .foregroundStyle(isAnimating ? Color.clear : Color.pink)
-        Text("Grow")
-          .foregroundStyle(isAnimating ? Color.primary : Color.clear)
-          .opacity(isAnimating ? 1:0)
+  enum LoadingState {
+    case start, end
+    
+    var next: LoadingState {
+      switch self {
+      case .start: return .end
+      case .end: return .start
       }
     }
-    .font(.title2)
-    .fontWeight(.semibold)
-    .onAppear {
-      withAnimation(.spring(duration: 0.8).repeatForever(autoreverses: true)) {
-        isAnimating.toggle()
+  }
+  
+  @State private var currentState: LoadingState = .start
+  @State private var isContentReady = false
+  
+  var body: some View {
+    VStack {
+      HStack {
+        Circle()
+          .frame(width: 20, height: 20)
+          .scaleEffect(currentState == .start ? 1 : 0.3)
+          .opacity(currentState == .start ? 1 : 0.3)
+        Circle()
+          .frame(width: 20, height: 20)
+          .scaleEffect(currentState == .end ? 1 : 0.3)
+          .opacity(currentState == .end ? 1 : 0.3)
       }
+    }
+    .onAppear { startAnimation() }
+  }
+  
+  private func startAnimation() {
+    guard !isContentReady else { return }
+    withAnimation { currentState = currentState.next }
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+      startAnimation()
     }
   }
 }
