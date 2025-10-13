@@ -34,7 +34,7 @@ final class AuthManager {
   
   // MARK: - Public API
   
-  /// Автентифікує користувача за допомогою електронної пошти та пароля.
+  /// Authenticates a user using email and password.
   func signIn(email: String, password: String) async {
     prepareForRequest()
     defer { isLoading = false }
@@ -47,7 +47,7 @@ final class AuthManager {
     }
   }
   
-  /// Реєструє нового користувача з іменем, електронною поштою та паролем.
+  /// Registers a new user with full name, email, and password.
   func signUp(fullName: String, email: String, password: String) async {
     prepareForRequest()
     defer { isLoading = false }
@@ -66,7 +66,7 @@ final class AuthManager {
     }
   }
   
-  /// Виконує вихід поточного користувача із системи.
+  /// Signs out the current user.
   func signOut() async {
     isLoading = true
     defer { isLoading = false }
@@ -80,7 +80,7 @@ final class AuthManager {
     }
   }
   
-  /// Асинхронно оновлює ім'я поточного автентифікованого користувача.
+  /// Asynchronously updates the full name of the currently authenticated user.
   func updateUser(fullName: String) async {
     guard currentUser != nil else { return }
     prepareForRequest()
@@ -94,7 +94,7 @@ final class AuthManager {
     }
   }
   
-  /// Надсилає запит на скидання пароля для вказаної електронної пошти.
+  /// Sends a password reset request to the specified email address.
   func requestPasswordReset(for email: String) async {
     prepareForRequest()
     defer { isLoading = false }
@@ -106,7 +106,7 @@ final class AuthManager {
     }
   }
   
-  /// Оновлює дані поточного користувача з сервера.
+  /// Refreshes the current user's data from the server.
   func refreshUser() async {
     isLoading = true
     defer { isLoading = false }
@@ -122,7 +122,7 @@ final class AuthManager {
     }
   }
   
-  /// Видаляє акаунт поточного користувача.
+  /// Deletes the current user's account.
   /*
   func deleteUser() async {
     guard currentUser != nil else { return }
@@ -141,11 +141,8 @@ final class AuthManager {
   
   // MARK: - 'Sign In With' providers
   
-  /// Ініціює процес входу через сервіс Google.
+  /// Initiates the sign-in flow via Google.
   func signInWithGoogle() async {
-    prepareForRequest()
-    defer { isLoading = false }
-    
     do {
       guard let bundleId = Bundle.main.bundleIdentifier else { return }
       try await authService.signInWithGoogle(bundleId: bundleId)
@@ -154,21 +151,29 @@ final class AuthManager {
     }
   }
   
+  func signInWithMagicLink(for email: String) async {
+    do {
+      try await authService.signInWithMagicLink(for: email)
+    } catch {
+      print("Failed to sign in with magic link: \(error)")
+    }
+  }
+  
   // MARK: - Private API
   
-  /// Готує стан менеджера до нового асинхронного запиту.
+  /// Prepares the manager's state for a new asynchronous request.
   private func prepareForRequest() {
     isLoading = true
     error = nil
   }
   
-  /// Оновлює стан користувача та автентифікації на основі отриманого об'єкта AppUser.
+  /// Updates the user and authentication state based on the provided AppUser object.
   private func updateUserState(with user: AppUser) {
     self.currentUser = user
     self.authState = user.emailConfirmed ? .authenticated : .authenticated
   }
   
-  /// Обробляє помилки, оновлюючи стан для відображення в UI.
+  /// Handles errors and updates the state for UI presentation.
   private func handle(error: Error) {
     self.error = error as? AuthError ?? .unknown(description: error.localizedDescription)
     self.authState = .unauthenticated

@@ -11,6 +11,7 @@ import Supabase
 protocol AuthServiceProtocol {
   func signIn(email: String, password: String) async throws -> AppUser
   func signInWithGoogle(bundleId: String) async throws
+  func signInWithMagicLink(for email: String) async throws
   
   func signUp(fullName: String, email: String, password: String) async throws -> AppUser
   func signOut() async throws
@@ -21,7 +22,7 @@ protocol AuthServiceProtocol {
 
 struct AuthService: AuthServiceProtocol {
   
-  /// Автентифікує користувача за допомогою електронної пошти та пароля.
+  /// Authenticates a user using email and password.
   func signIn(email: String, password: String) async throws -> AppUser {
     do {
       let session = try await SupabaseManager.shared.client.auth.signIn(email: email, password: password)
@@ -31,7 +32,7 @@ struct AuthService: AuthServiceProtocol {
     }
   }
   
-  /// Реєструє нового користувача з іменем, електронною поштою та паролем.
+  /// Registers a new user with full name, email, and password.
   func signUp(fullName: String, email: String, password: String) async throws -> AppUser {
     do {
       let session = try await SupabaseManager.shared.client.auth.signUp(
@@ -45,7 +46,7 @@ struct AuthService: AuthServiceProtocol {
     }
   }
   
-  /// Виконує вихід поточного користувача із системи.
+  /// Signs out the current user.
   func signOut() async throws {
     do {
       try await SupabaseManager.shared.client.auth.signOut()
@@ -54,7 +55,7 @@ struct AuthService: AuthServiceProtocol {
     }
   }
   
-  /// Асинхронно оновлює ім'я поточного автентифікованого користувача.
+  /// Asynchronously updates the full name of the currently authenticated user.
   func updateUser(fullName: String) async throws -> AppUser {
     let updatedUser = try await SupabaseManager.shared.client.auth.update(
       user: UserAttributes(data: ["fullName": .string(fullName)])
@@ -62,6 +63,7 @@ struct AuthService: AuthServiceProtocol {
     return try mapSupabaseUserToAppUser(updatedUser)
   }
   
+  /// Retrieves the current authenticated session and maps it to the `AppUser` model.
   func getCurrentUser() async throws -> AppUser {
     do {
       let session = try await SupabaseManager.shared.client.auth.session
@@ -71,23 +73,44 @@ struct AuthService: AuthServiceProtocol {
     }
   }
   
-  /// Надсилає запит на скидання пароля для вказаної електронної пошти.
+  /// Sends a password reset request to the specified email address.
   func requestPasswordReset(for email: String) async throws {
     try await SupabaseManager.shared.client.auth.resetPasswordForEmail(email)
   }
-
+  
+  // MARK: - Sign In With Providers.
+  
+  /// Authenticates a user via Google account.
+  ///
+  /// This method initiates the OAuth sign-in flow with Google.
+  /// During sign-in, the user is always prompted to choose a Google account.
+  ///
+  /// - Parameter bundleId: The app’s bundle identifier, used to form the callback URL.
   func signInWithGoogle(bundleId: String) async throws {
     try await SupabaseManager.shared.client.auth.signInWithOAuth(
       provider: .google,
       redirectTo: URL(string: "\(bundleId)://"),
-      // завжди дозволяє користувачу обрати google-акаунт.
+      // always prompts the user to select a Google account.
       queryParams: [(name: "prompt", value: "select_account")]
+    )
+  }
+  
+  /// Sends a magic link for sign-in to the specified email address.
+  ///
+  /// The method generates a one-time link for passwordless sign-in.
+  /// After following the link, the user will be redirected back into the app.
+  ///
+  /// - Parameter email: The user's email address to send the magic link to.
+  func signInWithMagicLink(for email: String) async throws {
+    try await SupabaseManager.shared.client.auth.signInWithOTP(
+      email: email,
+      redirectTo: URL(string: "lexigrow://callback")
     )
   }
   
   // MARK: - Private methods
   
-  /// Перетворює користувача Supabase у внутрішню модель `AppUser`, витягуючи основні дані та метадані користувача.
+  /// Maps a Supabase user to the internal `AppUser` model by extracting core fields and user metadata.
   private func mapSupabaseUserToAppUser( _ supabaseUser: Supabase.User) throws -> AppUser {
     guard let email = supabaseUser.email else {
       throw AuthError.invalidCredentials
@@ -125,15 +148,15 @@ enum AuthError: LocalizedError {
   var errorDescription: String? {
     switch self {
     case .invalidCredentials:
-      return "Неправильна електронна пошта або пароль."
+      return "Incorrect email or password."
     case .networkError:
-      return "Помилка мережі. Будь ласка, перевірте ваше інтернет-з'єднання."
+      return "Network error. Please check your internet connection."
     case .serverError:
-      return "Сталася помилка на сервері. Спробуйте пізніше."
+      return "There was an error on the server. Please try again later."
     case .emailNotConfirmed:
-      return "Будь ласка, підтвердьте вашу електронну пошту."
+      return "Please confirm your email address."
     case .unknown(let description):
-      return "Сталася невідома помилка: \(description)"
+      return "An unknown error has occurred: \(description)"
     }
   }
 }
