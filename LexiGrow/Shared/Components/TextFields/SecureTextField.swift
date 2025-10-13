@@ -12,7 +12,7 @@ struct SecureTextField: View {
   let iconName: String
   @Binding var text: String
   @State private var showPassword = false
-  var showToggleIcon: Bool = true
+  var showToggleIcon = true
   
   var body: some View {
     HStack {
@@ -36,8 +36,11 @@ struct SecureTextField: View {
       }
     }
     .frame(height: 55)
-    .background(.thinMaterial)
-    .clipShape(.rect(cornerRadius: 20))
+    .background {
+      RoundedRectangle(cornerRadius: 20)
+        .fill(.thinMaterial)
+        .shadow(radius: 1)
+    }
   }
 }
 

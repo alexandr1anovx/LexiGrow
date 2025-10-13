@@ -20,8 +20,11 @@ struct DefaultTextField: View {
       TextField(title, text: $text)
     }
     .frame(height: 55)
-    .background(.thinMaterial)
-    .clipShape(.rect(cornerRadius: 20))
+    .background {
+      RoundedRectangle(cornerRadius: 20)
+        .fill(.thinMaterial)
+        .shadow(radius: 1)
+    }
   }
 }
 
