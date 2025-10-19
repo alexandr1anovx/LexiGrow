@@ -14,49 +14,46 @@ extension CardView {
     @Binding var isFlipped: Bool
     
     var body: some View {
-      ZStack {
-        RoundedRectangle(cornerRadius: 40)
-          .fill(Color.systemGray)
-          .stroke(Color.systemGray, lineWidth: 2, antialiased: true)
-          .shadow(radius: 2)
-        
-        VStack {
-          Spacer()
+      RoundedRectangle(cornerRadius: 40)
+        .fill(Color.systemGray)
+        .stroke(Color.systemGray, lineWidth: 2, antialiased: true)
+        .shadow(radius: 2)
+        .overlay {
           Text(word.translation)
             .font(.largeTitle)
             .fontWeight(.semibold)
             .foregroundStyle(.blue)
             .padding(.horizontal, 10)
             .multilineTextAlignment(.center)
-          Spacer()
-          
-          HStack {
-            Button {
-              withAnimation(.easeInOut(duration: 0.6)) {
-                isFlipped = false
-                viewModel.handleUnknownWord()
-              }
-            } label: {
-              Image(systemName: "xmark")
-                .font(.title)
-                .capsuleLabelStyle()
-            }
-            Spacer()
-            Button {
-              withAnimation(.easeInOut(duration: 0.6)) {
-                isFlipped = false
-                viewModel.handleKnownWord()
-              }
-            } label: {
-              Image(systemName: "checkmark")
-                .font(.title)
-                .capsuleLabelStyle()
-            }
-          }
-          .shadow(radius: 3)
-          .padding([.horizontal, .bottom], 50)
         }
-      }
+        .overlay(alignment: .bottomTrailing) {
+          Button {
+            withAnimation(.easeInOut(duration: 0.6)) {
+              isFlipped = false
+              viewModel.handleKnownWord()
+            }
+          } label: {
+            Image(systemName: "checkmark")
+              .font(.title)
+              .capsuleLabelStyle()
+          }
+          .shadow(radius: 5)
+          .padding(50)
+        }
+        .overlay(alignment: .bottomLeading) {
+          Button {
+            withAnimation(.easeInOut(duration: 0.6)) {
+              isFlipped = false
+              viewModel.handleUnknownWord()
+            }
+          } label: {
+            Image(systemName: "xmark")
+              .font(.title)
+              .capsuleLabelStyle()
+          }
+          .shadow(radius: 5)
+          .padding(50)
+        }
     }
   }
 }

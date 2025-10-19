@@ -27,17 +27,10 @@ struct CardView: View {
         .padding(.horizontal)
         
         HStack(spacing: 10) {
-          WordCounterView(
-            systemImage: "xmark.circle.fill",
-            count: viewModel.unknownWords.count,
-            backgroundColor: .indigo
-          )
-          WordCounterView(
-            systemImage: "checkmark.circle.fill",
-            count: viewModel.knownWords.count,
-            backgroundColor: .indigo
-          )
-        }.padding(.top)
+          WordCountView(count: viewModel.unknownWords.count, iconName: "xmark.circle.fill")
+          WordCountView(count: viewModel.knownWords.count, iconName: "checkmark.circle.fill")
+        }
+        .padding(.top)
         
         Group {
           if !isFlipped {
@@ -48,10 +41,10 @@ struct CardView: View {
               .transition(.scale)
           }
         }
+        .padding(20)
         .onTapGesture {
           withAnimation(.easeInOut(duration: 0.6)) { isFlipped.toggle() }
         }
-        .padding(20)
         .onChange(of: viewModel.currentWordIndex) {
           viewModel.speakCurrentWord(auto: isTurnedAudioPlayback)
         }
@@ -66,28 +59,17 @@ struct CardView: View {
 }
 
 extension CardView {
-  struct WordCounterView: View {
-    @Environment(FlashcardViewModel.self) var viewModel
-    
-    let systemImage: String
+  struct WordCountView: View {
     let count: Int
-    let backgroundColor: Color
+    let iconName: String
     
     var body: some View {
-      HStack {
-        Image(systemName: systemImage)
-        Text("\(count)")
-          .fontWeight(.semibold)
-          .monospacedDigit()
-          .contentTransition(.numericText())
-          .animation(.bouncy, value: viewModel.currentWordIndex)
-      }
-      .foregroundStyle(.white)
-      .padding(15)
-      .background {
-        Capsule()
-          .fill(backgroundColor)
-      }
+      Label("\(count)", systemImage: iconName)
+        .capsuleLabelStyle(pouring: .primary)
+        .monospacedDigit()
+        .contentTransition(.numericText())
+        .animation(.bouncy, value: count)
+        .foregroundStyle(Color.system)
     }
   }
 }

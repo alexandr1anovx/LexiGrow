@@ -20,20 +20,24 @@ extension CardView {
       ZStack {
         RoundedRectangle(cornerRadius: 40)
           .fill(Color.systemGray)
-          .stroke(Color.systemGray, lineWidth: 2, antialiased: true)
+          .stroke(
+            Color.systemGray,
+            lineWidth: 2,
+            antialiased: true
+          )
           .shadow(radius: 2)
-        
-        VStack(spacing: 23) {
-          Text(word.original)
-            .font(.largeTitle)
-            .fontWeight(.semibold)
-            .foregroundStyle(.blue)
-            .padding(.horizontal)
-            .multilineTextAlignment(.center)
-          Text("[\(word.transcription)]")
-            .font(.title2)
-            .fontWeight(.medium)
-            .foregroundStyle(Color.primary)
+        VStack(spacing: 30) {
+          VStack(spacing: 15) {
+            Text(word.original)
+              .font(.largeTitle)
+              .fontWeight(.semibold)
+              .foregroundStyle(.blue)
+              .padding(.horizontal)
+              .multilineTextAlignment(.center)
+            Text("[\(word.transcription)]")
+              .font(.title2)
+              .fontWeight(.medium)
+          }
           
           if #available(iOS 26, *) {
             Button {
@@ -47,7 +51,6 @@ extension CardView {
             }
             .tint(.blue)
             .buttonStyle(.glassProminent)
-            
           } else {
             Button {
               viewModel.speakOriginal()
