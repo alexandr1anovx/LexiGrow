@@ -50,7 +50,7 @@ struct PhoneNumberInputView: View {
       
       Spacer()
     }
-    .padding()
+    .padding(.horizontal, .defaultPadding)
   }
 }
 

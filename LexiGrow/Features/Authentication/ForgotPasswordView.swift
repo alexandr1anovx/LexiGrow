@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct ForgotPasswordView: View {
-  @Environment(AuthManager.self) var authManager
   @Environment(\.dismiss) var dismiss
+  @Environment(AuthManager.self) var authManager
   
   @State private var email = ""
   @State private var isLoading = false
@@ -17,21 +17,23 @@ struct ForgotPasswordView: View {
   @State private var alertTitle = ""
   @State private var alertMessage = ""
   
-  private let validator = ValidationService.shared
-  
   @FocusState private var fieldContent: TextFieldContent?
+  private let validator = ValidationService.shared
   
   var body: some View {
     VStack(spacing: 25) {
-      
       VStack(spacing: 25) {
-        Image(systemName: "lock.circle.fill")
-          .font(.system(size: 35))
+        HStack(spacing: 8) {
+          Image(systemName: "lock.circle.fill")
+          Text("Forgot Password")
+            .fontWeight(.bold)
+        }
+        .font(.title2)
         Text("Enter your email address to receive a link to reset your password.")
           .font(.subheadline)
           .foregroundColor(.secondary)
           .multilineTextAlignment(.center)
-          .padding(.horizontal,10)
+          .padding(.horizontal, 10)
       }
       
       DefaultTextField(

@@ -8,63 +8,45 @@
 import SwiftUI
 
 struct FlashcardSummaryView: View {
-  @State private var selectedList: SelectedList?
-  @State private var isFavorite = false
-  @Environment(FlashcardViewModel.self) var viewModel
   @Environment(\.dismiss) var dismiss
-  
-  @State private var isVisible = false
+  @Environment(FlashcardViewModel.self) var viewModel
+  @State private var wordSection: WordSection?
   
   var body: some View {
-    VStack(spacing: 30) {
-      
-      HStack(spacing: 15) {
-        if isVisible {
-          Image(systemName: isFavorite ? "checkmark.circle.dotted" : "app.background.dotted")
-            .resizable()
-            .frame(width: 35, height: 35)
-            .contentTransition(.symbolEffect(.replace, options: .speed(0.6)))
-            .foregroundStyle(.green)
-        }
+    VStack(spacing: 40) {
+      Label {
         Text(viewModel.lessonFeedbackTitle)
-          .fontWeight(.bold)
+          .fontWeight(.semibold)
+          .font(.title2)
+      } icon: {
+        Image(systemName: viewModel.lessonFeedbackIconName)
           .font(.title)
       }
-      .frame(height: 30)
       
-      .onAppear {
-        withAnimation { isVisible = true }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-          withAnimation { isFavorite = true }
+      HStack(spacing: 10) {
+        StatItem("Known", viewModel.knownWords.count) {
+          withAnimation(.easeInOut) { wordSection = .known }
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.3) {
-          withAnimation { isVisible = false }
+        StatItem("Unknown", viewModel.unknownWords.count) {
+          withAnimation(.easeInOut) { wordSection = .unknown }
+        }
+        StatItem("Total", viewModel.words.count) {
+          withAnimation(.easeInOut) { wordSection = .total }
         }
       }
       
-      ResultsRingView(score: viewModel.lessonAccuracy)
-      
-      HStack(spacing: 15) {
-        StatCard("Known", viewModel.knownWords.count) {
-          withAnimation(.easeInOut) { selectedList = .known }
-        }
-        StatCard("Unknown", viewModel.unknownWords.count) {
-          withAnimation(.easeInOut) { selectedList = .unknown }
-        }
-        StatCard("Total", viewModel.words.count) {
-          withAnimation(.easeInOut) { selectedList = .total }
-        }
-      }
-      
-      VStack(spacing: 10) {
+      VStack(spacing: 12) {
         if #available(iOS 26, *) {
           Button {
             Task { await viewModel.startLesson() }
           } label: {
-            Label("Repeat unknown words", systemImage: "")
-              .modernLabelStyle()
+            Label("Repeat unknown words", systemImage: "repeat")
+              .padding(12)
+              .frame(maxWidth: .infinity)
+              .fontWeight(.medium)
           }
-          .buttonStyle(.glass)
+          .tint(.blue)
+          .buttonStyle(.glassProminent)
           Button {
             Task {
               await viewModel.saveLessonProgress()
@@ -72,11 +54,10 @@ struct FlashcardSummaryView: View {
               dismiss()
             }
           } label: {
-            Label("Finish lesson", systemImage: "")
+            Label("Finish lesson", systemImage: "flag.pattern.checkered.2.crossed")
               .padding(12)
               .frame(maxWidth: .infinity)
               .fontWeight(.medium)
-              //.modernLabelStyle(textColor: .blue)
           }
           .tint(.blue)
           .buttonStyle(.glassProminent)
@@ -84,7 +65,7 @@ struct FlashcardSummaryView: View {
           Button {
             Task { await viewModel.startLesson() }
           } label: {
-            Label("Repeat unknown words", systemImage: "")
+            Label("Repeat unknown words", systemImage: "repeat")
               .prominentLabelStyle(tint: .purple)
           }
           Button {
@@ -100,65 +81,25 @@ struct FlashcardSummaryView: View {
         }
       }
     }
-    .padding()
+    .padding(.defaultPadding)
     .overlay {
-      if let selectedList {
-        WordListView(
-          words: words(for: selectedList),
+      if let section = wordSection {
+        WordList(
+          words: getWords(for: section),
           onClose: {
-            withAnimation(.easeInOut) {
-              self.selectedList = nil
-            }
+            self.wordSection = nil
           }
-        ).transition(.scale.combined(with: .move(edge: .bottom)))
+        ).transition(.blurReplace)
       }
-    }
-  }
-}
-
-// MARK: - Helpers
-
-private extension FlashcardSummaryView {
-  enum SelectedList {
-    case known, unknown, total
-  }
-  
-  func words(for list: SelectedList) -> [Word] {
-    switch list {
-    case .known: return viewModel.knownWords
-    case .unknown: return viewModel.unknownWords
-    case .total: return viewModel.words
     }
   }
 }
 
 // MARK: - Subviews
 
-private extension FlashcardSummaryView {
+extension FlashcardSummaryView {
   
-  struct WordListView: View {
-    let words: [Word]
-    let onClose: () -> Void
-    
-    var body: some View {
-      NavigationView {
-        List(words) {
-          Text("**\($0.original)** (\($0.translation))")
-        }
-        .padding(.top)
-        .scrollContentBackground(.hidden)
-        .toolbar {
-          ToolbarItem(placement: .topBarTrailing) {
-            Button(action: onClose) {
-              Image(systemName: "xmark.circle.fill")
-            }
-          }
-        }
-      }
-    }
-  }
-  
-  struct ResultsRingView: View {
+  struct ResultsRing: View {
     let score: Double
     
     var body: some View {
@@ -169,43 +110,87 @@ private extension FlashcardSummaryView {
       }
       .gaugeStyle(.accessoryCircularCapacity)
       .tint(.green)
-      .scaleEffect(1.3)
-      .padding(.vertical, 15)
+      .scaleEffect(1.2)
     }
   }
   
-  struct StatCard: View {
-    let label: String
-    let count: Int
-    let onInfoTap: () -> Void
+  struct WordList: View {
+    let words: [Word]
+    let onClose: () -> Void
     
-    init(_ label: String, _ count: Int, onInfoTap: @escaping () -> Void) {
-      self.label = label
+    var body: some View {
+      NavigationView {
+        List(words) {
+          Text("**\($0.original)** - \($0.translation)")
+        }
+        .shadow(radius: 1)
+        .scrollContentBackground(.hidden)
+        .toolbar {
+          ToolbarItem(placement: .topBarTrailing) {
+            Button {
+              withAnimation(.easeInOut) { onClose() }
+            } label: {
+              Image(systemName: "xmark.circle.fill")
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  struct StatItem: View {
+    let title: String
+    let count: Int
+    let onTap: () -> Void
+    
+    init(_ title: String, _ count: Int, onTap: @escaping () -> Void) {
+      self.title = title
       self.count = count
-      self.onInfoTap = onInfoTap
+      self.onTap = onTap
     }
     
     var body: some View {
-      VStack(spacing: 6) {
+      VStack(spacing: 8) {
         Text("\(count)")
           .font(.title2)
           .fontWeight(.bold)
-        Text(label)
+        Text(title)
           .font(.caption)
-          .foregroundStyle(.secondary)
       }
       .frame(maxWidth: .infinity)
       .padding(10)
-      .background(.thinMaterial)
-      .clipShape(.rect(cornerRadius: 20))
+      .background {
+       Capsule()
+          .fill(Color.systemGray)
+          .shadow(radius: 2)
+      }
       .overlay(alignment: .topTrailing) {
-        Button(action: onInfoTap) {
+        Button(action: onTap) {
           Image(systemName: "info.circle.fill")
-            .font(.title3)
-            .foregroundStyle(.orange)
+            .font(.title2)
+            .symbolRenderingMode(.multicolor)
         }
+        .opacity(count == 0 ? 0:1)
         .disabled(count == 0)
       }
+    }
+  }
+}
+
+// MARK: - Helpers
+
+extension FlashcardSummaryView {
+  
+  enum WordSection: Identifiable {
+    case known, unknown, total
+    var id: Self { self }
+  }
+  
+  func getWords(for section: WordSection) -> [Word] {
+    switch section {
+    case .known: return viewModel.knownWords
+    case .unknown: return viewModel.unknownWords
+    case .total: return viewModel.words
     }
   }
 }

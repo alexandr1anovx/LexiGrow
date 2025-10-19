@@ -18,9 +18,7 @@ struct MagicLinkView: View {
       } else {
         FormView(email: $email, isLinkSent: $isLinkSent)
       }
-    }
-    .padding()
-    .animation(.easeInOut, value: isLinkSent)
+    }.animation(.easeInOut, value: isLinkSent)
   }
 }
 
@@ -44,7 +42,7 @@ extension MagicLinkView {
             .font(.subheadline)
             .foregroundStyle(.secondary)
             .multilineTextAlignment(.center)
-            .padding(.horizontal)
+            .padding(.horizontal, .defaultPadding)
         }
         
         DefaultTextField(
@@ -63,24 +61,30 @@ extension MagicLinkView {
         }
         .disabled(!validator.isValidEmail(email))
         .opacity(!validator.isValidEmail(email) ? 0.5:1)
+        
+        Spacer()
       }
+      .padding(.horizontal, .defaultPadding)
     }
   }
   
   struct ConfirmationView: View {
     @Environment(AuthManager.self) var authManager
+    @State private var animateSymbol = false
     let email: String
     
     var body: some View {
       VStack(spacing: 25) {
-        Text("Done!")
-          .font(.title3)
-          .fontWeight(.semibold)
+        
+        Image(systemName: "checkmark.circle.fill")
+          .symbolEffect(.bounce, value: animateSymbol)
+          .font(.largeTitle)
+        
         Text("We have sent a login link to **\(email)**.")
           .font(.subheadline)
           .foregroundStyle(.secondary)
-          .multilineTextAlignment(.center)
-        HStack(spacing: 10) {
+        
+        HStack(spacing: 5) {
           Text("Didn't receive the letter?")
           Button {
             Task { await authManager.signInWithMagicLink(for: email) }
@@ -92,17 +96,15 @@ extension MagicLinkView {
           }
         }.font(.subheadline)
       }
-      .padding(30)
-      .background {
-        RoundedRectangle(cornerRadius: 30)
-          .fill(Color(.systemGray6))
-          .shadow(radius: 3)
-      }
+      .padding(.horizontal, .defaultPadding)
+      .onAppear { animateSymbol = true }
+      // Do not allow the user to return to the login screen.
+      .navigationBarBackButtonHidden()
     }
   }
 }
 
 #Preview {
-  MagicLinkView()
+  MagicLinkView.ConfirmationView(email: "an4lex@gmail.com")
     .environment(AuthManager.mockObject)
 }

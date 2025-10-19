@@ -20,9 +20,8 @@ struct LessonsScreen: View {
     NavigationView {
       VStack {
         Text("Hi👋, \(authManager.currentUser?.fullName ?? "user")!")
-        .font(.title3)
+        .font(.headline)
         .fontDesign(.monospaced)
-        .fontWeight(.semibold)
         .padding(25)
           
         DisplayModeSelector(displayMode: $displayMode)
