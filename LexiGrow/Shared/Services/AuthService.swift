@@ -147,25 +147,47 @@ struct AuthService: AuthServiceProtocol {
 
 // MARK: - Auth Error
 
-enum AuthError: LocalizedError {
+enum AuthError: LocalizedError, Identifiable {
   case invalidCredentials
   case networkError(description: String)
   case serverError
   case emailNotConfirmed
+  case userAlreadyExists
   case unknown(description: String)
   
-  var errorDescription: String? {
+  var id: String { self.localizedDescription }
+  
+  var title: String {
     switch self {
     case .invalidCredentials:
-      return "Incorrect email or password."
+      "Помилка входу"
     case .networkError:
-      return "Network error. Please check your internet connection."
+      "Помилка мережі"
     case .serverError:
-      return "There was an error on the server. Please try again later."
+      "Помилка сервера"
     case .emailNotConfirmed:
-      return "Please confirm your email address."
+      "Email не підтверджено"
+    case .userAlreadyExists:
+      "Користувач вже існує"
+    case .unknown:
+      "Невідома помилка"
+    }
+  }
+  
+  var message: String {
+    switch self {
+    case .invalidCredentials:
+      "Неправильна пошта або пароль. Будь ласка, перевірте дані та спробуйте ще раз."
+    case .networkError(let description):
+      "Перевірте ваше інтернет-з'єднання. Деталі: \(description)"
+    case .serverError:
+      "На жаль, сталася помилка на нашому боці. Спробуйте, будь ласка, пізніше."
+    case .emailNotConfirmed:
+      "Будь ласка, перевірте свою пошту та перейдіть за посиланням для активації акаунту."
+    case .userAlreadyExists:
+      "Акаунт з такою поштою вже зареєстровано. Будь ласка, увійдіть."
     case .unknown(let description):
-      return "An unknown error has occurred: \(description)"
+      "Сталася неочікувана помилка: \(description)"
     }
   }
 }
