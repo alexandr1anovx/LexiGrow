@@ -9,30 +9,31 @@ import SwiftUI
 
 struct ProfileScreen: View {
   @Environment(AuthManager.self) var authManager
-  @FocusState private var inputContent: TextFieldContent?
-  @State private var username = ""
+  @FocusState private var fieldContent: TextFieldContent?
+  @State private var fullName = ""
   @State private var email = ""
+  @State private var isEmailConfirmed: Bool?
+  @State private var connectedProviders: [String] = []
   
   private var formHasChanges: Bool {
     guard let user = authManager.currentUser else { return false }
-    let changedUsername = username != user.username
+    let changedUsername = fullName != user.fullName
     let changedEmail = email != user.email
     return changedUsername || changedEmail
   }
   
   var body: some View {
-    VStack {
-      VStack(spacing: 15) {
-        Image(systemName: "person.crop.circle.fill")
-          .font(.system(size: 80))
-          .foregroundStyle(.secondary)
-          .padding(.bottom)
+    VStack(spacing: 30) {
+      Image(systemName: "person.crop.circle.fill")
+        .font(.system(size: 80))
+      
+      VStack(spacing: 10) {
         DefaultTextField(
-          title: "Username",
+          title: "Full Name",
           iconName: "person",
-          text: $username
+          text: $fullName
         )
-        .focused($inputContent, equals: .username)
+        .focused($fieldContent, equals: .fullName)
         .textInputAutocapitalization(.words)
         .autocorrectionDisabled(true)
         DefaultTextField(
@@ -44,58 +45,39 @@ struct ProfileScreen: View {
         .autocorrectionDisabled(true)
         .keyboardType(.emailAddress)
       }
-      .padding(.horizontal, 15)
+      
+      if let emailConfirmed = isEmailConfirmed {
+        Text(emailConfirmed ? "Email confirmed!" : "Email not confirmed!")
+      }
+      
+      HStack {
+        Text("Connected Providers: ")
+        ForEach(connectedProviders, id: \.self) {
+          Text($0.rawValue)
+        }
+      }
+      
+      if formHasChanges {
+        PrimaryButton(title: "Save changes", tint: .green) {
+          Task {
+            await authManager.updateUser(fullName: fullName)
+          }
+        }
+      }
       
       if let error = authManager.error {
         Text(error.localizedDescription)
-          .padding()
           .foregroundStyle(.red)
-      }
-      
-      if authManager.isLoading {
-        HStack(spacing: 20) {
-          Text("Saving")
-          CustomProgressView(tint: .green)
-        }
-        .padding(20)
-      } else {
-        Button {
-          Task {
-            await authManager.updateUser(username: username)
-          }
-        } label: {
-          Text("Save changes")
-            .prominentButtonStyle(tint: .green)
-        }
-        .disabled(!formHasChanges)
-        .opacity(!formHasChanges ? 0.5 : 1)
-        .padding()
       }
       Spacer()
     }
-    .padding(.top)
+    .padding(.horizontal, .defaultPadding)
+    .onAppear { retrieveUserData() }
+    .task {
+      self.connectedProviders = await authManager.fetchConnectedProviders()
+    }
     .navigationTitle("Profile")
     .navigationBarTitleDisplayMode(.large)
-    .toolbar {
-      ToolbarItem(placement: .topBarTrailing) {
-        Button("Edit") {
-          inputContent = .username
-        }
-      }
-    }
-    .onAppear {
-      retrieveUserData()
-    }
-  }
-  
-  private func retrieveUserData() {
-    guard let user = authManager.currentUser else {
-      username = "No username"
-      email = "No email"
-      return
-    }
-    username = user.username
-    email = user.email
   }
 }
 
@@ -103,5 +85,17 @@ struct ProfileScreen: View {
   NavigationView {
     ProfileScreen()
       .environment(AuthManager.mockObject)
+  }
+}
+
+extension ProfileScreen {
+  private func retrieveUserData() {
+    guard let user = authManager.currentUser else {
+      fullName = "Full Name"
+      email = "Email address"
+      return
+    }
+    fullName = user.fullName
+    email = user.email
   }
 }

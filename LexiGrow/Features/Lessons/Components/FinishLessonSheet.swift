@@ -14,14 +14,13 @@ struct FinishLessonSheet: View {
   var body: some View {
     NavigationView {
       VStack(spacing: 30) {
-        Spacer()
+
         VStack(spacing: 15) {
           Text("All progress will be cancelled")
             .font(.title2)
             .fontWeight(.bold)
           Text("Are you sure you want to finish the lesson?")
-            .font(.callout)
-            .fontWeight(.medium)
+            .font(.subheadline)
             .foregroundStyle(.gray)
             .multilineTextAlignment(.center)
         }
@@ -34,12 +33,12 @@ struct FinishLessonSheet: View {
               .fontWeight(.medium)
           }
           .padding(.horizontal)
-          .tint(.pink)
+          .tint(.red)
           .buttonStyle(.glassProminent)
         } else {
           Button(action: finishAction) {
             Text("Yes, finish")
-              .prominentButtonStyle(tint: .pink)
+              .prominentLabelStyle(tint: .red)
           }
           .padding(.horizontal)
         }

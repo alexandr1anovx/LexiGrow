@@ -19,11 +19,12 @@ struct LessonsScreen: View {
   var body: some View {
     NavigationView {
       VStack {
-        Text("Hi 👋, \(authManager.currentUser?.username ?? "user")!")
-          .font(.title)
-          .fontWeight(.bold)
-          .padding(.vertical, 20)
-          .padding(.horizontal)
+        Text("Hi👋, \(authManager.currentUser?.fullName ?? "user")!")
+        .font(.title3)
+        .fontDesign(.monospaced)
+        .fontWeight(.semibold)
+        .padding(25)
+          
         DisplayModeSelector(displayMode: $displayMode)
         TabView(selection: $displayMode) {
           GridView(selectedLesson: $selectedLesson)
@@ -31,7 +32,7 @@ struct LessonsScreen: View {
           StatisticsView()
             .tag(DisplayMode.statistics)
         }
-        .tabViewStyle(.page(indexDisplayMode: .never))
+        .tabViewStyle(.page)
       }
     }
     .sheet(item: $selectedLesson) {
@@ -88,7 +89,7 @@ private extension LessonsScreen {
           .fill(.thinMaterial)
           .shadow(radius: 2)
       }
-      .padding(.vertical)
+      .padding(.bottom)
     }
   }
   
@@ -159,6 +160,7 @@ struct StatisticsView: View {
       )
     }
     .listStyle(.insetGrouped)
+    .scrollContentBackground(.hidden)
     .refreshable {
       await viewModel.syncProgress(context: modelContext)
     }
@@ -219,7 +221,7 @@ struct LessonSetupSheet: View {
 
 /// The container that is displayed in .fullScreenCover
 struct LessonContainerView: View {
-  @Environment(TranslationViewModel.self) var viewModel
+  @Environment(TranslationViewModel.self) var translationViewModel
   @Environment(\.dismiss) var dismiss
   let lesson: LessonEntity
   
@@ -228,7 +230,7 @@ struct LessonContainerView: View {
     case .flashcards:
       FlashcardContainerView()
     case .translation:
-      TranslationView(viewModel: viewModel)
+      TranslationView(viewModel: translationViewModel)
     case .unknown:
       VStack {
         Label("Coming Soon", systemImage: "sparkles")

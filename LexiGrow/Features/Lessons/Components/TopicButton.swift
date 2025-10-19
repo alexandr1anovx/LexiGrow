@@ -19,13 +19,13 @@ struct TopicButton: View {
   
   var body: some View {
     Button(action: selectAction) {
-      HStack(spacing: 10) {
+      HStack(spacing: 8) {
         Text(topic.name)
           .font(.subheadline)
-          .fontWeight(.medium)
+          //.fontWeight(.medium)
           .foregroundColor(.white)
         
-        HStack(spacing: 0) {
+        HStack(spacing: 1) {
           Text("\(topic.learnedWords)")
             .foregroundStyle(topic.learnedWords != topic.totalWords ? .orange : .white)
           Text("/")
@@ -34,19 +34,19 @@ struct TopicButton: View {
             .foregroundStyle(.white)
         }
         .font(.caption)
-        .fontWeight(.semibold)
-        .padding(7)
+        .fontWeight(.medium)
+        .padding(8)
         .background {
-          RoundedRectangle(cornerRadius: 10)
+          RoundedRectangle(cornerRadius: 15)
             .fill(topic.learnedWords == topic.totalWords ? .green : .olive)
         }
       }
       .padding(12)
       .background {
         Capsule()
-          .fill(selectedTopic?.id == topic.id ? .pink : .black)
+          .fill(selectedTopic?.id == topic.id ? .blue : .black)
           .stroke(
-            selectedTopic?.id == topic.id ? .clear : Color(.systemGray5),
+            selectedTopic?.id == topic.id ? .clear : .systemGray,
             lineWidth: 2
           )
       }

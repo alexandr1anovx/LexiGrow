@@ -7,41 +7,37 @@
 
 import SwiftUI
 
-extension FlashcardView {
-  
-  struct FrontView: View {
+extension CardView {
+  struct FrontCardView: View {
+    
+    // MARK: - Properties
     @Environment(FlashcardViewModel.self) var viewModel
     @State private var animateSoundIcon = false
     let word: Word
     @Binding var isFlipped: Bool
-    @Binding var isTurnedAudioPlayback: Bool
     
     var body: some View {
       ZStack {
         RoundedRectangle(cornerRadius: 40)
-          .fill(.thinMaterial)
-          .stroke(
-            Color(.systemGray5),
-            lineWidth: 2,
-            antialiased: true
-          )
+          .fill(Color.systemGray)
+          .stroke(Color.systemGray, lineWidth: 2, antialiased: true)
           .shadow(radius: 2)
         
-        VStack(spacing: 15) {
+        VStack(spacing: 23) {
           Text(word.original)
             .font(.largeTitle)
             .fontWeight(.semibold)
-            .foregroundStyle(.pink)
+            .foregroundStyle(.blue)
             .padding(.horizontal)
             .multilineTextAlignment(.center)
           Text("[\(word.transcription)]")
             .font(.title2)
-            .fontWeight(.semibold)
+            .fontWeight(.medium)
+            .foregroundStyle(Color.primary)
           
           if #available(iOS 26, *) {
             Button {
               viewModel.speakOriginal()
-              //audioPlayer.playSound(named: word.audioName)
               animateSoundIcon.toggle()
             } label: {
               Image(systemName: "speaker.wave.2.fill")
@@ -49,40 +45,32 @@ extension FlashcardView {
                 .font(.title3)
                 .padding(5)
             }
-            .buttonStyle(.glass)
-            .padding(.top)
+            .tint(.blue)
+            .buttonStyle(.glassProminent)
+            
           } else {
             Button {
               viewModel.speakOriginal()
-              //audioPlayer.playSound(named: word.audioName)
               animateSoundIcon.toggle()
             } label: {
               Image(systemName: "speaker.wave.2.fill")
                 .symbolEffect(.bounce, value: animateSoundIcon)
-                .foregroundStyle(Color(.systemBackground))
                 .font(.title3)
                 .padding(5)
                 .background(.primary)
                 .clipShape(.circle)
             }
-            .padding(.top)
           }
         }
       }
-//      .onAppear {
-//        if isTurnedAutomaticAudio {
-//          audioPlayer.playSound(named: word.audioName)
-//        }
-//      }
     }
   }
 }
 
 #Preview {
-  FlashcardView.FrontView(
+  CardView.FrontCardView(
     word: Word.mock1,
-    isFlipped: .constant(false),
-    isTurnedAudioPlayback: .constant(false)
+    isFlipped: .constant(false)
   )
   .environment(FlashcardViewModel.mockObject)
 }

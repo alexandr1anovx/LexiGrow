@@ -16,14 +16,13 @@ struct LevelButton: View {
     Button(action: selectAction) {
       Text(name)
         .font(.subheadline)
-        .fontWeight(.medium)
         .foregroundColor(.white)
         .padding(15)
         .background {
           Capsule()
-            .fill(selectedLevel?.name == name ? .pink : .black)
+            .fill(selectedLevel?.name == name ? .blue : .black)
             .stroke(
-              selectedLevel?.name == name ? .clear : Color(.systemGray5),
+              selectedLevel?.name == name ? .clear : .systemGray,
               lineWidth: 2
             )
             .frame(minWidth: 55)
@@ -33,9 +32,23 @@ struct LevelButton: View {
 }
 
 #Preview {
-  LevelButton(
-    name: "A2",
-    selectedLevel: .constant(Level.mockB1),
-    selectAction: {}
-  )
+  @Previewable @State var selectedLevel: Level?
+  
+  let levels: [Level] = [.mockB1, .mockB2]
+  VStack {
+    ScrollView(.horizontal) {
+      HStack {
+        ForEach(levels, id: \.id) { level in
+          
+          LevelButton(
+            name: level.name,
+            selectedLevel: $selectedLevel,
+            selectAction: {
+              selectedLevel = level
+            }
+          )
+        }
+      }.padding(4)
+    }.scrollIndicators(.hidden)
+  }
 }

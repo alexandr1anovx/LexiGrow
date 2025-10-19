@@ -8,7 +8,7 @@
 import Foundation
 
 enum TextFieldContent {
-  case username
+  case fullName
   case email
   case password
   case confirmPassword

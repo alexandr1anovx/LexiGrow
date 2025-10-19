@@ -9,7 +9,7 @@ import Foundation
 
 struct AppUser: Codable, Identifiable, Equatable {
   let id: UUID
-  var username: String
+  var fullName: String
   var email: String
   let emailConfirmed: Bool
 }

@@ -52,7 +52,7 @@ final class FlashcardViewModelTests: XCTestCase {
 
   func test_lessonProgress_accuracy_and_feedback() {
     let (vm, _) = makeSUT()
-    let words: [Word] = [.mock1, .mock2, .mock3]
+    let words: [Word] = [.mock1, .mock2]
     vm._test_setWords(words, currentIndex: 0)
     vm._test_setLessonState(.inProgress)
 
@@ -93,19 +93,19 @@ final class FlashcardViewModelTests: XCTestCase {
 
   func test_getLevels_callsServiceOnce_andStoresResult_orSetsError() async throws {
     let (vm, spy) = makeSUT()
-    await MainActor.run { vm.getLevels() }
+    await vm.getLevels()
     try await Task.sleep(nanoseconds: 100_000_000)
     XCTAssertTrue(spy.getLevelsCalled)
     XCTAssertFalse(vm.levels.isEmpty)
     let firstCallLevels = vm.levels
 
-    await MainActor.run { vm.getLevels() }
+    await vm.getLevels()
     try await Task.sleep(nanoseconds: 50_000_000)
     XCTAssertEqual(vm.levels, firstCallLevels)
 
     vm.levels = []
     spy.getLevelsError = NSError(domain: "test", code: 1)
-    await MainActor.run { vm.getLevels() }
+    await vm.getLevels()
     try await Task.sleep(nanoseconds: 100_000_000)
     XCTAssertNotNil(vm.errorMessage)
   }
@@ -115,13 +115,13 @@ final class FlashcardViewModelTests: XCTestCase {
     vm._test_setWords([.mock1, .mock2])
     vm._test_appendKnown(.mock1)
 
-    await MainActor.run { vm.saveLessonProgress() }
+    await vm.saveLessonProgress()
     try await Task.sleep(nanoseconds: 100_000_000)
     XCTAssertTrue(spy.saveLessonProgressCalled)
 
     spy.saveProgressError = NSError(domain: "test", code: 2)
     vm.errorMessage = nil
-    await MainActor.run { vm.saveLessonProgress() }
+    await vm.saveLessonProgress()
     try await Task.sleep(nanoseconds: 100_000_000)
     XCTAssertNotNil(vm.errorMessage)
   }

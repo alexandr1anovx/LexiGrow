@@ -14,19 +14,29 @@ extension MoreScreen {
     var body: some View {
       VStack(alignment: .leading, spacing: 10) {
         if let user = authManager.currentUser {
-          Text(user.username)
-            .fontWeight(.semibold)
-          Text(user.email)
-            .foregroundStyle(.secondary)
+          HStack(spacing: 12) {
+            Image(systemName: "person.circle.fill")
+              .font(.system(size: 40))
+              .foregroundStyle(.blue)
+            VStack(alignment: .leading, spacing: 6) {
+              Text(user.fullName)
+                .fontWeight(.semibold)
+              Text(user.email)
+                .foregroundStyle(.secondary)
+            }
+            .font(.subheadline)
+          }
         } else {
-          ProgressView()
+          ProgressView("Retrieving data...")
         }
-      }.font(.subheadline)
+      }
     }
   }
 }
 
 #Preview {
-  MoreScreen.UserDataView()
-    .environment(AuthManager.mockObject)
+  List {
+    MoreScreen.UserDataView()
+      .environment(AuthManager.mockObject)
+  }
 }

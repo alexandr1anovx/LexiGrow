@@ -13,7 +13,7 @@ struct LessonBlock: View {
   var body: some View {
     ZStack {
       RoundedRectangle(cornerRadius: 30)
-        .fill(.pink.gradient)
+        .fill(.blue.gradient)
         .frame(width: 165, height: 150)
         .offset(x: 0, y: -5)
       
@@ -44,6 +44,7 @@ struct LessonBlock: View {
           .fontDesign(.monospaced)
           .padding(.horizontal)
         Image(systemName: lesson.iconName)
+          .font(.title2)
       }
       .foregroundColor(.white)
     }

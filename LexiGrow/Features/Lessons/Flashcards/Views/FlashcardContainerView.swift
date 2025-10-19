@@ -17,13 +17,13 @@ struct FlashcardContainerView: View {
       Group {
         switch viewModel.lessonState {
         case .inProgress:
-          FlashcardView()
+          CardView()
         case .summary:
           FlashcardSummaryView()
         }
       }
       .navigationTitle("Flashcards")
-      .navigationBarTitleDisplayMode(viewModel.lessonState == .inProgress ? .large : .inline)
+      .navigationBarTitleDisplayMode(.large)
       .toolbar {
         if viewModel.lessonState == .inProgress {
           ToolbarItem(placement: .topBarTrailing) {

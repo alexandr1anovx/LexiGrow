@@ -7,12 +7,10 @@
 
 import SwiftUI
 
-/// Button style for iOS < 26.
 struct PrimaryButton: View {
   let title: String
   var textColor: Color = .white
   var tint: Color = .blue
-  var withPadding: Bool = true
   var action: () -> Void
   
   var body: some View {
@@ -22,7 +20,7 @@ struct PrimaryButton: View {
           Text(title)
             .fontWeight(.medium)
             .foregroundStyle(textColor)
-            .padding(10)
+            .padding(9)
             .frame(maxWidth: .infinity)
         }
         .tint(tint)
@@ -38,11 +36,38 @@ struct PrimaryButton: View {
             .clipShape(.capsule)
         }
       }
-    }.padding(.horizontal, withPadding ? 15:0)
+    }
   }
 }
 
 #Preview {
-  PrimaryButton(title: "Save changes", tint: .green, withPadding: true) {}
-  PrimaryButton(title: "Edit profile", tint: .blue, withPadding: true) {}
+  PrimaryButton(title: "Save changes", tint: .green) {}
+  PrimaryButton(title: "Edit profile", tint: .blue) {}
+}
+
+struct IconButton: View {
+  let iconName: String
+  var tint: Color = .blue
+  var action: () -> Void
+  
+  var body: some View {
+    Group {
+      if #available(iOS 26, *) {
+        Button(action: action) {
+          Image(systemName: iconName)
+        }
+        .tint(tint)
+        .buttonStyle(.glassProminent)
+      } else {
+        Button(action: action) {
+          Image(systemName: iconName)
+            .fontWeight(.medium)
+            .padding(15)
+            .frame(maxWidth: .infinity)
+            .background(tint)
+            .clipShape(.capsule)
+        }
+      }
+    }
+  }
 }

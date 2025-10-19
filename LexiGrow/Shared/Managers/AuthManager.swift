@@ -139,7 +139,18 @@ final class AuthManager {
   }
   */
   
-  // MARK: - 'Sign In With' providers
+  func fetchConnectedProviders() async -> [String] {
+    var connectedProviders = [String]()
+    do {
+      let providers = try await authService.getConnectedProviders()
+      return connectedProviders
+    } catch {
+      print("🔴 Не вдалося отримати список провайдерів: \(error)")
+      return []
+    }
+  }
+  
+  // MARK: - Sign In Providers
   
   /// Initiates the sign-in flow via Google.
   func signInWithGoogle() async {

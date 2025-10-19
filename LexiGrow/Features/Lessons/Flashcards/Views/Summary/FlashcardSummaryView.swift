@@ -9,15 +9,38 @@ import SwiftUI
 
 struct FlashcardSummaryView: View {
   @State private var selectedList: SelectedList?
+  @State private var isFavorite = false
   @Environment(FlashcardViewModel.self) var viewModel
   @Environment(\.dismiss) var dismiss
   
+  @State private var isVisible = false
+  
   var body: some View {
     VStack(spacing: 30) {
-      Text(viewModel.lessonFeedbackTitle)
-        .fontWeight(.bold)
-        .font(.title2)
-        .fontDesign(.monospaced)
+      
+      HStack(spacing: 15) {
+        if isVisible {
+          Image(systemName: isFavorite ? "checkmark.circle.dotted" : "app.background.dotted")
+            .resizable()
+            .frame(width: 35, height: 35)
+            .contentTransition(.symbolEffect(.replace, options: .speed(0.6)))
+            .foregroundStyle(.green)
+        }
+        Text(viewModel.lessonFeedbackTitle)
+          .fontWeight(.bold)
+          .font(.title)
+      }
+      .frame(height: 30)
+      
+      .onAppear {
+        withAnimation { isVisible = true }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+          withAnimation { isFavorite = true }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.3) {
+          withAnimation { isVisible = false }
+        }
+      }
       
       ResultsRingView(score: viewModel.lessonAccuracy)
       
@@ -36,35 +59,43 @@ struct FlashcardSummaryView: View {
       VStack(spacing: 10) {
         if #available(iOS 26, *) {
           Button {
-            viewModel.startLesson()
+            Task { await viewModel.startLesson() }
           } label: {
             Label("Repeat unknown words", systemImage: "")
               .modernLabelStyle()
           }
           .buttonStyle(.glass)
           Button {
-            viewModel.saveLessonProgress()
-            viewModel.resetSetupData()
-            dismiss()
+            Task {
+              await viewModel.saveLessonProgress()
+              viewModel.resetSetupData()
+              dismiss()
+            }
           } label: {
             Label("Finish lesson", systemImage: "")
-              .modernLabelStyle(textColor: .pink)
+              .padding(12)
+              .frame(maxWidth: .infinity)
+              .fontWeight(.medium)
+              //.modernLabelStyle(textColor: .blue)
           }
-          .buttonStyle(.glass)
+          .tint(.blue)
+          .buttonStyle(.glassProminent)
         } else {
           Button {
-            viewModel.startLesson()
+            Task { await viewModel.startLesson() }
           } label: {
             Label("Repeat unknown words", systemImage: "")
-              .prominentButtonStyle(tint: .purple)
+              .prominentLabelStyle(tint: .purple)
           }
           Button {
-            viewModel.saveLessonProgress()
-            viewModel.resetSetupData()
-            dismiss()
+            Task {
+              await viewModel.saveLessonProgress()
+              viewModel.resetSetupData()
+              dismiss()
+            }
           } label: {
             Label("Finish lesson", systemImage: "")
-              .prominentButtonStyle(tint: .pink)
+              .prominentLabelStyle(tint: .pink)
           }
         }
       }
@@ -135,12 +166,11 @@ private extension FlashcardSummaryView {
         Text("\(score * 100, specifier: "%.0f")%")
           .font(.title3)
           .fontWeight(.semibold)
-          .fontDesign(.monospaced)
       }
       .gaugeStyle(.accessoryCircularCapacity)
       .tint(.green)
-      .scaleEffect(1.5)
-      .padding(.vertical, 25)
+      .scaleEffect(1.3)
+      .padding(.vertical, 15)
     }
   }
   
@@ -160,7 +190,6 @@ private extension FlashcardSummaryView {
         Text("\(count)")
           .font(.title2)
           .fontWeight(.bold)
-          .fontDesign(.monospaced)
         Text(label)
           .font(.caption)
           .foregroundStyle(.secondary)
@@ -173,6 +202,7 @@ private extension FlashcardSummaryView {
         Button(action: onInfoTap) {
           Image(systemName: "info.circle.fill")
             .font(.title3)
+            .foregroundStyle(.orange)
         }
         .disabled(count == 0)
       }

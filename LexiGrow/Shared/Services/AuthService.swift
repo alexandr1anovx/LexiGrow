@@ -18,6 +18,8 @@ protocol AuthServiceProtocol {
   func updateUser(fullName: String) async throws -> AppUser
   func getCurrentUser() async throws -> AppUser
   func requestPasswordReset(for email: String) async throws
+  
+  func getConnectedProviders() async throws -> [String]
 }
 
 struct AuthService: AuthServiceProtocol {
@@ -63,6 +65,11 @@ struct AuthService: AuthServiceProtocol {
     return try mapSupabaseUserToAppUser(updatedUser)
   }
   
+  /// Sends a password reset request to the specified email address.
+  func requestPasswordReset(for email: String) async throws {
+    try await SupabaseManager.shared.client.auth.resetPasswordForEmail(email)
+  }
+  
   /// Retrieves the current authenticated session and maps it to the `AppUser` model.
   func getCurrentUser() async throws -> AppUser {
     do {
@@ -73,12 +80,7 @@ struct AuthService: AuthServiceProtocol {
     }
   }
   
-  /// Sends a password reset request to the specified email address.
-  func requestPasswordReset(for email: String) async throws {
-    try await SupabaseManager.shared.client.auth.resetPasswordForEmail(email)
-  }
-  
-  // MARK: - Sign In With Providers.
+  // MARK: - Sign In Providers
   
   /// Authenticates a user via Google account.
   ///
@@ -116,23 +118,30 @@ struct AuthService: AuthServiceProtocol {
       throw AuthError.invalidCredentials
     }
     
-    let username: String
+    let fullName: String
     let metadata = supabaseUser.userMetadata
     
-    if let nameValue = metadata["full_name"], case .string(let fullName) = nameValue {
-      username = fullName
-    } else if let nameValue = metadata["username"], case .string(let usrname) = nameValue {
-      username = usrname
+    if let nameValue = metadata["fullName"], case .string(let fullname) = nameValue {
+      fullName = fullname
     } else {
-      username = email.components(separatedBy: "@").first ?? "User"
+      fullName = "Full Name Not Provided"
+      //fullName = email.components(separatedBy: "@").first ?? "User"
     }
     
     return AppUser(
       id: supabaseUser.id,
-      username: username,
+      fullName: fullName,
       email: email,
       emailConfirmed: supabaseUser.emailConfirmedAt != nil
     )
+  }
+  
+  func getConnectedProviders() async throws -> [String] {
+    let user = try await SupabaseManager.shared.client.auth.user()
+    guard let providerNames = user.identities?.compactMap({ $0.provider }) else {
+      return []
+    }
+    return providerNames
   }
 }
 

@@ -7,18 +7,18 @@
 
 import SwiftUI
 
-struct FlashcardView: View {
+struct CardView: View {
   @Environment(FlashcardViewModel.self) var viewModel
   @Environment(\.dismiss) var dismiss
+  @AppStorage("automatic_sound_playback") private var isTurnedAudioPlayback = false
   @State private var isFlipped = false
-  @AppStorage("automatic_sound_playback") private var isTurnedAudioPlayback: Bool = false
   
   var body: some View {
     VStack {
       if let word = viewModel.currentWord {
         LessonProgressView()
         Toggle(
-          "Automatic sound playback:",
+          "Automatic Sound Playback:",
           systemImage: "speaker.wave.2.fill",
           isOn: $isTurnedAudioPlayback
         )
@@ -30,39 +30,33 @@ struct FlashcardView: View {
           WordCounterView(
             systemImage: "xmark.circle.fill",
             count: viewModel.unknownWords.count,
-            backgroundColor: .red
+            backgroundColor: .indigo
           )
           WordCounterView(
             systemImage: "checkmark.circle.fill",
             count: viewModel.knownWords.count,
-            backgroundColor: .green
+            backgroundColor: .indigo
           )
-        }
-        .padding(.top)
-        .shadow(radius: 2)
+        }.padding(.top)
         
         Group {
           if !isFlipped {
-            FrontView(word: word, isFlipped: $isFlipped, isTurnedAudioPlayback: $isTurnedAudioPlayback)
+            FrontCardView(word: word, isFlipped: $isFlipped)
+              .transition(.slide)
           } else {
-            BackView(word: word, isFlipped: $isFlipped)
+            BackCardView(word: word, isFlipped: $isFlipped)
+              .transition(.scale)
           }
         }
         .onTapGesture {
-          isFlipped.toggle()
+          withAnimation(.easeInOut(duration: 0.6)) { isFlipped.toggle() }
         }
-        .padding(30)
-        .onChange(of: viewModel.currentWordIndex) { _, _ in
+        .padding(20)
+        .onChange(of: viewModel.currentWordIndex) {
           viewModel.speakCurrentWord(auto: isTurnedAudioPlayback)
         }
         .onAppear {
           viewModel.speakCurrentWord(auto: isTurnedAudioPlayback)
-        }
-        
-        if let error = viewModel.errorMessage {
-          Text(error)
-            .foregroundStyle(.red)
-            .padding(.horizontal)
         }
       } else {
         ProgressView("The data is loading...")
@@ -71,8 +65,7 @@ struct FlashcardView: View {
   }
 }
 
-extension FlashcardView {
-  
+extension CardView {
   struct WordCounterView: View {
     @Environment(FlashcardViewModel.self) var viewModel
     
@@ -92,7 +85,7 @@ extension FlashcardView {
       .foregroundStyle(.white)
       .padding(15)
       .background {
-        RoundedRectangle(cornerRadius: 20)
+        Capsule()
           .fill(backgroundColor)
       }
     }
@@ -100,6 +93,6 @@ extension FlashcardView {
 }
 
 #Preview {
-  FlashcardView()
+  CardView()
     .environment(FlashcardViewModel.mockObject)
 }

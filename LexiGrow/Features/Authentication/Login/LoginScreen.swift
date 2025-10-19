@@ -9,37 +9,64 @@ import SwiftUI
 
 struct LoginScreen: View {
   @Environment(AuthManager.self) private var authManager
-  @State private var email: String = ""
-  @State private var password: String = ""
+  @State private var email = ""
+  @State private var password = ""
+  private var isValidForm: Bool {
+    !email.isEmpty && !password.isEmpty
+  }
   
   var body: some View {
     NavigationView {
-      VStack(spacing: 25) {
-        Text("Welcome to LexiGrow")
-          .font(.title2)
-          .fontWeight(.bold)
-          .padding(.bottom)
-          .fontDesign(.rounded)
-          .foregroundStyle(
-            LinearGradient(
-              colors: [.purple, .pink, .pink],
-              startPoint: .leading,
-              endPoint: .trailing
-            )
-          )
-        InputFields(email: $email, password: $password)
-        SignInButton(email: $email, password: $password)
-        HStack {
-          ForgotPasswordOption()
-          Spacer()
-          SignUpOption()
-        }.padding(.horizontal, 20)
-      }.padding(.top,30)
+      ScrollView {
+        VStack(spacing: 20) {
+          InputFields(email: $email, password: $password)
+          
+          PrimaryButton(title: "Sign In") {
+            Task {
+              await authManager.signIn(email: email, password: password)
+              password = ""
+            }
+          }
+          .opacity(!isValidForm ? 0.5:1)
+          .disabled(!isValidForm)
+          
+          ORDivider()
+          
+          ScrollView(.horizontal) {
+            HStack(spacing: 10) {
+              GoogleButton()
+              MagicLinkButton()
+              PhoneNumberButton()
+            }
+          }.scrollIndicators(.hidden)
+          
+          FooterView()
+        }
+        .opacity(authManager.isLoading ? 0.5:1)
+        .disabled(authManager.isLoading)
+        .overlay {
+          if authManager.isLoading {
+            RoundedRectangle(cornerRadius: 10)
+              .fill(Color.systemGray)
+              .frame(width: 60, height: 60)
+              .overlay {
+                ProgressView()
+              }
+          }
+        }
+        .padding(.top, 20)
+        .navigationTitle("Sign In")
+        .navigationBarTitleDisplayMode(.large)
+        .padding(.horizontal, .defaultPadding)
+      }
     }
   }
 }
 
+
 extension LoginScreen {
+  
+  // MARK: - Input Fields
   
   struct InputFields: View {
     @Binding var email: String
@@ -59,6 +86,7 @@ extension LoginScreen {
         .keyboardType(.emailAddress)
         .submitLabel(.next)
         .onSubmit { inputContent = .password }
+        
         SecureTextField(
           title: "Password",
           iconName: "lock",
@@ -69,68 +97,88 @@ extension LoginScreen {
         .submitLabel(.done)
         .onSubmit { inputContent = nil }
       }
-      .padding(.horizontal, 15)
     }
   }
   
-  struct SignInButton: View {
-    @Environment(AuthManager.self) var authManager
-    @Binding var email: String
-    @Binding var password: String
-    private var isValidForm: Bool {
-      !email.isEmpty && !password.isEmpty
-    }
-    
-    var body: some View {
-      Button {
-        Task {
-          await authManager.signIn(email: email, password: password)
-          password = ""
-        }
-      } label: {
-        Group {
-          if authManager.isLoading {
-            CustomProgressView(tint: .white)
-          } else {
-            Text("Sign In")
-          }
-        }
-        .prominentButtonStyle(tint: .pink)
-      }
-      .padding(.horizontal, 15)
-      .opacity(!isValidForm ? 0.5 : 1)
-      .disabled(!isValidForm)
-    }
-  }
+  // MARK: - OR Divider
   
-  struct SignUpOption: View {
-    @Environment(AuthManager.self) var authManager
-    
+  struct ORDivider: View {
     var body: some View {
-      HStack(spacing: 5) {
-        Text("New user?")
-          .foregroundStyle(.secondary)
-        NavigationLink {
-          RegistrationScreen()
-        } label: {
-          Text("Sign Up")
-            .underline(true)
-        }
-      }.font(.footnote)
-    }
-  }
-  
-  struct ForgotPasswordOption: View {
-    @Environment(AuthManager.self) var authManager
-    var body: some View {
-      NavigationLink {
-        PasswordResetView()
-      } label: {
-        Text("Forgot password?")
+      HStack {
+        VStack { Divider() }
+        Text("OR WITH")
           .font(.footnote)
           .foregroundStyle(.secondary)
-          .underline(true)
+        VStack { Divider() }
       }
+    }
+  }
+  
+  // MARK: - Buttons
+  
+  struct GoogleButton: View {
+    @Environment(AuthManager.self) var authManager
+    var body: some View {
+      Button {
+        Task { await authManager.signInWithGoogle() }
+      } label: {
+        Label {
+          Text("Google")
+        } icon: {
+          Image(.googleIcon)
+            .resizable()
+            .frame(width: 22, height: 22)
+        }
+        .capsuleLabelStyle()
+      }
+    }
+  }
+  struct MagicLinkButton: View {
+    var body: some View {
+      NavigationLink {
+        MagicLinkView()
+      } label: {
+        Label("Magic Link", systemImage: "sparkles")
+          .capsuleLabelStyle()
+      }
+    }
+  }
+  struct PhoneNumberButton: View {
+    var body: some View {
+      NavigationLink {
+        PhoneNumberInputView()
+      } label: {
+        Label("Phone Number", systemImage: "phone.fill")
+          .capsuleLabelStyle()
+      }
+    }
+  }
+  
+  // MARK: - Footer View
+  
+  struct FooterView: View {
+    var body: some View {
+      HStack {
+        NavigationLink {
+          ForgotPasswordView()
+        } label: {
+          Text("Forgot password?")
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+            .underline()
+        }
+        Spacer()
+        HStack(spacing: 5) {
+          Text("New user?")
+            .foregroundStyle(.secondary)
+          NavigationLink {
+            RegistrationScreen()
+          } label: {
+            Text("Sign Up")
+              .underline()
+          }
+        }.font(.subheadline)
+      }.padding(.top, 8)
     }
   }
 }

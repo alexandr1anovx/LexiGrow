@@ -9,37 +9,33 @@ import SwiftUI
 
 extension View {
   
-  // MARK: - Button Styles
-  
-  func prominentButtonStyle(tint: Color) -> some View {
+  func prominentLabelStyle(tint: Color) -> some View {
     self
-      .fontWeight(.semibold)
+      .fontWeight(.medium)
       .foregroundStyle(.white)
-      .frame(maxWidth: .infinity, minHeight: 55)
+      .padding(15)
+      .frame(maxWidth: .infinity)
       .background(tint)
-      .cornerRadius(20)
-      .shadow(radius: 3)
+      .clipShape(.capsule)
   }
   
   func modernLabelStyle(textColor: Color = .primary) -> some View {
     self
       .fontWeight(.medium)
-      .fontDesign(.monospaced)
       .padding(11)
       .frame(maxWidth: .infinity)
       .foregroundStyle(textColor)
   }
   
-  // MARK: - Input Field Style
-  
-  func inputFieldStyle() -> some View {
+  func capsuleLabelStyle(
+    pouring: Color = Color(.systemGray6)
+  ) -> some View {
     self
-      .font(.subheadline)
-      .padding()
-      .frame(minHeight: 55)
-      .overlay {
-        RoundedRectangle(cornerRadius: 15)
-          .stroke(.secondary.tertiary, lineWidth: 1)
+      .font(.callout)
+      .fontWeight(.medium)
+      .padding(15)
+      .background {
+        Capsule().fill(pouring)
       }
   }
 }

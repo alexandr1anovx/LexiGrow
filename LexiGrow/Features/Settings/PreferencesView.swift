@@ -9,18 +9,17 @@ import SwiftUI
 
 struct PreferencesView: View {
   @AppStorage("topic_sort_option") private var topicSortOption: TopicSortOption = .defaultOrder
-  @AppStorage("automatic_sound_playback") private var isTurnedAudioPlayback: Bool = false
+  @AppStorage("automatic_sound_playback") private var isTurnedAudioPlayback = false
   
   var body: some View {
     Form {
       Section("Lessons") {
         Picker("Topic sorting", selection: $topicSortOption) {
           ForEach(TopicSortOption.allCases) {
-            Text($0.rawValue)
-              .tag($0)
+            Text($0.rawValue).tag($0)
           }
-        }
-        .pickerStyle(.menu)
+        }.pickerStyle(.menu)
+        
         Toggle("Automatic audio playback", isOn: $isTurnedAudioPlayback)
       }
     }

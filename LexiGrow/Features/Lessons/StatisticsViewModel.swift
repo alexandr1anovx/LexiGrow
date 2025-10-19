@@ -90,7 +90,7 @@ final class StatisticsViewModel {
     defer { isLoading = false }
     
     var tempProgressData: [LevelProgress] = []
-    let user = try await supabase.auth.user()
+    let user = try await SupabaseManager.shared.client.auth.user()
     let allLevels = try await supabaseService.getLevels()
     
     for level in allLevels {

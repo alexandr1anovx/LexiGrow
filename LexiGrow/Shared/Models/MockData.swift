@@ -53,7 +53,7 @@ extension Lesson {
 extension AppUser {
   static var mockUser = AppUser(
     id: UUID(),
-    username: "Alex",
+    fullName: "Alex",
     email: "address@mail.com",
     emailConfirmed: true
   )

@@ -40,20 +40,20 @@ struct FlashcardSetupView: View {
         // Start button
         if #available(iOS 26.0, *) {
           Button {
-            viewModel.startLesson()
-            activeLesson = lesson
-            dismiss()
+            Task {
+              await viewModel.startLesson()
+              activeLesson = lesson
+              dismiss()
+            }
           } label: {
             Label("Start lesson", systemImage: "play.circle.fill")
-              .padding(10)
-              .fontWeight(.medium)
-              .frame(maxWidth: .infinity)
+              .modernLabelStyle(textColor: .white)
           }
-          .tint(.pink)
+          .tint(.blue)
           .buttonStyle(.glassProminent)
           .padding(.horizontal, 25)
           .disabled(!viewModel.canStartLesson)
-          .opacity(!viewModel.canStartLesson ? 0.5 : 1)
+          .opacity(!viewModel.canStartLesson ? 0.7 : 1)
         } else {
           // Fallback on earlier versions
         }
@@ -68,8 +68,8 @@ struct FlashcardSetupView: View {
           SortMenuView(viewModel: viewModel)
         }
       }
-      .onAppear {
-        viewModel.getLevels()
+      .task {
+        await viewModel.getLevels()
       }
       .onDisappear {
         viewModel.resetSetupData()

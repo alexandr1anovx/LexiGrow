@@ -11,10 +11,11 @@ import Foundation
 @MainActor
 final class TranslationViewModel {
   
+  /// The translation direction for the current sentence.
   enum TranslationDirection {
     case toUkrainian, toEnglish
   }
-  
+  /// The evaluation state of the user's answer.
   enum AnswerState {
     case idle, correct, incorrect
   }
@@ -26,27 +27,29 @@ final class TranslationViewModel {
   
   var userInput = ""
   var answerState: AnswerState = .idle
-  
   var selectedLevel: Level?
   
-  private let service: SupabaseService
+  private let service: SupabaseServiceProtocol
   
-  init(supabaseService: SupabaseService) {
+  init(supabaseService: SupabaseServiceProtocol) {
     self.service = supabaseService
   }
   
   // MARK: - Computed Properties
   
+  /// The currently active sentence, or `nil` if the index is out of bounds or the list is empty.
   var currentSentence: Sentence? {
     guard sentences.indices.contains(currentIndex) else { return nil }
     return sentences[currentIndex]
   }
   
+  /// The source text that the user needs to translate based on the current direction.
   var sourceText: String {
     guard let currentSentence else { return "Loading..." }
     return direction == .toUkrainian ? currentSentence.englishSentence : currentSentence.ukrainianSentence
   }
   
+  /// The correct answer for the current sentence based on the current direction.
   private var correctAnswer: String {
     guard let currentSentence else { return "" }
     return direction == .toUkrainian ? currentSentence.ukrainianSentence : currentSentence.englishSentence
@@ -54,6 +57,12 @@ final class TranslationViewModel {
   
   // MARK: - Public Methods
   
+  /// Starts a new lesson for the selected level:
+  /// - Loads sentences for the selected level from the backend.
+  /// - Shuffles the sentences to add variability.
+  /// - Resets the current index and sets the initial direction to `.toUkrainian`.
+  ///
+  /// If `selectedLevel` is not set, this method does nothing.
   func startLesson() async {
     guard let level = selectedLevel else { return }
     do {
@@ -61,10 +70,14 @@ final class TranslationViewModel {
       currentIndex = 0
       direction = .toUkrainian
     } catch {
-      print("⚠️ Failed to load sentences: \(error)")
+      print("Failed to load sentences: \(error)")
     }
   }
   
+  /// Checks the user's input against the correct answer:
+  /// - Trims whitespaces/newlines and lowercases both strings for a lenient comparison.
+  /// - Updates `answerState` to `.correct` or `.incorrect`.
+  /// - Automatically advances to the next sentence after a 1.5 second delay.
   func checkAnswer() {
     let formattedUserInput = userInput.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
     let formattedCorrectAnswer = correctAnswer.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
@@ -75,7 +88,7 @@ final class TranslationViewModel {
       answerState = .incorrect
     }
     
-    // Через 1.5 секунди переходимо до наступного речення
+    // Move to the next sentence after 1.5 seconds.
     Task {
       try? await Task.sleep(for: .seconds(1.5))
       await MainActor.run {
@@ -84,20 +97,25 @@ final class TranslationViewModel {
     }
   }
   
-  func getLevels() {
+  /// Fetches the list of available levels from the backend if not already loaded.
+  /// Subsequent calls are ignored if `levels` is non-empty.
+  func getLevels() async {
     guard levels.isEmpty else { return }
-    Task {
-      do {
-        self.levels = try await service.getLevels()
-      } catch {
-        print("⚠️ Failed to get levels: \(error)")
-        //errorMessage = "Failed to get levels: \(error)"
-      }
+    do {
+      self.levels = try await service.getLevels()
+    } catch {
+      print("⚠️ Failed to get levels: \(error)")
     }
   }
   
   // MARK: - Private Methods
   
+  /// Advances to the next sentence in the lesson:
+  /// - Increments `currentIndex` if possible.
+  /// - Clears `userInput` and resets `answerState` to `.idle`.
+  /// - Randomizes the next translation direction.
+  ///
+  /// If there are no more sentences, logs that the lesson is finished.
   private func nextSentence() {
     if currentIndex < sentences.count - 1 {
       currentIndex += 1
@@ -111,14 +129,16 @@ final class TranslationViewModel {
 }
 
 extension TranslationViewModel {
-  static var mockObject: TranslationViewModel {
+  /// A mock object for previews and testing.
+  static var mockObject: TranslationViewModel = {
     let vm = TranslationViewModel(supabaseService: SupabaseService.mockObject)
     vm.sentences = [
       Sentence(
-      id: UUID(),
-      englishSentence: "Hello, Swift",
-      ukrainianSentence: "Привіт, Сфіфт!"
-    )]
+        id: UUID(),
+        englishSentence: "Hello, Swift",
+        ukrainianSentence: "Привіт, Свіфт!"
+      )
+    ]
     return vm
-  }
+  }()
 }

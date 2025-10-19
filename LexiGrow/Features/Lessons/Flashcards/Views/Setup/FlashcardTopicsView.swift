@@ -51,7 +51,7 @@ extension FlashcardSetupView {
       .frame(maxWidth: .infinity, alignment: .leading)
       .padding(.leading, 8)
       .onChange(of: viewModel.selectedLevel) {
-        viewModel.getTopics()
+        Task { await viewModel.getTopics() }
       }
     }
   }

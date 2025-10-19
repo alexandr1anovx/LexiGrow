@@ -105,12 +105,12 @@ final class FlashcardViewModel {
   /// Starts a new lesson with flashcards.
   ///
   /// Resets the lesson data and starts loading words for the level and topic selected by the user.
-  func startLesson() {
+  func startLesson() async {
     currentWordIndex = 0
     knownWords = []
     unknownWords = []
     lessonState = .inProgress
-    getWords()
+    await getWords()
   }
   
   /// Handles the user's action when they mark a word as "known".
@@ -140,14 +140,12 @@ final class FlashcardViewModel {
   /// Loads a list of all available levels from the backend.
   ///
   /// If successful, fills in the `levels` property. If an error occurs, updates `errorMessage`.
-  func getLevels() {
+  func getLevels() async {
     guard levels.isEmpty else { return }
-    Task {
-      do {
-        self.levels = try await supabaseService.getLevels()
-      } catch {
-        errorMessage = "Failed to get levels: \(error)"
-      }
+    do {
+      self.levels = try await supabaseService.getLevels()
+    } catch {
+      errorMessage = "Failed to get levels: \(error)"
     }
   }
   
@@ -155,19 +153,17 @@ final class FlashcardViewModel {
   ///
   /// Requires that the `selectedLevel` property be set. If successful, fills the `topicsProgress` array.
   /// If an error occurs or the user is not authenticated, updates `errorMessage`.
-  func getTopics() {
+  func getTopics() async {
     guard let level = selectedLevel else { return }
-    Task {
-      do {
-        let user = try await supabase.auth.user()
-        let progress = try await supabaseService.getTopics(
-          levelId: level.id,
-          userId: user.id
-        )
-        topics = progress
-      } catch {
-        errorMessage = "Failed to get topics progress: \(error)"
-      }
+    do {
+      let user = try await SupabaseManager.shared.client.auth.user()
+      let progress = try await supabaseService.getTopics(
+        levelId: level.id,
+        userId: user.id
+      )
+      topics = progress
+    } catch {
+      errorMessage = "Failed to get topics progress: \(error)"
     }
   }
 
@@ -175,31 +171,27 @@ final class FlashcardViewModel {
   ///
   /// Requires `selectedLevel` and `selectedTopic`. On success assigns to `words`;
   /// on failure sets `errorMessage`. Runs asynchronously on the main actor.
-  func getWords() {
+  func getWords() async {
     guard let level = selectedLevel, let topic = selectedTopic else { return }
-    Task {
-      do {
-        let user = try await supabase.auth.user()
-        let fetchedWords = try await supabaseService.getWords(
-          levelId: level.id,
-          topicId: topic.id,
-          userId: user.id
-        )
-        self.words = fetchedWords.shuffled()
-      } catch {
-        errorMessage = "Failed to load words: \(error)"
-      }
+    do {
+      let user = try await SupabaseManager.shared.client.auth.user()
+      let fetchedWords = try await supabaseService.getWords(
+        levelId: level.id,
+        topicId: topic.id,
+        userId: user.id
+      )
+      self.words = fetchedWords.shuffled()
+    } catch {
+      errorMessage = "Failed to load words: \(error)"
     }
   }
   
-  func saveLessonProgress() {
-    Task {
-      do {
-        try await supabaseService.saveLessonProgress(learnedWords: knownWords)
-      } catch {
-        errorMessage = "Failed to save lesson progress: \(error)"
-        print("Failed to save lesson progress: \(error)")
-      }
+  func saveLessonProgress() async {
+    do {
+      try await supabaseService.saveLessonProgress(learnedWords: knownWords)
+    } catch {
+      errorMessage = "Failed to save lesson progress: \(error)"
+      print("Failed to save lesson progress: \(error)")
     }
   }
   
@@ -210,10 +202,12 @@ final class FlashcardViewModel {
     speechService.languageCode = "en-US"
     speechService.speak(text: word.original)
   }
+  
   func speakCurrentWord(auto: Bool) {
     guard auto else { return }
     speakOriginal()
   }
+  
   func stopSpeech(immediately: Bool = false) {
     speechService.stop(immediately: immediately)
   }
@@ -247,8 +241,9 @@ extension FlashcardViewModel {
     let viewModel = FlashcardViewModel(supabaseService: MockSupabaseService())
     viewModel.selectedLevel = .mockB1
     viewModel.topics = [.mock1, .mock2]
-    viewModel.words = [.mock1]
-    viewModel.unknownWords = [.mock1, .mock2]
+    viewModel.words = [.mock1, .mock2, .mock1]
+    viewModel.knownWords = [.mock1]
+    viewModel.unknownWords = [.mock1]
     return viewModel
   }()
 }

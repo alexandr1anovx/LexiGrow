@@ -8,39 +8,51 @@
 import Foundation
 
 class MockAuthService: AuthServiceProtocol {
+  
+  func getConnectedProviders() async throws -> [String] {
+    []
+  }
+  
+  func signInWithMagicLink(for email: String) async throws {
+    //
+  }
+  func signInWithGoogle(bundleId: String) async throws {
+    //
+  }
+  
   var shouldSucceed = true
   
-  var mockUser = AppUser(id: UUID(), username: "mockuser", email: "mock@test.com", emailConfirmed: true)
+  var mockUser = AppUser(id: UUID(), fullName: "mockuser", email: "mock@test.com", emailConfirmed: true)
   
   func signIn(email: String, password: String) async throws -> AppUser {
     if shouldSucceed { return mockUser }
-    throw AuthError.invalidCredentials(description: "Mock error")
+    throw AuthError.invalidCredentials
   }
   
-  func signUp(username: String, email: String, password: String) async throws -> AppUser {
+  func signUp(fullName: String, email: String, password: String) async throws -> AppUser {
     if shouldSucceed { return mockUser }
-    throw AuthError.serverError(description: "Mock error")
+    throw AuthError.serverError
   }
   
   func signOut() async throws {
-    if !shouldSucceed { throw AuthError.unknown }
+    if !shouldSucceed { throw AuthError.unknown(description: "Unknown error") }
   }
   
-  func updateUser(username: String) async throws -> AppUser {
+  func updateUser(fullName: String) async throws -> AppUser {
     if shouldSucceed {
-      mockUser.username = username
+      mockUser.fullName = fullName
       return mockUser
     }
-    throw AuthError.serverError(description: "Mock error")
+    throw AuthError.serverError
   }
   
   func getCurrentUser() async throws -> AppUser {
     if shouldSucceed { return mockUser }
-    throw AuthError.userNotFound
+    throw AuthError.unknown(description: "User Not Found")
   }
   
   func requestPasswordReset(for email: String) async throws {
-    if !shouldSucceed { throw AuthError.unknown }
+    if !shouldSucceed { throw AuthError.unknown(description: "Unknown error") }
   }
 }
 
@@ -57,44 +69,44 @@ class MockSupabaseService: SupabaseServiceProtocol {
   
   func getLessons() async throws -> [Lesson] {
     if shouldSucceed { return lessons }
-    throw AuthError.serverError(description: "Mock error")
+    throw AuthError.serverError
   }
   
   func getLevels() async throws -> [Level] {
     if shouldSucceed { return levels }
-    throw AuthError.serverError(description: "Mock error")
+    throw AuthError.serverError
   }
   
   func getTopics(for levelId: UUID) async throws -> [Topic] {
     if shouldSucceed { return topics }
-    throw AuthError.serverError(description: "Mock error")
+    throw AuthError.serverError
   }
   
   func getTopics(levelId: UUID, userId: UUID) async throws -> [Topic] {
     if shouldSucceed { return topicsProgress }
-    throw AuthError.serverError(description: "Mock error")
+    throw AuthError.serverError
   }
   
   func getWords(levelId: UUID, topicId: UUID, userId: UUID) async throws -> [Word] {
     if shouldSucceed { return mockUnlearnedWords }
-    throw AuthError.serverError(description: "Mock error")
+    throw AuthError.serverError
   }
   
   func getWords(levelId: UUID, topicId: UUID) async throws -> [Word] {
     if shouldSucceed { return words }
-    throw AuthError.serverError(description: "Mock error")
+    throw AuthError.serverError
   }
   
   func markWordAsLearned(wordId: UUID) async throws {
-    if !shouldSucceed { throw AuthError.serverError(description: "Mock error") }
+    if !shouldSucceed { throw AuthError.serverError }
   }
   
   func saveLessonProgress(learnedWords: [Word]) async throws {
-    if !shouldSucceed { throw AuthError.serverError(description: "Mock error") }
+    if !shouldSucceed { throw AuthError.serverError }
   }
   
   func getSentences(for levelId: UUID) async throws -> [Sentence] {
     if shouldSucceed { return [] }
-    throw AuthError.serverError(description: "Mock error")
+    throw AuthError.serverError
   }
 }

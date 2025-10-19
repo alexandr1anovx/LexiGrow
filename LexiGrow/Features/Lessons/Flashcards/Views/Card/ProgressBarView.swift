@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-extension FlashcardView {
+extension CardView {
   
   struct LessonProgressView: View {
     @Environment(FlashcardViewModel.self) var viewModel
@@ -17,22 +17,19 @@ extension FlashcardView {
         Text("Index")
       } currentValueLabel: {
         Text("\(viewModel.currentWordIndex + 1)")
-          .foregroundStyle(.gray)
       } minimumValueLabel: {
         Text("\(viewModel.currentWordIndex + 1)")
-          .foregroundStyle(.gray)
       } maximumValueLabel: {
         Text("\(viewModel.words.count)")
-          .foregroundStyle(.gray)
       }
       .tint(.blue)
       .gaugeStyle(.accessoryLinear)
-      .padding()  
+      .padding()
     }
   }
 }
 
 #Preview {
-  FlashcardView.LessonProgressView()
+  CardView.LessonProgressView()
     .environment(FlashcardViewModel.mockObject)
 }

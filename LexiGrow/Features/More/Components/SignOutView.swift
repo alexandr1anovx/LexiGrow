@@ -16,7 +16,7 @@ extension MoreScreen {
     var body: some View {
       NavigationView {
         VStack(spacing: 30) {
-          Spacer()
+          
           VStack(spacing: 10) {
             Text("Sign Out")
               .font(.title2)
@@ -25,19 +25,41 @@ extension MoreScreen {
               .font(.callout)
               .foregroundStyle(.secondary)
           }
-          Button {
-            authManager.signOut()
-          } label: {
-            Group {
-              if authManager.isLoading {
-                CustomProgressView(tint: .white)
-              } else {
-                Text("Yes, sign out")
+          
+          if #available(iOS 26, *) {
+            Button {
+              Task {
+                await authManager.signOut()
+                dismiss()
               }
+            } label: {
+              Group {
+                if authManager.isLoading {
+                  CustomProgressView(tint: .white)
+                } else {
+                  Text("Yes, sign out")
+                }
+              }
+              .modernLabelStyle(textColor: .white)
             }
-            .prominentButtonStyle(tint: .pink)
+            .tint(.red)
+            .buttonStyle(.glassProminent)
+            .padding(.horizontal, 20)
+          } else {
+            Button {
+              Task { await authManager.signOut() }
+            } label: {
+              Group {
+                if authManager.isLoading {
+                  CustomProgressView(tint: .white)
+                } else {
+                  Text("Yes, sign out")
+                }
+              }
+              .prominentLabelStyle(tint: .red)
+            }
+            .padding(.horizontal, 20)
           }
-          .padding(.horizontal, 20)
         }
         .toolbar {
           ToolbarItem(placement: .topBarTrailing) {

@@ -44,7 +44,6 @@ extension FlashcardSetupView {
 }
 
 #Preview {
-//  FlashcardSetupView.LevelsView(viewModel: FlashcardViewModel.mockObject)
   @Previewable @State var levels: [Level] = [.mockB1, .mockB2]
   @Previewable @State var selectedLevel: Level?
   HStack(spacing: 10) {

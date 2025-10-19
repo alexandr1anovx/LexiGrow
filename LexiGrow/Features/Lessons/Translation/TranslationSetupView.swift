@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct TranslationSetupView: View {
-  @Bindable var viewModel: TranslationViewModel
   @Environment(\.dismiss) var dismiss
+  @Bindable var viewModel: TranslationViewModel
   let lesson: LessonEntity
   @Binding var activeLesson: LessonEntity?
   
@@ -25,16 +25,22 @@ struct TranslationSetupView: View {
           .font(.footnote)
           .foregroundStyle(.secondary)
       }
-      
-      ScrollView(.horizontal) {
-        ForEach(viewModel.levels, id: \.self) { level in
-          LevelButton(
-            name: level.name,
-            selectedLevel: $viewModel.selectedLevel) {
-              viewModel.selectedLevel = viewModel.selectedLevel == level ? nil : level
+      HStack {
+        Text("Levels:")
+          .fontWeight(.medium)
+        ScrollView(.horizontal) {
+          HStack(spacing: 12) {
+            ForEach(viewModel.levels, id: \.self) { level in
+              LevelButton(
+                name: level.name,
+                selectedLevel: $viewModel.selectedLevel) {
+                  viewModel.selectedLevel = viewModel.selectedLevel == level ? nil : level
+                }
             }
+          }.padding([.leading, .vertical], 8)
         }
-      }.padding(.horizontal)
+      }
+      .padding(.horizontal)
       
       Button {
         Task {
@@ -44,13 +50,13 @@ struct TranslationSetupView: View {
         }
       } label: {
         Label("Start lesson", systemImage: "play.circle.fill")
-          .padding(12)
+          .prominentLabelStyle(tint: .blue)
       }
-      .prominentButtonStyle(tint: .blue)
+      .padding(.horizontal, 20)
       .disabled(viewModel.selectedLevel == nil)
     }
-    .onAppear {
-      viewModel.getLevels()
+    .task {
+      await viewModel.getLevels()
     }
   }
 }

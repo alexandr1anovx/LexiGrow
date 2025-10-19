@@ -16,21 +16,20 @@ struct SettingsScreen: View {
     Form {
       Section("Appearance") {
         DisclosureGroup("Color Scheme", isExpanded: $isExpandedSchemePanel) {
-          HStack(spacing: 15) {
+          HStack {
             ForEach(Theme.allCases) { theme in
-              Button {
-                appScheme = theme
-                feedbackGenerator.impactOccurred()
-              } label: {
-                Text(theme.rawValue)
-                  .frame(minWidth: 60)
-                  .foregroundStyle(appScheme == theme ? Color(.systemBackground) : Color.primary)
-                  .padding(10)
-                  .background(appScheme == theme ? Color.primary : Color.clear)
-                  .clipShape(.rect(cornerRadius: 20))
-              }
+              Text(theme.rawValue)
+                .foregroundStyle(appScheme == theme ? Color(.systemBackground) : Color.primary)
+                .padding(10)
+                .background(appScheme == theme ? Color.primary : Color.clear)
+                .clipShape(.rect(cornerRadius: 20))
+                .onTapGesture {
+                  appScheme = theme
+                  feedbackGenerator.impactOccurred()
+                }
+              Spacer()
             }
-          }
+          }.padding(.horizontal)
         }
       }
       NavigationLink {
