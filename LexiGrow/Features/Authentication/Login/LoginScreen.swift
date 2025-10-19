@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct LoginScreen: View {
-  @Environment(AuthManager.self) private var authManager
+  //@Environment(AuthManager.self) private var authManager
+  @Bindable var authManager: AuthManager
   @State private var email = ""
   @State private var password = ""
   private var isValidForm: Bool {
@@ -49,15 +50,19 @@ struct LoginScreen: View {
             RoundedRectangle(cornerRadius: 10)
               .fill(Color.systemGray)
               .frame(width: 60, height: 60)
-              .overlay {
-                ProgressView()
-              }
+              .overlay { ProgressView() }
           }
         }
-        .padding(.top, 20)
+        .padding([.top, .horizontal], .defaultPadding)
         .navigationTitle("Sign In")
         .navigationBarTitleDisplayMode(.large)
-        .padding(.horizontal, .defaultPadding)
+        .alert(item: $authManager.authError) { error in
+          Alert(
+            title: Text(error.title),
+            message: Text(error.message),
+            dismissButton: .default(Text("OK"))
+          )
+        }
       }
     }
   }
@@ -184,6 +189,6 @@ extension LoginScreen {
 }
 
 #Preview {
-  LoginScreen()
+  LoginScreen(authManager: AuthManager.mockObject)
     .environment(AuthManager.mockObject)
 }
