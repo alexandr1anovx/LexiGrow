@@ -9,8 +9,8 @@ import SwiftUI
 import SwiftData
 
 enum LessonType: String {
-  case flashcards = "Flashcards"
-  case translation = "Translation"
+  case cards = "Картки"
+  case translation = "Переклад"
   case unknown
 }
 
@@ -66,10 +66,10 @@ final class LessonEntity {
 }
 
 extension LessonEntity {
-  static let mockObject = LessonEntity(
+  static let mock = LessonEntity(
     id: UUID(),
-    title: "Flashcards",
-    subtitle: "Subtitle",
+    title: "Картки",
+    subtitle: "Вивчайте слова за допомогою інтервального повторення.",
     iconName: "tray.badge.fill",
     isLocked: false
   )

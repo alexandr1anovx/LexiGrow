@@ -1,5 +1,5 @@
 //
-//  FlashcardTopicButton.swift
+//  TopicButton.swift
 //  LexiGrow
 //
 //  Created by Alexander Andrianov on 15.08.2025.
@@ -9,8 +9,7 @@ import SwiftUI
 
 struct TopicButton: View {
   let topic: Topic
-  @Binding var selectedTopic: Topic?
-  let activeColor: Color
+  let isSelected: Bool
   let selectAction: () -> Void
   
   private var isCompleted: Bool {
@@ -19,65 +18,57 @@ struct TopicButton: View {
   
   var body: some View {
     Button(action: selectAction) {
-      HStack(spacing: 8) {
+      HStack(spacing: 10) {
         Text(topic.name)
           .font(.subheadline)
-          //.fontWeight(.medium)
-          .foregroundColor(.white)
-        
-        HStack(spacing: 1) {
-          Text("\(topic.learnedWords)")
-            .foregroundStyle(topic.learnedWords != topic.totalWords ? .orange : .white)
-          Text("/")
-            .foregroundStyle(.white)
-          Text("\(topic.totalWords)")
-            .foregroundStyle(.white)
-        }
-        .font(.caption)
-        .fontWeight(.medium)
-        .padding(8)
-        .background {
-          RoundedRectangle(cornerRadius: 15)
-            .fill(topic.learnedWords == topic.totalWords ? .green : .olive)
-        }
+          .fontWeight(.medium)
+          
+        Text("\(topic.learnedWords)/\(topic.totalWords)")
+          .font(.caption)
+          .fontWeight(.semibold)
+          .padding(6)
+          .background {
+            Capsule()
+              .fill(topic.learnedWords == topic.totalWords ? .orange : .mainYellow)
+          }
       }
+      .foregroundColor(.white)
       .padding(12)
       .background {
         Capsule()
-          .fill(selectedTopic?.id == topic.id ? .blue : .black)
-          .stroke(
-            selectedTopic?.id == topic.id ? .clear : .systemGray,
-            lineWidth: 2
-          )
+          .fill(isSelected ? .mainGreen : .topicCapsule)
+          .stroke(isSelected ? .clear : .systemGray, lineWidth: 2)
       }
     }
     .disabled(topic.learnedWords == topic.totalWords)
-    .opacity(topic.learnedWords == topic.totalWords ? 0.7 : 1)
+    .opacity(topic.learnedWords == topic.totalWords ? 0.8 : 1)
   }
 }
 
-#Preview {
-  @Previewable @State var selectedTopic: Topic?
-  let topics: [Topic] = [.mock1, .mock2, .mock3]
-  VStack {
-    ScrollView(.horizontal) {
-      HStack {
-        ForEach(topics, id: \.id) { topic in
-          TopicButton(
-            topic: Topic(
-              id: topic.id,
-              name: topic.name,
-              totalWords: 20,
-              learnedWords: 15
-            ),
-            selectedTopic: $selectedTopic,
-            activeColor: .pink,
-            selectAction: {
-              selectedTopic = topic
-            }
-          )
-        }
-      }.padding(4)
-    }.scrollIndicators(.hidden)
-  }
-}
+//#Preview {
+//  @Previewable @State var selectedTopic: Topic?
+//  let topics: [Topic] = [.mock1, .mock2, .mock3]
+//  VStack {
+//    ScrollView(.horizontal) {
+//      HStack {
+//        ForEach(topics) { topic in
+//          TopicButton(
+//            topic: Topic(
+//              id: topic.id,
+//              name: topic.name,
+//              totalWords: topic.totalWords,
+//              learnedWords: topic.learnedWords
+//            ),
+//            selectedTopic: $selectedTopic,
+//            activeColor: .pink,
+//            selectAction: {
+//              selectedTopic = topic
+//            }
+//          )
+//        }
+//      }.padding(4)
+//    }
+//    .shadow(radius: 1)
+//    .scrollIndicators(.hidden)
+//  }
+//}

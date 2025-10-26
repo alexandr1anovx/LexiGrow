@@ -8,26 +8,25 @@
 import SwiftUI
 
 struct SecureTextField: View {
-  let title: String
-  let iconName: String
+  let content: Field
   @Binding var text: String
   @State private var showPassword = false
-  var showToggleIcon = true
+  var showEye = true
   
   var body: some View {
     HStack {
-      Image(systemName: iconName)
+      Image(systemName: content.iconName)
         .foregroundColor(.secondary)
         .padding(.leading)
         .frame(minWidth: 35)
       
       if showPassword {
-        TextField(title, text: $text)
+        TextField(content.title, text: $text)
       } else {
-        SecureField(title, text: $text)
+        SecureField(content.title, text: $text)
       }
       
-      if showToggleIcon && !text.isEmpty {
+      if showEye && !text.isEmpty {
         Image(systemName: showPassword ? "eye" : "eye.slash")
           .onTapGesture {
             showPassword.toggle()
@@ -37,7 +36,7 @@ struct SecureTextField: View {
     }
     .frame(height: 55)
     .background {
-      RoundedRectangle(cornerRadius: 20)
+      Capsule()
         .fill(.thinMaterial)
         .shadow(radius: 1)
     }
@@ -47,16 +46,7 @@ struct SecureTextField: View {
 #Preview {
   @Previewable @State var password = "123456"
   VStack {
-    SecureTextField(
-      title: "Password",
-      iconName: "lock",
-      text: $password
-    )
-    SecureTextField(
-      title: "Password",
-      iconName: "lock",
-      text: $password,
-      showToggleIcon: false
-    )
+    SecureTextField(content: .password, text: $password)
+    SecureTextField(content: .confirmPassword, text: $password, showEye: false)
   }
 }

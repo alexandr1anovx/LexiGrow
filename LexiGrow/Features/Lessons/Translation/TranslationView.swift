@@ -62,7 +62,5 @@ struct TranslationView: View {
 }
 
 #Preview {
-  TranslationView(
-    viewModel: TranslationViewModel.mockObject
-  )
+  TranslationView(viewModel: TranslationViewModel.mock)
 }

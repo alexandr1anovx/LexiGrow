@@ -18,10 +18,9 @@ enum AuthState {
 final class AuthManager {
   
   // MARK: - Published Properties
-  
-  private(set) var currentUser: AppUser?
+  var authError: AuthError?
   private(set) var authState: AuthState = .unauthenticated
-  private(set) var error: AuthError?
+  private(set) var currentUser: AppUser?
   private(set) var isLoading = false
   
   private let authService: AuthServiceProtocol
@@ -32,7 +31,7 @@ final class AuthManager {
     Task { await refreshUser() }
   }
   
-  // MARK: - Public API
+  // MARK: - Public methods
   
   /// Authenticates a user using email and password.
   func signIn(email: String, password: String) async {
@@ -114,11 +113,10 @@ final class AuthManager {
     do {
       let user = try await authService.getCurrentUser()
       updateUserState(with: user)
-      self.error = nil
+      self.authError = nil
     } catch {
       self.currentUser = nil
-      self.authState = .unauthenticated
-      handle(error: error)
+      //handle(error: error)
     }
   }
   
@@ -140,13 +138,11 @@ final class AuthManager {
   */
   
   func fetchConnectedProviders() async -> [String] {
-    var connectedProviders = [String]()
     do {
-      let providers = try await authService.getConnectedProviders()
-      return connectedProviders
+      return try await authService.getConnectedProviders()
     } catch {
-      print("🔴 Не вдалося отримати список провайдерів: \(error)")
-      return []
+      print("Failed to get providers list: \(error)")
+      return ["No Providers Used"]
     }
   }
   
@@ -170,12 +166,12 @@ final class AuthManager {
     }
   }
   
-  // MARK: - Private API
+  // MARK: - Private methods
   
   /// Prepares the manager's state for a new asynchronous request.
   private func prepareForRequest() {
     isLoading = true
-    error = nil
+    authError = nil
   }
   
   /// Updates the user and authentication state based on the provided AppUser object.
@@ -186,19 +182,52 @@ final class AuthManager {
   
   /// Handles errors and updates the state for UI presentation.
   private func handle(error: Error) {
-    self.error = error as? AuthError ?? .unknown(description: error.localizedDescription)
+    if let specificAuthError = error as? AuthError {
+      self.authError = specificAuthError
+    } else {
+      self.authError = .unknown(description: error.localizedDescription)
+    }
     self.authState = .unauthenticated
+  }
+  
+  func sendOTP(for phoneNumber: String) async -> Bool {
+    isLoading = true
+    authError = nil
+    defer { isLoading = false }
+    
+    do {
+      try await authService.sendOTP(for: phoneNumber)
+      print("OTP successfully sent to \(phoneNumber)")
+      return true
+    } catch {
+      print("AuthManager Error (sendOTP): \(error.localizedDescription)")
+      return false
+    }
+  }
+  
+  func verifyOTP(for phoneNumber: String, with code: String) async {
+    isLoading = true
+    authError = nil
+    defer { isLoading = false }
+    
+    do {
+      try await authService.verifyOTP(for: phoneNumber, with: code)
+      print("Phone number verified successfully. User is logged in.")
+      self.authState = .authenticated
+    } catch {
+      print("AuthManager Error (verifyOTP): \(error.localizedDescription)")
+    }
   }
 }
 
 // MARK: - Mock Object
 
 extension AuthManager {
-  static var mockObject: AuthManager = {
+  static var mock: AuthManager = {
     let manager = AuthManager()
     manager.currentUser = .mockUser
     manager.authState = .authenticated
-    manager.error = nil
+    manager.authError = nil
     manager.isLoading = false
     return manager
   }()

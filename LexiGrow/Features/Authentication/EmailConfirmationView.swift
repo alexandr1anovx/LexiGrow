@@ -8,53 +8,80 @@
 import SwiftUI
 
 struct EmailConfirmationView: View {
-  @Environment(AuthManager.self) var authManager
-  @State private var showAlert = false
-  @State private var animateIcon = false
-  @State private var alertTitle = ""
-  @State private var alertMessage = ""
+  @State private var showSendButton = false
+  @State private var animateShadow = false
+  @State private var remainingTime = 0
+  let email: String
+  var sendAction: (() -> Void)? = nil
   
   var body: some View {
-    VStack(spacing: 25) {
-      VStack(spacing: 20) {
+    ZStack {
+      Color.mainBackground.ignoresSafeArea()
+      VStack(spacing: 30) {
         Text("Check your inbox")
-          .font(.title3)
+          .font(.title2)
           .fontWeight(.semibold)
-        Text("We have sent a confirmation link to your email address. Please check your inbox.")
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
-          .multilineTextAlignment(.center)
-          .padding(.horizontal)
+        VStack {
+          Text("We have sent a confirmation link to")
+            .foregroundStyle(.secondary)
+          Text(email)
+            .foregroundStyle(.primary)
+            .fontWeight(.medium)
+        }
+        .font(.subheadline)
+        .padding(.horizontal)
+        
+        Button {
+          sendAction?()
+          disableButtonTemporarily()
+        } label: {
+          if remainingTime > 0 {
+            Text("Send again in \(remainingTime)s")
+          } else {
+            Text("Send again")
+              .foregroundStyle(.blue)
+          }
+        }
+        .font(.subheadline)
+        .underline()
+        .disabled(!showSendButton)
       }
-      
-      Button {
-        alertTitle = "Letter sent"
-        alertMessage = "We have resent the confirmation letter to your email address."
-        showAlert = true
-      } label: {
-        Text("Send again")
-          .capsuleLabelStyle(pouring: .primary)
-          .foregroundStyle(Color.system)
+      .padding(.vertical, 40)
+      .padding(.horizontal, 20)
+      .background {
+        RoundedRectangle(cornerRadius: 50)
+          .fill(.systemGray)
+          .shadow(
+            color: animateShadow ? .yellow : .blue,
+            radius: 3,
+            x: 0,
+            y: animateShadow ? 2:-2
+          )
+      }
+      .navigationBarBackButtonHidden()
+      .onAppear {
+        disableButtonTemporarily()
+        withAnimation(.linear(duration: 1).repeatForever()) {
+          animateShadow.toggle()
+        }
       }
     }
-    .padding(.vertical,30)
-    .padding(.horizontal)
-    .background {
-      RoundedRectangle(cornerRadius: 30)
-        .fill(.thinMaterial)
-        .shadow(radius: 2)
-    }
-    .alert(isPresented: $showAlert) {
-      Alert(
-        title: Text(alertTitle),
-        message: Text(alertMessage),
-        dismissButton: .default(Text("OK"))
-      )
+  }
+  
+  private func disableButtonTemporarily() {
+    showSendButton = false
+    remainingTime = 60
+    Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
+      if remainingTime > 0 {
+        remainingTime -= 1
+      } else {
+        timer.invalidate()
+        showSendButton = true
+      }
     }
   }
 }
 
 #Preview {
-  EmailConfirmationView()
-    .environment(AuthManager.mockObject)
+  EmailConfirmationView(email: "an4lex@gmail.com")
 }

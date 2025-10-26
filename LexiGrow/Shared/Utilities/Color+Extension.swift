@@ -10,8 +10,5 @@ import SwiftUI
 extension Color {
   static let system = Color(.systemBackground)
   static let systemGray = Color(.systemGray6)
-  
-  static let flashcard = LinearGradient(
-    colors: [.olive, .blue], startPoint: .topLeading, endPoint: .bottomTrailing
-  )
+  //static let mainYellow = Color.yellow.opacity(0.5)
 }

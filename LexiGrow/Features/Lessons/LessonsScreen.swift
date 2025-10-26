@@ -12,53 +12,94 @@ struct LessonsScreen: View {
   @Environment(\.modelContext) var modelContext
   @Environment(AuthManager.self) var authManager
   @Environment(LessonsViewModel.self) var viewModel
+  
   @State private var selectedLesson: LessonEntity? // for sheet
   @State private var activeLesson: LessonEntity? // for .fullScreenCover
   @State private var displayMode: DisplayMode = .lessons
   
+  private let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
+  
   var body: some View {
-    NavigationView {
+    ZStack {
+      Color.mainBackground.ignoresSafeArea()
       VStack {
-        Text("Hi👋, \(authManager.currentUser?.fullName ?? "user")!")
-        .font(.headline)
-        .fontDesign(.monospaced)
-        .padding(25)
-          
-        DisplayModeSelector(displayMode: $displayMode)
-        TabView(selection: $displayMode) {
-          GridView(selectedLesson: $selectedLesson)
-            .tag(DisplayMode.lessons)
-          StatisticsView()
-            .tag(DisplayMode.statistics)
+        HStack(spacing: 15) {
+          Image(.boy)
+            .resizable()
+            .frame(width: 30, height: 30)
+          Text("Привіт👋, \(authManager.currentUser?.firstName ?? "користувач")!")
+            .font(.subheadline)
+            .fontWeight(.semibold)
+            .fontDesign(.monospaced)
+            .lineLimit(1)
         }
-        .tabViewStyle(.page)
+        .padding(23)
+        
+        DisplayModeSelector(displayMode: $displayMode)
+        
+        Spacer()
+        
+//        TabView(selection: $displayMode) {
+//          GridView(selectedLesson: $selectedLesson)
+//            .tag(DisplayMode.lessons)
+//          LessonProgressScreen()
+//            .tag(DisplayMode.progress)
+//        }
+//        .tabViewStyle(.page)
+        
+        Group {
+          switch displayMode {
+          case .lessons:
+            GridView(selectedLesson: $selectedLesson)
+              .tag(DisplayMode.lessons)
+          case .progress:
+            LessonProgressScreen()
+              .tag(DisplayMode.progress)
+          }
+        }
+        .transition(.blurReplace)
+        
+        Spacer()
+      }
+      .onChange(of: displayMode) {
+        feedbackGenerator.impactOccurred()
+      }
+      .background(.mainBackground)
+      .onDisappear {
+        // always return user to the first tab
+        displayMode = .lessons
+      }
+//      .task {
+//        await viewModel.syncData(context: modelContext)
+//      }
+      .animation(.spring, value: displayMode)
+      .sheet(item: $selectedLesson) { lesson in
+        LessonSetupSheet(
+          lesson: lesson,
+          activeLesson: $activeLesson
+        )
+      }
+      .fullScreenCover(item: $activeLesson) { lesson in
+        LessonContainerView(lesson: lesson)
       }
     }
-    .sheet(item: $selectedLesson) {
-      LessonSetupSheet(lesson: $0, activeLesson: $activeLesson)
-    }
-    .fullScreenCover(item: $activeLesson) {
-      LessonContainerView(lesson: $0)
-    }
-    .task {
-      await viewModel.syncData(context: modelContext)
-    }
+    
   }
 }
 
-private extension LessonsScreen {
+extension LessonsScreen {
   
   // MARK: Display Mode
   
   enum DisplayMode: String, Identifiable, CaseIterable {
-    case lessons = "Lessons"
-    case statistics = "Statistics"
+    case lessons = "Уроки"
+    case progress = "Прогрес"
     
     var id: Self { self }
     var iconName: String {
       switch self {
-      case .lessons: return "book.pages"
-      case .statistics: return "chart.bar"
+      case .lessons: return "book.closed"
+      case .progress: return "chart.bar"
       }
     }
   }
@@ -67,25 +108,19 @@ private extension LessonsScreen {
   
   struct DisplayModeSelector: View {
     @Binding var displayMode: DisplayMode
-    private let feedbackGenerator = UIImpactFeedbackGenerator(style: .soft)
     
     var body: some View {
       HStack(spacing: 8) {
         ForEach(DisplayMode.allCases) { mode in
-          ModeButton(
-            title: mode.rawValue,
-            icon: mode.iconName,
-            isSelected: displayMode == mode
-          ) {
+          ModeButton(mode: mode, isSelected: displayMode == mode) {
             displayMode = mode
-            feedbackGenerator.impactOccurred()
           }
         }
       }
-      .padding(5)
+      .padding(6)
       .background {
-        RoundedRectangle(cornerRadius: 25)
-          .fill(.thinMaterial)
+        Capsule()
+          .fill(.mainGreen)
           .shadow(radius: 2)
       }
       .padding(.bottom)
@@ -96,20 +131,23 @@ private extension LessonsScreen {
   
   /// Stylized button for mode selector
   struct ModeButton: View {
-    let title: String
-    let icon: String
+    let mode: DisplayMode
     let isSelected: Bool
-    let selectModeAction: () -> Void
+    let selectAction: () -> Void
+    @State private var shouldAnimate = false
     
     var body: some View {
-      Button(action: selectModeAction) {
-        Label(title, systemImage: icon)
+      Button {
+        selectAction()
+        if !isSelected {
+          shouldAnimate.toggle()
+        }
+      } label: {
+        Label(mode.rawValue, systemImage: isSelected ? "\(mode.iconName).fill" : mode.iconName)
+          .symbolEffect(.bounce, value: shouldAnimate)
           .font(.subheadline)
-          .fontWeight(.medium)
-          .foregroundStyle(isSelected ? Color(.systemBackground) : .primary)
-          .padding(14)
-          .background(isSelected ? Color.primary : Color.clear)
-          .clipShape(.rect(cornerRadius: 20))
+          .foregroundStyle(.white)
+          .capsuleLabelStyle(pouring: isSelected ? .lessonCapsule : .clear)
       }
     }
   }
@@ -121,57 +159,74 @@ private extension LessonsScreen {
     @Environment(LessonsViewModel.self) var viewModel
     
     private let columns: [GridItem] = [
-      GridItem(.flexible(), spacing: 15),
-      GridItem(.flexible(), spacing: 15)
+      GridItem(.flexible()),
+      GridItem(.flexible())
     ]
     
     var body: some View {
-      Group {
-        if viewModel.isLoading {
-          CustomProgressView(tint: .pink)
-        } else {
-          ScrollView {
-            LazyVGrid(columns: columns, spacing: 25) {
-              ForEach(viewModel.lessons, id: \.id) { lesson in
-                LessonBlock(lesson: lesson)
-                  .onTapGesture { selectedLesson = lesson }
-              }
-            }.padding()
-          }
+      if viewModel.isLoading {
+        DefaultProgressView()
+      } else {
+        ScrollView {
+          LazyVGrid(columns: columns, spacing: 25) {
+            ForEach(viewModel.lessons) { lesson in
+              LessonBlockView(lesson: lesson)
+                .onTapGesture { selectedLesson = lesson }
+            }
+          }.padding()
         }
       }
     }
   }
 }
 
-struct StatisticsView: View {
-  @Query(sort: \LevelProgress.orderIndex) private var levelProgressData: [LevelProgress]
+struct LessonProgressScreen: View {
+  @Query(sort: \LevelProgressEntity.orderIndex)
+  private var levelProgressData: [LevelProgressEntity]
+  
   @Environment(\.modelContext) private var modelContext
-  @Environment(StatisticsViewModel.self) var viewModel
+  @Environment(LessonProgressViewModel.self) var viewModel
   
   var body: some View {
-    List(levelProgressData) {
-      Cell(
-        title: $0.name,
-        progress: $0.progress,
-        learnedWords: $0.learnedWords,
-        totalWords: $0.totalWords
+    VStack {
+      
+      List(levelProgressData) {
+        
+        Cell(
+          title: $0.name,
+          progress: $0.progress,
+          learnedWords: $0.learnedWords,
+          totalWords: $0.totalWords
+        )
+      }
+      .listRowSpacing(8)
+      .scrollContentBackground(.hidden)
+      .refreshable {
+        await viewModel.syncProgress(context: modelContext)
+      }
+    }
+    /*
+    .alert(isPresented: $showAlert) {
+      Alert(
+        title: Text("Erase all progress?"),
+        message: Text("This action cannot be undone. All your achievements and settings will be deleted."),
+        primaryButton: .destructive(Text("Erase")) {
+          feedbackGenerator.notificationOccurred(.success)
+        },
+        secondaryButton: .cancel(Text("Cancel"))
       )
     }
-    .listStyle(.insetGrouped)
-    .scrollContentBackground(.hidden)
-    .refreshable {
-      await viewModel.syncProgress(context: modelContext)
-    }
+    */
   }
 }
 
-extension StatisticsView {
+extension LessonProgressScreen {
   struct Cell: View {
     let title: String
     let progress: Double
     let learnedWords: Int
     let totalWords: Int
+    
     var body: some View {
       VStack(alignment: .leading, spacing: 8) {
         Text(title)
@@ -205,8 +260,8 @@ struct LessonSetupSheet: View {
   var body: some View {
     Group {
       switch lesson.type {
-      case .flashcards:
-        FlashcardSetupView(lesson: lesson, activeLesson: $activeLesson)
+      case .cards:
+        CardsSetupView(lesson: lesson, activeLesson: $activeLesson)
       case .translation:
         TranslationSetupView(viewModel: translationViewModel, lesson: lesson, activeLesson: $activeLesson)
       case .unknown:
@@ -214,7 +269,6 @@ struct LessonSetupSheet: View {
       }
     }
     .presentationDetents([.fraction(0.5)])
-    .presentationCornerRadius(50)
   }
 }
 
@@ -226,8 +280,8 @@ struct LessonContainerView: View {
   
   var body: some View {
     switch lesson.type {
-    case .flashcards:
-      FlashcardContainerView()
+    case .cards:
+      CardsContainerView()
     case .translation:
       TranslationView(viewModel: translationViewModel)
     case .unknown:
@@ -241,10 +295,10 @@ struct LessonContainerView: View {
 
 #Preview {
   LessonsScreen()
-    .environment(FlashcardViewModel.mockObject)
-    .environment(StatisticsViewModel.mockObject)
-    .environment(LessonsViewModel.mockObject)
-    .environment(SupabaseService.mockObject)
-    .environment(AuthManager.mockObject)
-    .environment(TranslationViewModel.mockObject)
+    .environment(CardsViewModel.mock)
+    .environment(LessonProgressViewModel.mock)
+    .environment(LessonsViewModel.mock)
+    .environment(EducationService.mock)
+    .environment(AuthManager.mock)
+    .environment(TranslationViewModel.mock)
 }

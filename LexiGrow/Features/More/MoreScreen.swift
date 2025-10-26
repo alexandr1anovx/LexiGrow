@@ -8,40 +8,58 @@
 import SwiftUI
 
 struct MoreScreen: View {
-  @State private var showSignOutSheet = false
+  @Environment(AuthManager.self) var authManager
+  @State private var showSignOutConfirmation = false
   
   var body: some View {
     NavigationStack {
-      Form {
-        Section {
-          UserDataView()
-        } footer: {
-          HStack(spacing: 5) {
-            Text("Would you like to edit your data?")
-            NavigationLink {
-              ProfileScreen()
-            } label: {
-              Text("Go to Profile")
-                .font(.footnote)
-                .underline()
+      ZStack {
+        Color.mainBackground.ignoresSafeArea()
+        Form {
+          Section {
+            if let user = authManager.currentUser {
+              UserDataView(user: user)
+            } else {
+              Text("No data provided")
+            }
+          } header: {
+            Text("Personal data")
+          } footer: {
+            HStack(spacing: 5) {
+              Text("Would you like to edit your data?")
+              NavigationLink {
+                ProfileScreen()
+              } label: {
+                Text("Go to Profile")
+                  .underline()
+              }
+            }.font(.footnote)
+          }
+          
+          Section {
+            NavigationLink("Settings") {
+              SettingsScreen()
             }
           }
+          
+          Section {
+            Button("Sign Out") {
+              showSignOutConfirmation = true
+            }.tint(.red)
+          }
         }
-        NavigationLink("Settings") {
-          SettingsScreen()
+        .scrollContentBackground(.hidden)
+        .navigationTitle("More")
+        .navigationBarTitleDisplayMode(.large)
+        .sheet(isPresented: $showSignOutConfirmation) {
+          SignOutConfirmationView()
+            .presentationDetents([.fraction(0.35)])
         }
-        Section {
-          Button("Sign Out") {
-            showSignOutSheet = true
-          }.tint(.red)
+        .overlay {
+          if authManager.isLoading {
+            DefaultProgressView()
+          }
         }
-      }
-      .navigationTitle("More")
-      .navigationBarTitleDisplayMode(.large)
-      .sheet(isPresented: $showSignOutSheet) {
-        SignOutView()
-          .presentationDetents([.fraction(0.35)])
-          .presentationCornerRadius(50)
       }
     }
   }
@@ -49,5 +67,5 @@ struct MoreScreen: View {
 
 #Preview {
   MoreScreen()
-    .environment(AuthManager.mockObject)
+    .environment(AuthManager.mock)
 }

@@ -20,14 +20,17 @@ protocol AuthServiceProtocol {
   func requestPasswordReset(for email: String) async throws
   
   func getConnectedProviders() async throws -> [String]
+  
+  func sendOTP(for phoneNumber: String) async throws
+  func verifyOTP(for phoneNumber: String, with code: String) async throws
 }
 
-struct AuthService: AuthServiceProtocol {
+class AuthService: AuthServiceProtocol {
   
   /// Authenticates a user using email and password.
   func signIn(email: String, password: String) async throws -> AppUser {
     do {
-      let session = try await SupabaseManager.shared.client.auth.signIn(email: email, password: password)
+      let session = try await SupabaseService.shared.client.auth.signIn(email: email, password: password)
       return try mapSupabaseUserToAppUser(session.user)
     } catch {
       throw AuthError.invalidCredentials
@@ -37,7 +40,7 @@ struct AuthService: AuthServiceProtocol {
   /// Registers a new user with full name, email, and password.
   func signUp(fullName: String, email: String, password: String) async throws -> AppUser {
     do {
-      let session = try await SupabaseManager.shared.client.auth.signUp(
+      let session = try await SupabaseService.shared.client.auth.signUp(
         email: email,
         password: password,
         data: ["fullName": .string(fullName)]
@@ -51,7 +54,7 @@ struct AuthService: AuthServiceProtocol {
   /// Signs out the current user.
   func signOut() async throws {
     do {
-      try await SupabaseManager.shared.client.auth.signOut()
+      try await SupabaseService.shared.client.auth.signOut()
     } catch {
       throw AuthError.serverError
     }
@@ -59,7 +62,7 @@ struct AuthService: AuthServiceProtocol {
   
   /// Asynchronously updates the full name of the currently authenticated user.
   func updateUser(fullName: String) async throws -> AppUser {
-    let updatedUser = try await SupabaseManager.shared.client.auth.update(
+    let updatedUser = try await SupabaseService.shared.client.auth.update(
       user: UserAttributes(data: ["fullName": .string(fullName)])
     )
     return try mapSupabaseUserToAppUser(updatedUser)
@@ -67,13 +70,13 @@ struct AuthService: AuthServiceProtocol {
   
   /// Sends a password reset request to the specified email address.
   func requestPasswordReset(for email: String) async throws {
-    try await SupabaseManager.shared.client.auth.resetPasswordForEmail(email)
+    try await SupabaseService.shared.client.auth.resetPasswordForEmail(email)
   }
   
   /// Retrieves the current authenticated session and maps it to the `AppUser` model.
   func getCurrentUser() async throws -> AppUser {
     do {
-      let session = try await SupabaseManager.shared.client.auth.session
+      let session = try await SupabaseService.shared.client.auth.session
       return try mapSupabaseUserToAppUser(session.user)
     } catch {
       throw AuthError.unknown(description: error.localizedDescription)
@@ -89,7 +92,7 @@ struct AuthService: AuthServiceProtocol {
   ///
   /// - Parameter bundleId: The app’s bundle identifier, used to form the callback URL.
   func signInWithGoogle(bundleId: String) async throws {
-    try await SupabaseManager.shared.client.auth.signInWithOAuth(
+    try await SupabaseService.shared.client.auth.signInWithOAuth(
       provider: .google,
       redirectTo: URL(string: "\(bundleId)://"),
       // always prompts the user to select a Google account.
@@ -104,7 +107,7 @@ struct AuthService: AuthServiceProtocol {
   ///
   /// - Parameter email: The user's email address to send the magic link to.
   func signInWithMagicLink(for email: String) async throws {
-    try await SupabaseManager.shared.client.auth.signInWithOTP(
+    try await SupabaseService.shared.client.auth.signInWithOTP(
       email: email,
       redirectTo: URL(string: "lexigrow://callback")
     )
@@ -137,11 +140,23 @@ struct AuthService: AuthServiceProtocol {
   }
   
   func getConnectedProviders() async throws -> [String] {
-    let user = try await SupabaseManager.shared.client.auth.user()
+    let user = try await SupabaseService.shared.client.auth.user()
     guard let providerNames = user.identities?.compactMap({ $0.provider }) else {
       return []
     }
     return providerNames
+  }
+  
+  func sendOTP(for phoneNumber: String) async throws {
+    try await SupabaseService.shared.client.auth.signInWithOTP(phone: phoneNumber)
+  }
+  
+  func verifyOTP(for phoneNumber: String, with code: String) async throws {
+    try await SupabaseService.shared.client.auth.verifyOTP(
+      phone: phoneNumber,
+      token: code,
+      type: .sms
+    )
   }
 }
 

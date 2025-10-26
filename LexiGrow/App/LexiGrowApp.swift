@@ -12,57 +12,59 @@ import SwiftData
 struct LexiGrowApp: App {
   
   @AppStorage("app_scheme") private var appScheme: Theme = .system
-  private let supabaseService = SupabaseService()
-  private let authManager = AuthManager()
+  @State private var showLaunchScreen = true
+  
+  // MARK: - View Models
   
   @State private var lessonsViewModel: LessonsViewModel
-  @State private var statisticsViewModel: StatisticsViewModel
-  @State private var flashcardViewModel: FlashcardViewModel
+  @State private var lessonProgressViewModel: LessonProgressViewModel
+  @State private var cardsViewModel: CardsViewModel
   @State private var translationViewModel: TranslationViewModel
   
-  @State private var showLaunchView = true
+  // MARK: - Services & Managers
+  
+  private let authManager = AuthManager()
+  private let educationService = EducationService()
   
   init() {
-    self._lessonsViewModel = State(wrappedValue: LessonsViewModel(supabaseService: supabaseService))
-    self._statisticsViewModel = State(wrappedValue: StatisticsViewModel(supabaseService: supabaseService))
-    self._flashcardViewModel = State(wrappedValue: FlashcardViewModel(supabaseService: supabaseService))
-    self._translationViewModel = State(wrappedValue: TranslationViewModel(supabaseService: supabaseService))
+    self._lessonsViewModel = State(wrappedValue: LessonsViewModel(educationService: educationService))
+    self._lessonProgressViewModel = State(wrappedValue: LessonProgressViewModel(educationService: educationService))
+    self._cardsViewModel = State(wrappedValue: CardsViewModel(educationService: educationService))
+    self._translationViewModel = State(wrappedValue: TranslationViewModel(educationService: educationService))
   }
   
   var body: some Scene {
     WindowGroup {
       ZStack {
-        if showLaunchView {
-          LaunchView()
+        if showLaunchScreen {
+          LaunchScreen()
         } else {
-          Group {
-            switch authManager.authState {
-            case .unauthenticated:
-              LoginScreen()
-            case .waitingForEmailConfirmation:
-              EmailConfirmationView()
-            case .authenticated:
-              MainTabView()
-            }
+          switch authManager.authState {
+          case .unauthenticated:
+            LoginScreen(authManager: authManager)
+          case .waitingForEmailConfirmation:
+            EmailConfirmationView(email: authManager.currentUser!.email)
+          case .authenticated:
+            MainTabView()
           }
         }
       }
-      .animation(.spring, value: showLaunchView)
-      .animation(.spring, value: authManager.authState)
+      .animation(.easeInOut, value: showLaunchScreen)
+      .animation(.easeInOut, value: authManager.authState)
       .preferredColorScheme(appScheme.colorScheme)
-      .environment(supabaseService)
+      .environment(educationService)
       .environment(authManager)
       .environment(lessonsViewModel)
-      .environment(statisticsViewModel)
-      .environment(flashcardViewModel)
+      .environment(lessonProgressViewModel)
+      .environment(cardsViewModel)
       .environment(translationViewModel)
-      .modelContainer(for: [LessonEntity.self, LevelProgress.self])
+      .modelContainer(for: [LessonEntity.self, LevelProgressEntity.self])
       
       // Handles the redirect back to the app after Google Sign In.
       .onOpenURL { url in
         Task {
           do {
-            try await SupabaseManager.shared.client.auth.session(from: url)
+            try await SupabaseService.shared.client.auth.session(from: url)
           } catch {
             print("Error handling deep link: \(error.localizedDescription)")
           }
@@ -70,17 +72,17 @@ struct LexiGrowApp: App {
       }
       // Observes auth state changes.
       .task {
-        for await (event, _) in SupabaseManager.shared.client.auth.authStateChanges {
+        for await (event, _) in SupabaseService.shared.client.auth.authStateChanges {
           if event == .signedIn || event == .userUpdated || event == .tokenRefreshed {
             await authManager.refreshUser()
           }
         }
       }
-      // Delays content display for 1.5 seconds to load data.
+      // Delays content display for 1.5 seconds.
       .onAppear {
         Task {
           try? await Task.sleep(for: .seconds(1.5))
-          showLaunchView = false
+          showLaunchScreen = false
         }
       }
     }

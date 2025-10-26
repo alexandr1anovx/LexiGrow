@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct RegistrationScreen: View {
-  @Environment(\.dismiss) var dismiss
-  @Environment(AuthManager.self) var authManager
+  @Environment(\.dismiss) private var dismiss
+  @Environment(AuthManager.self) private var authManager
   @State private var fullName = ""
   @State private var email = ""
   @State private var password = ""
@@ -27,14 +27,15 @@ struct RegistrationScreen: View {
     NavigationView {
       ScrollView {
         VStack(spacing: 25) {
-          InputFields(
+          
+          TextFields(
             fullName: $fullName,
             email: $email,
             password: $password,
             confirmPassword: $confirmPassword
           )
           
-          PrimaryButton(title: "Sign Up") {
+          PrimaryButton("Sign Up") {
             Task {
               await authManager.signUp(
                 fullName: fullName,
@@ -54,92 +55,65 @@ struct RegistrationScreen: View {
             Button("Sign In") {
               dismiss()
             }
-            .tint(.primary)
             .underline()
           }
           .font(.subheadline)
         }
-        .padding(.horizontal, .defaultPadding)
-        .padding(.top)
-        .opacity(authManager.isLoading ? 0.5:1)
+        .padding([.top, .horizontal])
+        .opacity(authManager.isLoading ? 0.5 : 1)
         .disabled(authManager.isLoading)
         .overlay {
           if authManager.isLoading {
-            RoundedRectangle(cornerRadius: 10)
-              .fill(Color.systemGray)
-              .frame(width: 60, height: 60)
-              .overlay {
-                ProgressView()
-              }
+            DefaultProgressView()
           }
         }
-        .navigationTitle("Registration")
-        .navigationBarTitleDisplayMode(.inline)
       }
+      .background(.mainBackground)
+      .navigationTitle("Registration")
+      .navigationBarTitleDisplayMode(.inline)
     }
   }
 }
 
 extension RegistrationScreen {
   
-  struct InputFields: View {
+  struct TextFields: View {
     @Binding var fullName: String
     @Binding var email: String
     @Binding var password: String
     @Binding var confirmPassword: String
-    @FocusState private var inputContent: TextFieldContent?
+    @FocusState private var focusedField: Field?
     
     var body: some View {
       VStack(spacing: 10) {
-        DefaultTextField(
-          title: "First name and last name",
-          iconName: "person",
-          text: $fullName
-        )
-        .focused($inputContent, equals: .fullName)
-        .textInputAutocapitalization(.words)
-        .autocorrectionDisabled(true)
-        .submitLabel(.next)
-        .onSubmit { inputContent = .email }
-        DefaultTextField(
-          title: "Email",
-          iconName: "at",
-          text: $email
-        )
-        .focused($inputContent, equals: .email)
-        .textInputAutocapitalization(.never)
-        .autocorrectionDisabled(true)
-        .keyboardType(.emailAddress)
-        .submitLabel(.next)
-        .onSubmit { inputContent = .password }
-        SecureTextField(
-          title: "Password",
-          iconName: "lock",
-          text: $password,
-          showToggleIcon: true
-        )
-        .focused($inputContent, equals: .password)
-        .textInputAutocapitalization(.never)
-        .autocorrectionDisabled(true)
-        .submitLabel(.next)
-        .onSubmit { inputContent = .confirmPassword }
-        SecureTextField(
-          title: "Confirm password",
-          iconName: "lock",
-          text: $confirmPassword,
-          showToggleIcon: false
-        )
-        .focused($inputContent, equals: .confirmPassword)
-        .textInputAutocapitalization(.never)
-        .autocorrectionDisabled(true)
-        .submitLabel(.done)
-        .onSubmit { inputContent = nil }
+        DefaultTextField(content: .fullName, text: $fullName)
+          .focused($focusedField, equals: .fullName)
+          .textInputAutocapitalization(.words)
+          .submitLabel(.next)
+          .onSubmit { focusedField = .email }
+        
+        DefaultTextField(content: .email, text: $email)
+          .focused($focusedField, equals: .email)
+          .keyboardType(.emailAddress)
+          .submitLabel(.next)
+          .onSubmit { focusedField = .password }
+        
+        SecureTextField(content: .password, text: $password, showEye: true)
+          .focused($focusedField, equals: .password)
+          .submitLabel(.next)
+          .onSubmit { focusedField = .confirmPassword }
+        
+        SecureTextField(content: .confirmPassword, text: $confirmPassword, showEye: false)
+          .focused($focusedField, equals: .confirmPassword)
+          .submitLabel(.done)
+          .onSubmit { focusedField = nil }
       }
+      .autocorrectionDisabled()
     }
   }
 }
 
 #Preview {
   RegistrationScreen()
-    .environment(AuthManager.mockObject)
+    .environment(AuthManager.mock)
 }

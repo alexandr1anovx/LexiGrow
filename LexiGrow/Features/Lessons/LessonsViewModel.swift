@@ -12,13 +12,13 @@ import SwiftData
 @MainActor
 final class LessonsViewModel {
   private(set) var lessons: [LessonEntity] = []
-  private(set) var levels: [LevelProgress] = []
-  private(set) var isLoading = false
+  private(set) var levels: [LevelProgressEntity] = []
+  var isLoading = false
   private(set) var errorMessage: String?
-  private let supabaseService: SupabaseServiceProtocol
+  private let educationService: EducationServiceProtocol
   
-  init(supabaseService: SupabaseServiceProtocol) {
-    self.supabaseService = supabaseService
+  init(educationService: EducationServiceProtocol) {
+    self.educationService = educationService
   }
   
   /// Loads lessons data from local storage.
@@ -45,7 +45,7 @@ final class LessonsViewModel {
       
       if localLessons.isEmpty {
         print("Local data is empty. Fetching data from server...")
-        let remoteLessonsDTO = try await supabaseService.getLessons()
+        let remoteLessonsDTO = try await educationService.getLessons()
         print("Got the \(remoteLessonsDTO.count) lessons from server.")
         
         // Convert DTO into Entity and add to the context.
@@ -68,8 +68,24 @@ final class LessonsViewModel {
 }
 
 extension LessonsViewModel {
-  static var mockObject: LessonsViewModel = {
-    let viewModel = LessonsViewModel(supabaseService: MockSupabaseService())
+  static var mock: LessonsViewModel = {
+    let viewModel = LessonsViewModel(educationService: MockEducationService())
+    viewModel.lessons = [
+      LessonEntity(
+      id: UUID(),
+      title: "Картки",
+      subtitle: "Cards description Cards description Cards description Cards description",
+      iconName: "house",
+      isLocked: false
+    ),
+      LessonEntity(
+        id: UUID(),
+        title: "Переклад",
+        subtitle: "Translation description",
+        iconName: "house",
+        isLocked: false
+      )
+    ]
     return viewModel
   }()
 }

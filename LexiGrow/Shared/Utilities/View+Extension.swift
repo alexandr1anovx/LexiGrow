@@ -28,14 +28,17 @@ extension View {
   }
   
   func capsuleLabelStyle(
-    pouring: Color = Color(.systemGray6)
+    pouring: Color = .systemGray,
+    withShadow: Bool = true
   ) -> some View {
     self
       .font(.callout)
       .fontWeight(.medium)
-      .padding(15)
+      .padding(13)
       .background {
-        Capsule().fill(pouring)
+        Capsule()
+          .fill(pouring)
+          .shadow(radius: withShadow ? 2:0)
       }
   }
 }

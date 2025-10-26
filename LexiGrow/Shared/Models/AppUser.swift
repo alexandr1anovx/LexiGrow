@@ -12,6 +12,13 @@ struct AppUser: Codable, Identifiable, Equatable {
   var fullName: String
   var email: String
   let emailConfirmed: Bool
+  
+  var firstName: String {
+    fullName.components(separatedBy: " ").first ?? fullName
+  }
+  var lastName: String {
+    fullName.components(separatedBy: " ").last ?? fullName
+  }
 }
 
 struct UserProgress: Codable {

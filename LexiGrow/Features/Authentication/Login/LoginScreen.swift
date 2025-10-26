@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct LoginScreen: View {
-  //@Environment(AuthManager.self) private var authManager
   @Bindable var authManager: AuthManager
   @State private var email = ""
   @State private var password = ""
@@ -17,51 +16,52 @@ struct LoginScreen: View {
   }
   
   var body: some View {
-    NavigationView {
-      ScrollView {
-        VStack(spacing: 20) {
-          InputFields(email: $email, password: $password)
-          
-          PrimaryButton(title: "Sign In") {
-            Task {
-              await authManager.signIn(email: email, password: password)
-              password = ""
+    NavigationStack {
+      ZStack {
+        Color.mainBackground.ignoresSafeArea()
+        ScrollView {
+          VStack(spacing: 20) {
+            TextFields(email: $email, password: $password)
+            
+            PrimaryButton("Sign In") {
+              Task {
+                await authManager.signIn(email: email, password: password)
+                password = ""
+              }
+            }
+            .opacity(!isValidForm ? 0.5:1)
+            .disabled(!isValidForm)
+            
+            ORDivider()
+            
+            ScrollView(.horizontal) {
+              HStack(spacing: 10) {
+                GoogleButton()
+                EmailLinkButton()
+                PhoneNumberButton()
+              }
+            }
+            .scrollIndicators(.hidden)
+            
+            FooterView()
+          }
+          .padding([.top, .horizontal])
+          .opacity(authManager.isLoading ? 0.5 : 1)
+          .disabled(authManager.isLoading)
+          .overlay {
+            if authManager.isLoading {
+              DefaultProgressView()
             }
           }
-          .opacity(!isValidForm ? 0.5:1)
-          .disabled(!isValidForm)
-          
-          ORDivider()
-          
-          ScrollView(.horizontal) {
-            HStack(spacing: 10) {
-              GoogleButton()
-              MagicLinkButton()
-              PhoneNumberButton()
-            }
-          }.scrollIndicators(.hidden)
-          
-          FooterView()
-        }
-        .opacity(authManager.isLoading ? 0.5:1)
-        .disabled(authManager.isLoading)
-        .overlay {
-          if authManager.isLoading {
-            RoundedRectangle(cornerRadius: 10)
-              .fill(Color.systemGray)
-              .frame(width: 60, height: 60)
-              .overlay { ProgressView() }
+          .navigationTitle("Sign In")
+          .navigationBarTitleDisplayMode(.large)
+          .alert(item: $authManager.authError) { error in
+            Alert(
+              title: Text(error.title),
+              message: Text(error.message),
+              dismissButton: .default(Text("OK"))
+            )
           }
-        }
-        .padding([.top, .horizontal], .defaultPadding)
-        .navigationTitle("Sign In")
-        .navigationBarTitleDisplayMode(.large)
-        .alert(item: $authManager.authError) { error in
-          Alert(
-            title: Text(error.title),
-            message: Text(error.message),
-            dismissButton: .default(Text("OK"))
-          )
         }
       }
     }
@@ -71,36 +71,27 @@ struct LoginScreen: View {
 
 extension LoginScreen {
   
-  // MARK: - Input Fields
+  // MARK: - Text Fields
   
-  struct InputFields: View {
+  struct TextFields: View {
     @Binding var email: String
     @Binding var password: String
-    @FocusState private var inputContent: TextFieldContent?
+    @FocusState private var focusedField: Field?
     
     var body: some View {
       VStack {
-        DefaultTextField(
-          title: "Email address",
-          iconName: "at",
-          text: $email
-        )
-        .focused($inputContent, equals: .email)
-        .textInputAutocapitalization(.never)
-        .autocorrectionDisabled(true)
-        .keyboardType(.emailAddress)
-        .submitLabel(.next)
-        .onSubmit { inputContent = .password }
+        DefaultTextField(content: .email, text: $email)
+          .focused($focusedField, equals: .email)
+          .textInputAutocapitalization(.never)
+          .autocorrectionDisabled(true)
+          .keyboardType(.emailAddress)
+          .submitLabel(.next)
+          .onSubmit { focusedField = .password }
         
-        SecureTextField(
-          title: "Password",
-          iconName: "lock",
-          text: $password,
-          showToggleIcon: false
-        )
-        .focused($inputContent, equals: .password)
-        .submitLabel(.done)
-        .onSubmit { inputContent = nil }
+        SecureTextField(content: .password, text: $password, showEye: false)
+          .focused($focusedField, equals: .password)
+          .submitLabel(.done)
+          .onSubmit { focusedField = nil }
       }
     }
   }
@@ -134,28 +125,30 @@ extension LoginScreen {
             .resizable()
             .frame(width: 22, height: 22)
         }
-        .capsuleLabelStyle()
+        .capsuleLabelStyle(withShadow: false)
       }
     }
   }
-  struct MagicLinkButton: View {
+  struct EmailLinkButton: View {
     var body: some View {
       NavigationLink {
-        MagicLinkView()
+        EmailLinkScreen()
       } label: {
-        Label("Magic Link", systemImage: "sparkles")
-          .capsuleLabelStyle()
+        Label("Link", systemImage: "envelope.fill")
+          .capsuleLabelStyle(withShadow: false)
       }
     }
   }
   struct PhoneNumberButton: View {
     var body: some View {
       NavigationLink {
-        PhoneNumberInputView()
+        PhoneNumberView()
       } label: {
-        Label("Phone Number", systemImage: "phone.fill")
-          .capsuleLabelStyle()
+        Label("Phone", systemImage: "phone.fill")
+          .capsuleLabelStyle(withShadow: false)
       }
+      .disabled(true)
+      .opacity(0.5)
     }
   }
   
@@ -165,30 +158,31 @@ extension LoginScreen {
     var body: some View {
       HStack {
         NavigationLink {
-          ForgotPasswordView()
+          ForgotPasswordScreen()
         } label: {
           Text("Forgot password?")
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
             .underline()
         }
         Spacer()
         HStack(spacing: 5) {
           Text("New user?")
-            .foregroundStyle(.secondary)
           NavigationLink {
             RegistrationScreen()
           } label: {
             Text("Sign Up")
+              .foregroundStyle(.primary)
               .underline()
           }
-        }.font(.subheadline)
-      }.padding(.top, 8)
+        }
+      }
+      .font(.subheadline)
+      .foregroundStyle(.secondary)
+      .padding(.top, 8)
     }
   }
 }
 
 #Preview {
-  LoginScreen(authManager: AuthManager.mockObject)
-    .environment(AuthManager.mockObject)
+  LoginScreen(authManager: AuthManager.mock)
+    .environment(AuthManager.mock)
 }

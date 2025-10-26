@@ -29,10 +29,10 @@ final class TranslationViewModel {
   var answerState: AnswerState = .idle
   var selectedLevel: Level?
   
-  private let service: SupabaseServiceProtocol
+  private let educationService: EducationServiceProtocol
   
-  init(supabaseService: SupabaseServiceProtocol) {
-    self.service = supabaseService
+  init(educationService: EducationServiceProtocol) {
+    self.educationService = educationService
   }
   
   // MARK: - Computed Properties
@@ -66,7 +66,7 @@ final class TranslationViewModel {
   func startLesson() async {
     guard let level = selectedLevel else { return }
     do {
-      sentences = try await service.getSentences(for: level.id).shuffled()
+      sentences = try await educationService.getSentences(for: level.id).shuffled()
       currentIndex = 0
       direction = .toUkrainian
     } catch {
@@ -102,7 +102,7 @@ final class TranslationViewModel {
   func getLevels() async {
     guard levels.isEmpty else { return }
     do {
-      self.levels = try await service.getLevels()
+      self.levels = try await educationService.getLevels()
     } catch {
       print("⚠️ Failed to get levels: \(error)")
     }
@@ -130,8 +130,8 @@ final class TranslationViewModel {
 
 extension TranslationViewModel {
   /// A mock object for previews and testing.
-  static var mockObject: TranslationViewModel = {
-    let vm = TranslationViewModel(supabaseService: SupabaseService.mockObject)
+  static var mock: TranslationViewModel = {
+    let vm = TranslationViewModel(educationService: EducationService.mock)
     vm.sentences = [
       Sentence(
         id: UUID(),

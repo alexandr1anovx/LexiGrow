@@ -8,37 +8,29 @@
 import SwiftUI
 
 enum Tab {
-  case lessons, general
+  case lessons, more
 }
 
 struct MainTabView: View {
   @State private var selectedTab: Tab = .lessons
-  private let feedbackGenerator = UIImpactFeedbackGenerator(style: .soft)
   
   var body: some View {
     TabView(selection: $selectedTab) {
       LessonsScreen()
+        .tabItem { Label("Уроки", systemImage: "book.closed") }
         .tag(Tab.lessons)
-        .tabItem {
-          Label("Lessons", systemImage: "book.pages")
-        }
       MoreScreen()
-        .tag(Tab.general)
-        .tabItem {
-          Label("More", systemImage: "water.waves")
-        }
-    }
-    .onChange(of: selectedTab) {
-      feedbackGenerator.impactOccurred()
+        .tabItem { Label("Інше", systemImage: "water.waves") }
+        .tag(Tab.more)
     }
   }
 }
 
 #Preview {
   MainTabView()
-    .environment(AuthManager.mockObject)
-    .environment(FlashcardViewModel.mockObject)
-    .environment(StatisticsViewModel.mockObject)
-    .environment(LessonsViewModel.mockObject)
-    .environment(SupabaseService.mockObject)
+    .environment(AuthManager.mock)
+    .environment(CardsViewModel.mock)
+    .environment(LessonProgressViewModel.mock)
+    .environment(LessonsViewModel.mock)
+    .environment(EducationService.mock)
 }

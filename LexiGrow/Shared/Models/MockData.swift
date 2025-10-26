@@ -32,17 +32,17 @@ extension Word {
 // MARK: - Lesson
 
 extension Lesson {
-  static let mockFlashcards = Lesson(
+  static let mockCards = Lesson(
     id: UUID(),
-    title: "Flashcards",
-    subtitle: "Flashcards description",
+    title: "Cards",
+    subtitle: "Description",
     iconName: "rectangle.stack.fill",
     isLocked: false
   )
   static let mockReading = Lesson(
     id: UUID(),
     title: "Reading",
-    subtitle: "Reading description",
+    subtitle: "Description",
     iconName: "book.closed",
     isLocked: true
   )

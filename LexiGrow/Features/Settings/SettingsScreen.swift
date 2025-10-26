@@ -13,30 +13,33 @@ struct SettingsScreen: View {
   private let feedbackGenerator = UIImpactFeedbackGenerator(style: .soft)
   
   var body: some View {
-    Form {
-      Section("Appearance") {
-        DisclosureGroup("Color Scheme", isExpanded: $isExpandedSchemePanel) {
-          HStack {
-            ForEach(Theme.allCases) { theme in
-              Text(theme.rawValue)
-                .foregroundStyle(appScheme == theme ? Color(.systemBackground) : Color.primary)
-                .padding(10)
-                .background(appScheme == theme ? Color.primary : Color.clear)
-                .clipShape(.rect(cornerRadius: 20))
-                .onTapGesture {
-                  appScheme = theme
-                  feedbackGenerator.impactOccurred()
-                }
-              Spacer()
-            }
-          }.padding(.horizontal)
+    ZStack {
+      Color.mainBackground.ignoresSafeArea()
+      Form {
+        Section("Appearance") {
+          DisclosureGroup("Color Scheme", isExpanded: $isExpandedSchemePanel) {
+            HStack {
+              ForEach(Theme.allCases) { theme in
+                Text(theme.rawValue)
+                  .foregroundStyle(appScheme == theme ? Color(.systemBackground) : Color.primary)
+                  .padding(10)
+                  .background(appScheme == theme ? Color.primary : Color.clear)
+                  .clipShape(.rect(cornerRadius: 20))
+                  .onTapGesture {
+                    appScheme = theme
+                    feedbackGenerator.impactOccurred()
+                  }
+                Spacer()
+              }
+            }.padding(.horizontal)
+          }
         }
-      }
-      NavigationLink {
-        PreferencesView()
-      } label: {
-        Text("Preferences")
-      }
+        NavigationLink {
+          UserPreferencesScreen()
+        } label: {
+          Text("Preferences")
+        }
+      }.scrollContentBackground(.hidden)
     }
   }
 }

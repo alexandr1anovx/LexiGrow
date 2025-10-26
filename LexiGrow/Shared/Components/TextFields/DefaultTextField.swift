@@ -8,20 +8,19 @@
 import SwiftUI
 
 struct DefaultTextField: View {
-  let title: String
-  let iconName: String
+  let content: Field
   @Binding var text: String
   
   var body: some View {
     HStack {
-      Image(systemName: iconName)
+      Image(systemName: content.iconName)
         .foregroundColor(.secondary)
         .padding(.leading)
-      TextField(title, text: $text)
+      TextField(content.title, text: $text)
     }
     .frame(height: 55)
     .background {
-      RoundedRectangle(cornerRadius: 20)
+      Capsule()
         .fill(.thinMaterial)
         .shadow(radius: 1)
     }
@@ -30,10 +29,5 @@ struct DefaultTextField: View {
 
 #Preview {
   @Previewable @State var email = "andr1anov@gmail.com"
-  
-  DefaultTextField(
-    title: "Email address",
-    iconName: "at",
-    text: $email
-  )
+  DefaultTextField(content: .email, text: $email)
 }

@@ -8,6 +8,13 @@
 import Foundation
 
 class MockAuthService: AuthServiceProtocol {
+  func sendOTP(for phoneNumber: String) async throws {
+    ///
+  }
+  
+  func verifyOTP(for phoneNumber: String, with code: String) async throws {
+    ///
+  }
   
   func getConnectedProviders() async throws -> [String] {
     []
@@ -58,9 +65,9 @@ class MockAuthService: AuthServiceProtocol {
 
 // MARK: - Mock Supabase Service
 
-class MockSupabaseService: SupabaseServiceProtocol {
+class MockEducationService: EducationServiceProtocol {
   var shouldSucceed = true
-  var lessons: [Lesson] = [.mockFlashcards, .mockReading]
+  var lessons: [Lesson] = [.mockCards, .mockReading]
   var levels: [Level] = [.mockB1, .mockB2]
   var topics: [Topic] = [.mock1, .mock2, .mock3]
   var topicsProgress: [Topic] = [.mock1, .mock2, .mock3]

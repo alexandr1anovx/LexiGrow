@@ -1,5 +1,5 @@
 //
-//  FlashcardLevelButton.swift
+//  LevelButton.swift
 //  LexiGrow
 //
 //  Created by Alexander Andrianov on 15.08.2025.
@@ -16,16 +16,17 @@ struct LevelButton: View {
     Button(action: selectAction) {
       Text(name)
         .font(.subheadline)
+        .fontWeight(.medium)
         .foregroundColor(.white)
         .padding(15)
         .background {
           Capsule()
-            .fill(selectedLevel?.name == name ? .blue : .black)
+            .fill(selectedLevel?.name == name ? .mainGreen : .topicCapsule)
             .stroke(
               selectedLevel?.name == name ? .clear : .systemGray,
               lineWidth: 2
             )
-            .frame(minWidth: 55)
+            .frame(width: 55)
         }
     }
   }
@@ -37,18 +38,17 @@ struct LevelButton: View {
   let levels: [Level] = [.mockB1, .mockB2]
   VStack {
     ScrollView(.horizontal) {
-      HStack {
-        ForEach(levels, id: \.id) { level in
-          
+      HStack(spacing: 18) {
+        ForEach(levels) { level in
           LevelButton(
             name: level.name,
-            selectedLevel: $selectedLevel,
-            selectAction: {
+            selectedLevel: $selectedLevel) {
               selectedLevel = level
             }
-          )
         }
       }.padding(4)
-    }.scrollIndicators(.hidden)
+    }
+    .scrollIndicators(.hidden)
+    .shadow(radius: 1)
   }
 }

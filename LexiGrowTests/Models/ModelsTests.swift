@@ -29,8 +29,8 @@ final class ModelsTests: XCTestCase {
   }
   
   func test_Lesson_typeMapping() {
-    let flash = Lesson(id: UUID(), title: "Flashcards", subtitle: "", iconName: "x", isLocked: false)
-    XCTAssertEqual(flash.type, .flashcards)
+    let flash = Lesson(id: UUID(), title: "Cards", subtitle: "", iconName: "x", isLocked: false)
+    XCTAssertEqual(flash.type, .cards)
     
     let trans = Lesson(id: UUID(), title: "Translation", subtitle: "", iconName: "x", isLocked: false)
     XCTAssertEqual(trans.type, .translation)
@@ -40,13 +40,13 @@ final class ModelsTests: XCTestCase {
   }
   
   func test_LessonEntity_convenienceInit_fromDTO() {
-    let dto = Lesson(id: UUID(), title: "Flashcards", subtitle: "Sub", iconName: "house", isLocked: true)
+    let dto = Lesson(id: UUID(), title: "Cards", subtitle: "Sub", iconName: "house", isLocked: true)
     let entity = LessonEntity(from: dto)
     XCTAssertEqual(entity.id, dto.id)
     XCTAssertEqual(entity.title, dto.title)
     XCTAssertEqual(entity.subtitle, dto.subtitle)
     XCTAssertEqual(entity.iconName, dto.iconName)
     XCTAssertEqual(entity.isLocked, dto.isLocked)
-    XCTAssertEqual(entity.type, .flashcards)
+    XCTAssertEqual(entity.type, .cards)
   }
 }

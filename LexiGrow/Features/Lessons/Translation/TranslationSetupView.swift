@@ -63,8 +63,8 @@ struct TranslationSetupView: View {
 
 #Preview {
   TranslationSetupView(
-    viewModel: TranslationViewModel.mockObject,
-    lesson: .mockObject,
-    activeLesson: .constant(.mockObject)
+    viewModel: TranslationViewModel.mock,
+    lesson: .mock,
+    activeLesson: .constant(.mock)
   )
 }

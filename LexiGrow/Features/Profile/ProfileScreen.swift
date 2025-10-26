@@ -9,11 +9,16 @@ import SwiftUI
 
 struct ProfileScreen: View {
   @Environment(AuthManager.self) var authManager
-  @FocusState private var fieldContent: TextFieldContent?
+  
+  @State private var showSaveButton = false
+  @State private var showAccountDeletionAlert = false
+  
   @State private var fullName = ""
   @State private var email = ""
   @State private var isEmailConfirmed: Bool?
   @State private var connectedProviders: [String] = []
+  
+  private let feedbackGenerator = UINotificationFeedbackGenerator()
   
   private var formHasChanges: Bool {
     guard let user = authManager.currentUser else { return false }
@@ -22,69 +27,51 @@ struct ProfileScreen: View {
     return changedUsername || changedEmail
   }
   
+  // MARK: - Body
+  
   var body: some View {
-    VStack(spacing: 30) {
-      Image(systemName: "person.crop.circle.fill")
-        .font(.system(size: 80))
-      
-      VStack(spacing: 10) {
-        DefaultTextField(
-          title: "Full Name",
-          iconName: "person",
-          text: $fullName
-        )
-        .focused($fieldContent, equals: .fullName)
-        .textInputAutocapitalization(.words)
-        .autocorrectionDisabled(true)
-        DefaultTextField(
-          title: "Email",
-          iconName: "at",
-          text: $email
-        )
-        .textInputAutocapitalization(.never)
-        .autocorrectionDisabled(true)
-        .keyboardType(.emailAddress)
-      }
-      
-      if let emailConfirmed = isEmailConfirmed {
-        Text(emailConfirmed ? "Email confirmed!" : "Email not confirmed!")
-      }
-      
-      HStack {
-        Text("Connected Providers: ")
-        ForEach(connectedProviders, id: \.self) {
-          Text($0.rawValue)
+    NavigationView {
+      ZStack {
+        Color.mainBackground.ignoresSafeArea()
+        Form {
+          userInfoSection
+          providersSection
+          actionsSection
         }
+        .scrollContentBackground(.hidden)
       }
-      
-      if formHasChanges {
-        PrimaryButton(title: "Save changes", tint: .green) {
-          Task {
-            await authManager.updateUser(fullName: fullName)
+      .navigationTitle("Профіль")
+      .toolbar {
+        ToolbarItem(placement: .topBarTrailing) {
+          if formHasChanges {
+            Button {
+              Task {
+                await authManager.updateUser(fullName: fullName)
+                feedbackGenerator.notificationOccurred(.success)
+              }
+            } label: {
+              Image(systemName: "checkmark")
+            }
+            .tint(.green)
+            .buttonStyle(.borderedProminent)
           }
         }
       }
-      
-      if let error = authManager.error {
-        Text(error.localizedDescription)
-          .foregroundStyle(.red)
+      .alert(isPresented: $showAccountDeletionAlert) {
+        Alert(
+          title: Text("Видалення облікового запису"),
+          message: Text("Цю дію неможливо скасувати. Усі ваші досягнення та налаштування буде видалено."),
+          primaryButton: .destructive(Text("Видалити")) {
+            // perform deletion action
+          },
+          secondaryButton: .cancel(Text("Скасувати"))
+        )
       }
-      Spacer()
+      .onAppear(perform: retrieveUserData)
+      .task {
+        self.connectedProviders = await authManager.fetchConnectedProviders()
+      }
     }
-    .padding(.horizontal, .defaultPadding)
-    .onAppear { retrieveUserData() }
-    .task {
-      self.connectedProviders = await authManager.fetchConnectedProviders()
-    }
-    .navigationTitle("Profile")
-    .navigationBarTitleDisplayMode(.large)
-  }
-}
-
-#Preview {
-  NavigationView {
-    ProfileScreen()
-      .environment(AuthManager.mockObject)
   }
 }
 
@@ -97,5 +84,105 @@ extension ProfileScreen {
     }
     fullName = user.fullName
     email = user.email
+  }
+}
+
+// MARK: - Private UI Components
+private extension ProfileScreen {
+  
+  var userInfoSection: some View {
+    VStack(alignment: .leading, spacing: 10) {
+      
+      Image(.boy)
+        .resizable()
+        .frame(width: 50, height: 50)
+        .frame(maxWidth: .infinity, alignment: .center)
+        .padding(.bottom)
+      
+      DefaultTextField(content: .fullName, text: $fullName)
+        .textInputAutocapitalization(.words)
+      DefaultTextField(content: .email, text: $email)
+      
+      if let isEmailConfirmed {
+        Label {
+          Text(isEmailConfirmed ? "Email confirmed" : "Email is not confirmed")
+        } icon: {
+          Image(systemName: isEmailConfirmed ? "checkmark.circle.fill" : "xmark.circle.fill")
+            .foregroundStyle(.green)
+        }
+        .padding(12)
+        .opacity(0.5)
+      }
+    }
+  }
+  
+  var providersSection: some View {
+    Section("Провайдери") {
+      if connectedProviders.isEmpty {
+        Text("Немає підключених провайдерів")
+      } else {
+        ForEach(connectedProviders, id: \.self) { providerName in
+          NavigationLink {
+            Text("Провайдер: \(providerName)")
+          } label: {
+            ProviderRowView(providerName: providerName)
+          }
+        }
+      }
+    }
+  }
+  
+  var actionsSection: some View {
+    Section {
+      Button("Видалити обліковий запис") {
+        showAccountDeletionAlert.toggle()
+        feedbackGenerator.notificationOccurred(.warning)
+      }
+      .tint(.red)
+    }
+  }
+}
+
+struct ProviderRowView: View {
+  let providerName: String
+  
+  private var displayName: String {
+    switch providerName {
+    case "email": return "Email"
+    case "google": return "Google"
+    case "apple": return "Apple"
+    default: return providerName.capitalized
+    }
+  }
+  
+  private var icon: Image {
+    switch providerName {
+    case "email": return Image(systemName: "envelope.fill")
+    case "google": return Image("googleIcon")
+    case "apple": return Image(systemName: "apple.logo")
+    default: return Image(systemName: "person.badge.key.fill")
+    }
+  }
+  
+  var body: some View {
+    HStack(spacing: 15) {
+      icon
+        .resizable()
+        .scaledToFit()
+        .frame(width: 24, height: 24)
+        .foregroundStyle(.secondary)
+      Text(displayName)
+        .fontWeight(.medium)
+      Spacer()
+    }
+    .padding(5)
+  }
+}
+
+// MARK: - Preview
+#Preview {
+  NavigationStack {
+    ProfileScreen()
+      .environment(AuthManager.mock)
   }
 }
