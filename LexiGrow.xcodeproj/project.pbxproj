@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		D1C6D9432E1ABB8A0084D5D3 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = D1C6D9422E1ABB8A0084D5D3 /* Supabase */; };
+		D1CA3B682EB01CA500318CDF /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = D1CA3B672EB01CA500318CDF /* Lottie */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,6 +70,7 @@
 			isa = PBXFrameworksBuildPhase;
 			files = (
 				D1C6D9432E1ABB8A0084D5D3 /* Supabase in Frameworks */,
+				D1CA3B682EB01CA500318CDF /* Lottie in Frameworks */,
 			);
 		};
 		D197FB902E7760480038BFF3 /* Frameworks */ = {
@@ -131,6 +133,7 @@
 			name = LexiGrow;
 			packageProductDependencies = (
 				D1C6D9422E1ABB8A0084D5D3 /* Supabase */,
+				D1CA3B672EB01CA500318CDF /* Lottie */,
 			);
 			productName = LexiGrow;
 			productReference = D16774992E04B62600967AC8 /* LexiGrow.app */;
@@ -212,6 +215,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				D1C6D9322E1AA5840084D5D3 /* XCRemoteSwiftPackageReference "supabase-swift" */,
+				D1CA3B662EB01CA500318CDF /* XCRemoteSwiftPackageReference "lottie-ios" */,
 			);
 			preferredProjectObjectVersion = 90;
 			productRefGroup = D167749A2E04B62600967AC8 /* Products */;
@@ -604,6 +608,14 @@
 				minimumVersion = 2.5.1;
 			};
 		};
+		D1CA3B662EB01CA500318CDF /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.5.2;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -611,6 +623,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D1C6D9322E1AA5840084D5D3 /* XCRemoteSwiftPackageReference "supabase-swift" */;
 			productName = Supabase;
+		};
+		D1CA3B672EB01CA500318CDF /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D1CA3B662EB01CA500318CDF /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
