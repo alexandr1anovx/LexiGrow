@@ -17,8 +17,6 @@ struct LessonsScreen: View {
   @State private var activeLesson: LessonEntity? // for .fullScreenCover
   @State private var displayMode: DisplayMode = .lessons
   
-  private let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
-  
   var body: some View {
     ZStack {
       Color.mainBackground.ignoresSafeArea()
@@ -61,17 +59,14 @@ struct LessonsScreen: View {
         
         Spacer()
       }
-      .onChange(of: displayMode) {
-        feedbackGenerator.impactOccurred()
-      }
       .background(.mainBackground)
       .onDisappear {
         // always return user to the first tab
         displayMode = .lessons
       }
-//      .task {
-//        await viewModel.syncData(context: modelContext)
-//      }
+      .task {
+        await viewModel.syncData(context: modelContext)
+      }
       .animation(.spring, value: displayMode)
       .sheet(item: $selectedLesson) { lesson in
         LessonSetupSheet(
@@ -108,12 +103,14 @@ extension LessonsScreen {
   
   struct DisplayModeSelector: View {
     @Binding var displayMode: DisplayMode
+    private let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
     
     var body: some View {
       HStack(spacing: 8) {
         ForEach(DisplayMode.allCases) { mode in
           ModeButton(mode: mode, isSelected: displayMode == mode) {
             displayMode = mode
+            feedbackGenerator.impactOccurred()
           }
         }
       }

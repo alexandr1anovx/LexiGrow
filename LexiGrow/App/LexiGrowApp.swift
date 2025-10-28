@@ -12,6 +12,7 @@ import SwiftData
 struct LexiGrowApp: App {
   
   @AppStorage("app_scheme") private var appScheme: Theme = .system
+  @AppStorage("isCompleteOnboarding") private var isCompleteOnboarding = false
   @State private var showLaunchScreen = true
   
   // MARK: - View Models
@@ -39,18 +40,23 @@ struct LexiGrowApp: App {
         if showLaunchScreen {
           LaunchScreen()
         } else {
-          switch authManager.authState {
-          case .unauthenticated:
-            LoginScreen(authManager: authManager)
-          case .waitingForEmailConfirmation:
-            EmailConfirmationView(email: authManager.currentUser!.email)
-          case .authenticated:
-            MainTabView()
+          if isCompleteOnboarding {
+            switch authManager.authState {
+            case .unauthenticated:
+              LoginScreen(authManager: authManager)
+            case .waitingForEmailConfirmation:
+              EmailConfirmationView(email: authManager.currentUser!.email)
+            case .authenticated:
+              MainTabView()
+            }
+          } else {
+            OnboardingScreen(onComplete: { isCompleteOnboarding = true })
           }
         }
       }
       .animation(.easeInOut, value: showLaunchScreen)
       .animation(.easeInOut, value: authManager.authState)
+      .animation(.easeInOut, value: isCompleteOnboarding)
       .preferredColorScheme(appScheme.colorScheme)
       .environment(educationService)
       .environment(authManager)
