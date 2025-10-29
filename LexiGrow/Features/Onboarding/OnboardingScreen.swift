@@ -41,7 +41,7 @@ struct OnboardingScreen: View {
         
         Spacer()
         
-        AnimatableButton(currentPage == .getStarted ? "Почати подорож" : "Далі") {
+        AnimatableButton(currentPage == .getStarted ? "Почати подорож" : "Далі", tint: currentPage == .getStarted ? .mainBrown : .mainGreen) {
           handleNextButton()
         }.padding(20)
       }
