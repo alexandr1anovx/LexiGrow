@@ -22,7 +22,7 @@ struct SignOutConfirmationView: View {
           Text("Are you sure you want to sign out ?")
             .foregroundStyle(.secondary)
         }
-        PrimaryButton("Sign Out", tint: .pink) {
+        PrimaryButton("Sign Out", tint: .red) {
           Task {
             await authManager.signOut()
             dismiss()

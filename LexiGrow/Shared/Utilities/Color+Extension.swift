@@ -14,7 +14,7 @@ extension Color {
   // MARK: - Gradients
   
   static let yellowGreenGradient = LinearGradient(
-    colors: [.mainYellow, .mainGreen],
+    colors: [.mainBrown, .mainGreen],
     startPoint: .leading,
     endPoint: .trailing
   )
@@ -24,7 +24,7 @@ extension Color {
     endPoint: .trailing
   )
   static let onboardingLastPageBackground = LinearGradient(
-    colors: [.mainYellow, .mainGreen],
+    colors: [.mainBrown, .mainGreen],
     startPoint: .topLeading,
     endPoint: .bottomTrailing
   )

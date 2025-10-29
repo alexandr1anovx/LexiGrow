@@ -23,7 +23,7 @@ struct FinishLessonConfirmationView: View {
             .foregroundStyle(.gray)
             .multilineTextAlignment(.center)
         }
-        PrimaryButton("Finish", tint: .pink) {
+        PrimaryButton("Finish", tint: .red) {
           finishAction()
         }
       }

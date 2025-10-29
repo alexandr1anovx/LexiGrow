@@ -17,12 +17,8 @@ struct CardFrontView: View {
   var body: some View {
     ZStack {
       RoundedRectangle(cornerRadius: 40)
-        .fill(.mainGreen.gradient)
-        .stroke(
-          .systemGray,
-          lineWidth: 2,
-          antialiased: true
-        )
+        .fill(.mainGreen)
+        .stroke(.white, lineWidth: 2, antialiased: true)
         .shadow(radius: 2)
       
       VStack(spacing: 30) {
@@ -48,7 +44,7 @@ struct CardFrontView: View {
               .font(.title3)
               .padding(5)
           }
-          .tint(.mainYellow)
+          .tint(.mainBrown)
           .buttonStyle(.glassProminent)
         } else {
           Button {

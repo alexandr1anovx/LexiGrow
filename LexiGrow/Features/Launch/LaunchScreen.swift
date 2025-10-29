@@ -28,7 +28,7 @@ struct LaunchScreen: View {
       VStack {
         HStack {
           Circle()
-            .fill(.mainYellow)
+            .fill(.mainBrown)
             .frame(width: 20, height: 20)
             .scaleEffect(currentState == .start ? 1 : 0.3)
             .opacity(currentState == .start ? 1 : 0)

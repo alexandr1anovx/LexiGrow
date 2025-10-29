@@ -21,9 +21,9 @@ struct LevelButton: View {
         .padding(15)
         .background {
           Capsule()
-            .fill(selectedLevel?.name == name ? .mainGreen : .topicCapsule)
+            .fill(selectedLevel?.name == name ? .mainBrown : .mainGreen)
             .stroke(
-              selectedLevel?.name == name ? .clear : .systemGray,
+              selectedLevel?.name == name ? .white : .clear,
               lineWidth: 2
             )
             .frame(width: 55)

@@ -44,6 +44,7 @@ struct CardLessonView: View {
             }
           }
           .padding(20)
+          .padding(.vertical)
           .onTapGesture {
             withAnimation(.easeInOut(duration: 0.6)) { isFlipped.toggle() }
           }
@@ -58,7 +59,6 @@ struct CardLessonView: View {
         }
       }
     }
-    //.background(.mainBackground)
   }
 }
 
@@ -69,11 +69,11 @@ extension CardLessonView {
     
     var body: some View {
       Label("\(count)", systemImage: iconName)
-        .capsuleLabelStyle(pouring: .primary)
+        .capsuleLabelStyle(pouring: .mainBrown)
         .monospacedDigit()
         .contentTransition(.numericText())
         .animation(.bouncy, value: count)
-        .foregroundStyle(Color.system)
+        .foregroundStyle(.white)
     }
   }
 }

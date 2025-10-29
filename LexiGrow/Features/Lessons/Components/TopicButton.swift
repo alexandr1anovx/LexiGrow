@@ -29,46 +29,38 @@ struct TopicButton: View {
           .padding(6)
           .background {
             Capsule()
-              .fill(topic.learnedWords == topic.totalWords ? .orange : .mainYellow)
+              .fill(isSelected ? .mainGreen : (topic.learnedWords == topic.totalWords ? .orange : .mainBrown))
           }
       }
       .foregroundColor(.white)
       .padding(12)
       .background {
         Capsule()
-          .fill(isSelected ? .mainGreen : .topicCapsule)
-          .stroke(isSelected ? .clear : .systemGray, lineWidth: 2)
+          .fill(isSelected ? .mainBrown : .mainGreen)
+          .stroke(isSelected ? .white : .clear, lineWidth: 2)
       }
     }
     .disabled(topic.learnedWords == topic.totalWords)
-    .opacity(topic.learnedWords == topic.totalWords ? 0.8 : 1)
+    .opacity(topic.learnedWords == topic.totalWords ? 0.7 : 1)
   }
 }
 
-//#Preview {
-//  @Previewable @State var selectedTopic: Topic?
-//  let topics: [Topic] = [.mock1, .mock2, .mock3]
-//  VStack {
-//    ScrollView(.horizontal) {
-//      HStack {
-//        ForEach(topics) { topic in
-//          TopicButton(
-//            topic: Topic(
-//              id: topic.id,
-//              name: topic.name,
-//              totalWords: topic.totalWords,
-//              learnedWords: topic.learnedWords
-//            ),
-//            selectedTopic: $selectedTopic,
-//            activeColor: .pink,
-//            selectAction: {
-//              selectedTopic = topic
-//            }
-//          )
-//        }
-//      }.padding(4)
-//    }
-//    .shadow(radius: 1)
-//    .scrollIndicators(.hidden)
-//  }
-//}
+#Preview {
+  @Previewable @State var selectedTopic: Topic = .mock1
+  let topics: [Topic] = [.mock1, .mock2, .mock3]
+  VStack {
+    ScrollView(.horizontal) {
+      HStack {
+        ForEach(topics) { topic in
+          TopicButton(
+            topic: topic,
+            isSelected: selectedTopic == topic) {
+              selectedTopic = topic
+            }
+        }
+      }.padding(4)
+    }
+    .shadow(radius: 1)
+    .scrollIndicators(.hidden)
+  }
+}

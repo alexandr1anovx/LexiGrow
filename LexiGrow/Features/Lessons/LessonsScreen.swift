@@ -144,7 +144,7 @@ extension LessonsScreen {
           .symbolEffect(.bounce, value: shouldAnimate)
           .font(.subheadline)
           .foregroundStyle(.white)
-          .capsuleLabelStyle(pouring: isSelected ? .lessonCapsule : .clear)
+          .capsuleLabelStyle(pouring: isSelected ? .mainBrown : .clear)
       }
     }
   }

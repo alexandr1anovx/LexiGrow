@@ -14,8 +14,8 @@ struct CardBackView: View {
   
   var body: some View {
     RoundedRectangle(cornerRadius: 40)
-      .fill(.mainGreen.gradient)
-      .stroke(.systemGray, lineWidth: 2, antialiased: true)
+      .fill(.mainGreen)
+      .stroke(.white, lineWidth: 2, antialiased: true)
       .shadow(radius: 2)
       .overlay {
         Text(word.translation)
@@ -35,7 +35,7 @@ struct CardBackView: View {
           Image(systemName: "checkmark")
             .font(.title)
             .padding(2)
-            .capsuleLabelStyle(pouring: .mainYellow)
+            .capsuleLabelStyle(pouring: .mainBrown)
             .foregroundStyle(.white)
         }
         .padding(50)
@@ -50,7 +50,7 @@ struct CardBackView: View {
           Image(systemName: "xmark")
             .font(.title)
             .padding(2)
-            .capsuleLabelStyle(pouring: .mainYellow)
+            .capsuleLabelStyle(pouring: .mainBrown)
             .foregroundStyle(.white)
         }
         .padding(50)
