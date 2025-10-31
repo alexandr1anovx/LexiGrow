@@ -8,11 +8,20 @@
 import SwiftUI
 import SwiftData
 
+struct AppStorageKeys {
+  static let appTheme = "appTheme"
+  static let isCompleteOnboarding = "isCompleteOnboarding"
+  // Responsible for topic sorting.
+  static let topicSortOption = "topic_sort_option"
+  /// Responsible for automatic audio playback during the "Cards" lesson.
+  static let isAutomaticAudioPlaybackOn = "isAutomaticAudioPlaybackOn"
+}
+
 @main
 struct LexiGrowApp: App {
   
-  @AppStorage("app_scheme") private var appScheme: Theme = .system
-  @AppStorage("isCompleteOnboarding") private var isCompleteOnboarding = false
+  @AppStorage(AppStorageKeys.appTheme) private var appTheme: AppTheme = .system
+  @AppStorage(AppStorageKeys.isCompleteOnboarding) private var isCompleteOnboarding = false
   @State private var showLaunchScreen = true
   
   // MARK: - View Models
@@ -57,7 +66,7 @@ struct LexiGrowApp: App {
       .animation(.easeInOut, value: showLaunchScreen)
       .animation(.easeInOut, value: authManager.authState)
       .animation(.easeInOut, value: isCompleteOnboarding)
-      .preferredColorScheme(appScheme.colorScheme)
+      .preferredColorScheme(appTheme.colorScheme)
       .environment(educationService)
       .environment(authManager)
       .environment(lessonsViewModel)

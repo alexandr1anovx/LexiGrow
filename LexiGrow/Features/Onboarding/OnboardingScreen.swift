@@ -12,7 +12,6 @@ import Lottie
 
 struct OnboardingScreen: View {
   @State private var currentPage: OnboardingPage = .welcome
-  private let feedbackGenerator = UIImpactFeedbackGenerator(style: .light)
   var onComplete: () -> Void
   
   var body: some View {
@@ -41,14 +40,13 @@ struct OnboardingScreen: View {
         
         Spacer()
         
-        AnimatableButton(currentPage == .getStarted ? "Почати подорож" : "Далі", tint: currentPage == .getStarted ? .mainBrown : .mainGreen) {
+        AnimatableButton(currentPage == .getStarted ? "Почати подорож" : "Далі") {
           handleNextButton()
-        }.padding(20)
+        }
+        .sensoryFeedback(.impact, trigger: currentPage)
+        .padding(20)
       }
-      .animation(.spring, value: currentPage)
-    }
-    .onChange(of: currentPage) {
-      feedbackGenerator.impactOccurred()
+      .animation(.easeInOut, value: currentPage)
     }
   }
   

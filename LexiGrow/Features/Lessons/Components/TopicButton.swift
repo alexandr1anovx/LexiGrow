@@ -18,14 +18,12 @@ struct TopicButton: View {
   
   var body: some View {
     Button(action: selectAction) {
-      HStack(spacing: 10) {
+      HStack(spacing: 8) {
         Text(topic.name)
           .font(.subheadline)
-          .fontWeight(.medium)
-          
         Text("\(topic.learnedWords)/\(topic.totalWords)")
           .font(.caption)
-          .fontWeight(.semibold)
+          .fontWeight(.medium)
           .padding(6)
           .background {
             Capsule()
@@ -37,11 +35,11 @@ struct TopicButton: View {
       .background {
         Capsule()
           .fill(isSelected ? .mainBrown : .mainGreen)
-          .stroke(isSelected ? .white : .clear, lineWidth: 2)
+          .stroke(isSelected ? .mainGreen : .clear, lineWidth: 2)
       }
     }
     .disabled(topic.learnedWords == topic.totalWords)
-    .opacity(topic.learnedWords == topic.totalWords ? 0.7 : 1)
+    .opacity(topic.learnedWords == topic.totalWords ? 0.5 : 1)
   }
 }
 

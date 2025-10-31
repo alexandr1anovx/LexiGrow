@@ -8,39 +8,43 @@
 import SwiftUI
 
 struct SettingsScreen: View {
-  @AppStorage("app_scheme") private var appScheme: Theme = .system
-  @State private var isExpandedSchemePanel = true
-  private let feedbackGenerator = UIImpactFeedbackGenerator(style: .soft)
+  
+  @AppStorage(AppStorageKeys.appTheme) private var appTheme: AppTheme = .system
+  @AppStorage(AppStorageKeys.topicSortOption) private var topicSortOption: TopicSortOption = .defaultOrder
+  @AppStorage(AppStorageKeys.isAutomaticAudioPlaybackOn) private var isAutomaticAudioPlaybackOn = false
+  
+  
+  @State private var triggerSelection = false
   
   var body: some View {
     ZStack {
       Color.mainBackground.ignoresSafeArea()
       Form {
-        Section("Appearance") {
-          DisclosureGroup("Color Scheme", isExpanded: $isExpandedSchemePanel) {
-            HStack {
-              ForEach(Theme.allCases) { theme in
-                Text(theme.rawValue)
-                  .foregroundStyle(appScheme == theme ? Color(.systemBackground) : Color.primary)
-                  .padding(10)
-                  .background(appScheme == theme ? Color.primary : Color.clear)
-                  .clipShape(.rect(cornerRadius: 20))
-                  .onTapGesture {
-                    appScheme = theme
-                    feedbackGenerator.impactOccurred()
-                  }
-                Spacer()
-              }
-            }.padding(.horizontal)
+        Section("Зовнішній вигляд") {
+          Picker("Тема застосунку", selection: $appTheme) {
+            ForEach(AppTheme.allCases) {
+              Text($0.title)
+            }
           }
         }
-        NavigationLink {
-          UserPreferencesScreen()
-        } label: {
-          Text("Preferences")
+        
+        Section("Аудіо") {
+          Toggle("Озвучувати слова", isOn: $isAutomaticAudioPlaybackOn)
+        }
+        
+        Section("Сортування") {
+          Picker("Теми", selection: $topicSortOption) {
+            ForEach(TopicSortOption.allCases) {
+              Text($0.rawValue)
+                .tag($0)
+            }
+          }
+          
         }
       }.scrollContentBackground(.hidden)
     }
+    .navigationTitle("Налаштування")
+    .navigationBarTitleDisplayMode(.inline)
   }
 }
 #Preview {

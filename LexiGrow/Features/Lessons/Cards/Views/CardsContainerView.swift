@@ -22,8 +22,8 @@ struct CardsContainerView: View {
           CardsSummaryView()
         }
       }
-      .navigationTitle("Cards")
-      .navigationBarTitleDisplayMode(.large)
+      .navigationTitle("Картки")
+      .navigationBarTitleDisplayMode(viewModel.lessonState == .summary ? .inline : .large)
       .toolbar {
         if viewModel.lessonState == .inProgress {
           ToolbarItem(placement: .topBarTrailing) {

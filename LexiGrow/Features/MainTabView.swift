@@ -7,8 +7,16 @@
 
 import SwiftUI
 
-enum Tab {
-  case lessons, more
+enum Tab: String {
+  case lessons = "Уроки"
+  case more = "Інше"
+  
+  var iconName: String {
+    switch self {
+    case .lessons: "book.closed"
+    case .more: "water.waves"
+    }
+  }
 }
 
 struct MainTabView: View {
@@ -17,10 +25,10 @@ struct MainTabView: View {
   var body: some View {
     TabView(selection: $selectedTab) {
       LessonsScreen()
-        .tabItem { Label("Уроки", systemImage: "book.closed") }
+        .tabItem { Label(Tab.lessons.rawValue, systemImage: Tab.lessons.iconName) }
         .tag(Tab.lessons)
       MoreScreen()
-        .tabItem { Label("Інше", systemImage: "water.waves") }
+        .tabItem { Label(Tab.more.rawValue, systemImage: Tab.more.iconName) }
         .tag(Tab.more)
     }
   }

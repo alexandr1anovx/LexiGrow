@@ -29,19 +29,23 @@ struct Topic: Codable, Identifiable, Hashable {
 }
 
 enum TopicSortOption: String, CaseIterable, Identifiable {
-  case defaultOrder = "Default"
-  case uncompletedFirst = "Uncompleted first"
-  case completedFirst = "Completed first"
-  case alphabeticalAZ = "Alphabetical (A-Z)"
+  case defaultOrder = "За замовчуванням"
+  case alphabetical = "За алфавітом"
+  case completedFirst = "Спочатку завершені"
+  case uncompletedFirst = "Спочатку незавершені"
+  case minimumWords = "Найменше слів"
+  case maximumWords = "Найбільше слів"
   
   var id: Self { self }
   
   var iconName: String {
     switch self {
-    case .defaultOrder: return "list.bullet"
-    case .uncompletedFirst: return "xmark.circle.fill"
-    case .completedFirst: return "checkmark.circle.fill"
-    case .alphabeticalAZ: return "textformat.abc"
+    case .defaultOrder: "list.bullet"
+    case .uncompletedFirst: "xmark.circle.fill"
+    case .completedFirst: "checkmark.circle.fill"
+    case .alphabetical: "textformat.abc"
+    case .minimumWords: "lessthan"
+    case .maximumWords: "greaterthan"
     }
   }
 }

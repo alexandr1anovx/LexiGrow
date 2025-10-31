@@ -14,14 +14,14 @@ final class CardsViewModel {
   // MARK: - Public properties
   
   var lessonState: LessonState = .inProgress
-  var topicSortOption: TopicSortOption = .defaultOrder
+  var topicSortOption: TopicSortOption = .completedFirst
   var selectedLevel: Level?
   var selectedTopic: Topic?
   
   // MARK: - Private(set) properties
   
-  var words: [Word] = []
   var currentWordIndex: Int = 0
+  var words: [Word] = []
   var knownWords: [Word] = []
   var unknownWords: [Word] = []
   var levels: [Level] = []
@@ -40,12 +40,16 @@ final class CardsViewModel {
     switch topicSortOption {
     case .defaultOrder:
       return topics
+    case .alphabetical:
+      return topics.sorted { $0.name < $1.name }
     case .uncompletedFirst:
       return topics.sorted { $0.progress < $1.progress }
     case .completedFirst:
       return topics.sorted { $0.progress > $1.progress }
-    case .alphabeticalAZ:
-      return topics.sorted { $0.name < $1.name }
+    case .minimumWords:
+      return topics.sorted { $0.totalWords < $1.totalWords }
+    case .maximumWords:
+      return topics.sorted { $0.totalWords > $1.totalWords }
     }
   }
   
@@ -64,6 +68,7 @@ final class CardsViewModel {
     return min(raw, 1.0)
   }
   
+  /// The accuracy of the lesson (ratio of known words to total words).
   var lessonAccuracy: Double {
     guard !words.isEmpty else { return 0.0 }
     let correctAnswers = Double(knownWords.count)
@@ -71,18 +76,18 @@ final class CardsViewModel {
   }
   
   var lessonFeedbackTitle: String {
-    switch lessonProgress {
-    case 0.8...: return "Excellent Work!"
-    case 0.5..<0.8: return "Good Job!"
-    default: return "Keep Practicing!"
+    switch lessonAccuracy {
+    case 0.8...: return "Відмінно!"
+    case 0.5..<0.8: return "Гарна робота!"
+    default: return "Так тримати!"
     }
   }
   
   var lessonFeedbackIconName: String {
-    switch lessonProgress {
-    case 0.8...: return "hands.clap.fill"
-    case 0.5..<0.8: return "face.smiling"
-    default: return "figure.play.circle.fill"
+    switch lessonAccuracy {
+    case 0.8...: return "Congratulations"
+    case 0.5..<0.8: return "Clap"
+    default: return "HappyDog"
     }
   }
   

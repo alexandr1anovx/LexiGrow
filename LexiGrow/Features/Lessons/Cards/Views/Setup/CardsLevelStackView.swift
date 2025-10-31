@@ -11,32 +11,38 @@ struct CardsLevelStackView: View {
   @Bindable var viewModel: CardsViewModel
   
   var body: some View {
-    HStack(spacing: 10) {
-      Text("Уровні:")
+    HStack {
+      Text("Рівні:")
         .font(.subheadline)
         .fontWeight(.medium)
-      ScrollView(.horizontal) {
-        HStack(spacing: 16) {
-          ForEach(viewModel.levels) { level in
-            LevelButton(
-              name: level.name,
-              selectedLevel: $viewModel.selectedLevel
-            ) {
-              if viewModel.selectedLevel == level {
-                viewModel.selectedLevel = nil
-              } else {
-                viewModel.selectedLevel = level
-                viewModel.selectedTopic = nil // discard the selected topic when the level changes.
+        .frame(minWidth: 50)
+      if viewModel.levels.isEmpty {
+        ProgressView("Завантаження рівнів...")
+          .foregroundStyle(.gray)
+      } else {
+        ScrollView(.horizontal) {
+          HStack(spacing: 8) {
+            ForEach(viewModel.levels) { level in
+              LevelButton(
+                name: level.name,
+                selectedLevel: $viewModel.selectedLevel
+              ) {
+                if viewModel.selectedLevel == level {
+                  viewModel.selectedLevel = nil
+                } else {
+                  viewModel.selectedLevel = level
+                  viewModel.selectedTopic = nil // discard the selected topic when the level changes.
+                }
               }
             }
           }
+          .padding(3)
         }
-        .padding(8)
+        .scrollIndicators(.hidden)
+        .shadow(radius: 1)
       }
-      .scrollIndicators(.hidden)
-      .shadow(radius: 1)
     }
-    .frame(maxWidth: .infinity, alignment: .leading)
+    .frame(maxWidth: .infinity, minHeight: 45, alignment: .leading)
   }
 }
 
@@ -63,7 +69,7 @@ struct CardsLevelStackView: View {
         }
         
       }
-      .padding(8)
+      .padding(.vertical, 3)
     }.shadow(radius: 1)
   }
   .frame(maxWidth: .infinity, alignment: .leading)

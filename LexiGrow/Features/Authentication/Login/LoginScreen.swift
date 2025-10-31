@@ -23,7 +23,7 @@ struct LoginScreen: View {
           VStack(spacing: 20) {
             TextFields(email: $email, password: $password)
             
-            PrimaryButton("Sign In") {
+            PrimaryButton("Увійти") {
               Task {
                 await authManager.signIn(email: email, password: password)
                 password = ""
@@ -32,16 +32,21 @@ struct LoginScreen: View {
             .opacity(!isValidForm ? 0.5:1)
             .disabled(!isValidForm)
             
-            ORDivider()
-            
-            ScrollView(.horizontal) {
-              HStack(spacing: 10) {
-                GoogleButton()
-                EmailLinkButton()
-                PhoneNumberButton()
+            HStack {
+              Text("Увійти через:")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+              
+              ScrollView(.horizontal) {
+                HStack(spacing: 10) {
+                  GoogleButton()
+                  EmailLinkButton()
+                  PhoneNumberButton()
+                }
               }
+              .scrollIndicators(.hidden)
             }
-            .scrollIndicators(.hidden)
+            .padding(.vertical)
             
             FooterView()
           }
@@ -53,7 +58,7 @@ struct LoginScreen: View {
               DefaultProgressView()
             }
           }
-          .navigationTitle("Sign In")
+          .navigationTitle("Вхід")
           .navigationBarTitleDisplayMode(.large)
           .alert(item: $authManager.authError) { error in
             Alert(
@@ -96,20 +101,6 @@ extension LoginScreen {
     }
   }
   
-  // MARK: - OR Divider
-  
-  struct ORDivider: View {
-    var body: some View {
-      HStack {
-        VStack { Divider() }
-        Text("OR WITH")
-          .font(.footnote)
-          .foregroundStyle(.secondary)
-        VStack { Divider() }
-      }
-    }
-  }
-  
   // MARK: - Buttons
   
   struct GoogleButton: View {
@@ -123,9 +114,9 @@ extension LoginScreen {
         } icon: {
           Image(.googleIcon)
             .resizable()
-            .frame(width: 22, height: 22)
+            .frame(width: 20, height: 20)
         }
-        .capsuleLabelStyle(withShadow: false)
+        .capsuleLabelStyle(pouring: .systemGray, withShadow: false)
       }
     }
   }
@@ -134,8 +125,8 @@ extension LoginScreen {
       NavigationLink {
         EmailLinkScreen()
       } label: {
-        Label("Link", systemImage: "envelope.fill")
-          .capsuleLabelStyle(withShadow: false)
+        Label("Посилання", systemImage: "envelope.fill")
+          .capsuleLabelStyle(pouring: .systemGray, withShadow: false)
       }
     }
   }
@@ -144,11 +135,11 @@ extension LoginScreen {
       NavigationLink {
         PhoneNumberView()
       } label: {
-        Label("Phone", systemImage: "phone.fill")
-          .capsuleLabelStyle(withShadow: false)
+        Label("Номер телефону", systemImage: "phone.fill")
+          .capsuleLabelStyle(pouring: .systemGray, withShadow: false)
       }
       .disabled(true)
-      .opacity(0.5)
+      .opacity(0.8)
     }
   }
   
@@ -156,28 +147,27 @@ extension LoginScreen {
   
   struct FooterView: View {
     var body: some View {
-      HStack {
+      HStack(spacing: 20) {
         NavigationLink {
           ForgotPasswordScreen()
         } label: {
-          Text("Forgot password?")
+          Text("Забули пароль?")
             .underline()
         }
         Spacer()
-        HStack(spacing: 5) {
-          Text("New user?")
+        VStack(spacing: 5) {
+          Text("Новий користувач?")
           NavigationLink {
             RegistrationScreen()
           } label: {
-            Text("Sign Up")
+            Text("Зареєструватись.")
               .foregroundStyle(.primary)
               .underline()
           }
         }
       }
-      .font(.subheadline)
+      .font(.footnote)
       .foregroundStyle(.secondary)
-      .padding(.top, 8)
     }
   }
 }

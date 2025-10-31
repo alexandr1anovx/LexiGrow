@@ -13,14 +13,18 @@ struct EmailLinkScreen: View {
   @State private var showConfirmationView = false
   
   var body: some View {
-    if showConfirmationView {
-      EmailConfirmationView(email: email) { // send action:
-        Task {
-          await authManager.signInWithMagicLink(for: email)
+    ZStack {
+      Color.mainBackground.ignoresSafeArea()
+      
+      if showConfirmationView {
+        EmailConfirmationView(email: email) { // send action:
+          Task {
+            await authManager.signInWithMagicLink(for: email)
+          }
         }
+      } else {
+        FormView(email: $email, showConfirmationView: $showConfirmationView)
       }
-    } else {
-      FormView(email: $email, showConfirmationView: $showConfirmationView)
     }
   }
 }
@@ -38,11 +42,11 @@ extension EmailLinkScreen {
         VStack(spacing: 20) {
           HStack(spacing: 8) {
             Image(systemName: "envelope.fill")
-            Text("Email Link")
+            Text("Вхід через посилання")
               .fontWeight(.bold)
           }
           .font(.title2)
-          Text("Enter your email address and we will send you a link for instant access.")
+          Text("Введіть свою адресу електронної пошти, і Вам буде надіслано посилання для миттєвого входу.")
             .font(.subheadline)
             .foregroundStyle(.secondary)
             .multilineTextAlignment(.center)
@@ -56,7 +60,7 @@ extension EmailLinkScreen {
           .submitLabel(.done)
           .onSubmit { fieldContent = nil }
         
-        PrimaryButton("Send link") {
+        PrimaryButton("Відправити посилання") {
           Task {
             await authManager.signInWithMagicLink(for: email)
           }
@@ -70,7 +74,6 @@ extension EmailLinkScreen {
         Spacer()
       }
       .padding(.horizontal)
-      .background(.mainBackground)
       .onAppear { fieldContent = .email }
     }
   }

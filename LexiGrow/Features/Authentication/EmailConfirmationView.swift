@@ -17,19 +17,17 @@ struct EmailConfirmationView: View {
   var body: some View {
     ZStack {
       Color.mainBackground.ignoresSafeArea()
+      
       VStack(spacing: 30) {
-        Text("Check your inbox")
-          .font(.title2)
+        Text("Перевірте свою пошту 👀")
+          .font(.title3)
           .fontWeight(.semibold)
+          .foregroundStyle(.secondary)
         VStack {
-          Text("We have sent a confirmation link to")
-            .foregroundStyle(.secondary)
-          Text(email)
-            .foregroundStyle(.primary)
-            .fontWeight(.medium)
+          Text("Ми надіслали посилання для підтвердження на адресу ") + Text(email).bold().foregroundStyle(.secondary)
         }
         .font(.subheadline)
-        .padding(.horizontal)
+        .multilineTextAlignment(.center)
         
         Button {
           sendAction?()
@@ -46,17 +44,18 @@ struct EmailConfirmationView: View {
         .underline()
         .disabled(!showSendButton)
       }
-      .padding(.vertical, 40)
-      .padding(.horizontal, 20)
+      .padding(.horizontal)
+      
       .background {
-        RoundedRectangle(cornerRadius: 50)
+        RoundedRectangle(cornerRadius: 50, style: .circular)
           .fill(.systemGray)
           .shadow(
-            color: animateShadow ? .yellow : .blue,
-            radius: 3,
+            color: animateShadow ? .blue : .yellow,
+            radius: 5,
             x: 0,
             y: animateShadow ? 2:-2
           )
+          .frame(height: 240)
       }
       .navigationBarBackButtonHidden()
       .onAppear {

@@ -10,38 +10,38 @@ import SwiftUI
 struct CardsSetupView: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(CardsViewModel.self) var viewModel
+  
   let lesson: LessonEntity
   /// Passes the value of the '.fullScreenCover' modifier to the container view.
   @Binding var activeLesson: LessonEntity?
-  @State private var showMenu = false
   
   var body: some View {
     NavigationView {
-      VStack(spacing: 30) {
+      VStack(spacing: 35) {
+        
+        Spacer()
+        
+        // MARK: - Lesson information
+        
         VStack(spacing: 15) {
-          Label {
-            Text(lesson.title)
-              .fontWeight(.semibold)
-          } icon: {
-            Image(systemName: lesson.iconName)
-              //.foregroundStyle(.mainGreen)
-          }
-            .font(.title2)
-            
+          Label(lesson.title, systemImage: lesson.iconName)
+            .font(.title)
+            .fontWeight(.bold)
           Text(lesson.subtitle)
             .font(.footnote)
             .foregroundStyle(.secondary)
             .multilineTextAlignment(.center)
             .fixedSize(horizontal: false, vertical: true)
-            .padding(.horizontal)
         }
         
-        VStack(spacing: 12) {
+        // MARK: - Levels and Topics
+        
+        VStack(spacing: 15) {
           CardsLevelStackView(viewModel: viewModel)
           CardsTopicStackView(viewModel: viewModel)
-            .frame(height: 45)
         }
-        .padding(.horizontal)
+        
+        // MARK: - Start lesson button
         
         PrimaryLabelButton("Почати урок", iconName: "play.circle.fill") {
           Task {
@@ -50,77 +50,27 @@ struct CardsSetupView: View {
             dismiss()
           }
         }
-        .padding(.horizontal)
         .disabled(!viewModel.canStartLesson)
         .opacity(!viewModel.canStartLesson ? 0.5 : 1)
       }
-      .padding(.bottom,8)
+      .padding(.horizontal)
+      .padding(.bottom)
       .toolbar {
         ToolbarItem(placement: .topBarTrailing) {
           CloseButton {
             dismiss()
           }
         }
-        ToolbarItem(placement: .topBarLeading) {
-          SortMenuView(viewModel: viewModel)
-        }
       }
-      .task {
-        await viewModel.getLevels()
-      }
-      .onDisappear {
-        viewModel.resetSetupData()
-      }
+      .task { await viewModel.getLevels() }
+      .onDisappear { viewModel.resetSetupData() }
     }
   }
 }
-
-extension CardsSetupView {
-  struct SortMenuView: View {
-    @Bindable var viewModel: CardsViewModel
-    @AppStorage("topic_sort_option") private var topicSortOption: TopicSortOption = .defaultOrder
-    
-    var body: some View {
-      Menu {
-        Picker("Sort by", selection: $viewModel.topicSortOption) {
-          ForEach(TopicSortOption.allCases) {
-            Label($0.rawValue, systemImage: $0.iconName)
-              .tag($0)
-          }
-        }
-      } label: {
-        if #available(iOS 26, *) {
-          Image(systemName: "gearshape")
-            .imageScale(.large)
-        } else {
-          Image(systemName: "gearshape")
-            .imageScale(.large)
-            .foregroundStyle(.white)
-            .padding(3)
-            .background {
-              RoundedRectangle(cornerRadius: 12)
-                .fill(.black)
-                .shadow(radius: 3)
-            }
-        }
-      }
-      .onAppear {
-        viewModel.topicSortOption = topicSortOption
-      }
-      .onChange(of: topicSortOption) { _, newValue in
-        if viewModel.topicSortOption != newValue {
-          viewModel.topicSortOption = newValue
-        }
-      }
-    }
-  }
-}
-
 
 #Preview {
   CardsSetupView(
     lesson: .mock,
     activeLesson: .constant(.mock)
-  )
-  .environment(CardsViewModel.mock)
+  ).environment(CardsViewModel.mock)
 }

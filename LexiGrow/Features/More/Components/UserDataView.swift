@@ -12,7 +12,7 @@ struct UserDataView: View {
   
   var body: some View {
     HStack(spacing: 15) {
-      Image(.boy)
+      Image(systemName: "person.circle.fill")
         .resizable()
         .frame(width: 35, height: 35)
       VStack(alignment: .leading, spacing: 6) {

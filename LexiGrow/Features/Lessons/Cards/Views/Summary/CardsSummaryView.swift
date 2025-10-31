@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Lottie
 
 struct CardsSummaryView: View {
   @Environment(\.dismiss) var dismiss
@@ -16,36 +17,36 @@ struct CardsSummaryView: View {
     ZStack {
       Color.mainBackground.ignoresSafeArea()
       
-      VStack(spacing: 40) {
-        Label {
-          Text(viewModel.lessonFeedbackTitle)
-            .fontWeight(.semibold)
-            .font(.title2)
-        } icon: {
-          Image(systemName: viewModel.lessonFeedbackIconName)
-            .font(.title)
-            .foregroundStyle(.mainYellow)
-        }
+      VStack(spacing: 30) {
+        
+        Text(viewModel.lessonFeedbackTitle)
+          .font(.title)
+          .fontWeight(.semibold)
+          
+        
+        LottieView(animation: .named(viewModel.lessonFeedbackIconName))
+          .playbackMode(.playing(.toProgress(1, loopMode: .loop)))
+          .frame(width: 300, height: 200)
         
         HStack(spacing: 10) {
-          StatItem("Known", viewModel.knownWords.count) {
+          StatItem("Знаю", viewModel.knownWords.count) {
             withAnimation(.easeInOut) { wordSection = .known }
           }
-          StatItem("Unknown", viewModel.unknownWords.count) {
+          StatItem("Не знаю", viewModel.unknownWords.count) {
             withAnimation(.easeInOut) { wordSection = .unknown }
           }
-          StatItem("Total", viewModel.words.count) {
+          StatItem("Загалом", viewModel.words.count) {
             withAnimation(.easeInOut) { wordSection = .total }
           }
         }
         
         VStack(spacing: 10) {
-          PrimaryLabelButton("Repeat unknown words", iconName: "repeat") {
+          PrimaryLabelButton("Повторити невідомі слова", iconName: "repeat") {
             Task {
               await viewModel.startLesson()
             }
           }
-          PrimaryButton("Finish lesson") {
+          PrimaryButton("Завершити урок") {
             Task {
               await viewModel.saveLessonProgress()
               viewModel.resetSetupData()
@@ -143,7 +144,6 @@ extension CardsSummaryView {
           Image(systemName: "info.circle.fill")
             .font(.title2)
             .foregroundStyle(.primary)
-            //.symbolRenderingMode(.palette)
         }
         .opacity(count == 0 ? 0:1)
         .disabled(count == 0)

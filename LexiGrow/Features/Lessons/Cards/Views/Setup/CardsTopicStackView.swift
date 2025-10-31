@@ -9,64 +9,56 @@ import SwiftUI
 
 struct CardsTopicStackView: View {
   @Bindable var viewModel: CardsViewModel
+  @AppStorage(AppStorageKeys.topicSortOption) private var topicSortOption: TopicSortOption = .defaultOrder
   
   var body: some View {
     HStack {
       Text("Теми:")
-        .font(.subheadline)
         .fontWeight(.medium)
+        .frame(minWidth: 50)
       
       Menu {
-        ForEach(viewModel.sortedTopics) { topic in
-          Button {
-            viewModel.selectedTopic = (viewModel.selectedTopic == topic) ? nil : topic
-          } label: {
-            Label(topic.name, systemImage: viewModel.selectedTopic == topic ? "checkmark.circle.fill" : "circle")
+        Picker("Сортувати за", selection: $topicSortOption) {
+          ForEach(TopicSortOption.allCases) {
+            Text($0.rawValue).tag($0)
           }
         }
       } label: {
-        Image(systemName: "chevron.up.chevron.down")
+        Image(systemName: "line.3.horizontal.decrease")
+          .font(.title3)
       }
-      .padding(.leading, 8)
-      .disabled(viewModel.selectedLevel == nil)
-      .opacity(viewModel.selectedLevel == nil ? 0.5:1)
+      .onChange(of: topicSortOption) { _, newTopic in
+        viewModel.topicSortOption = newTopic
+      }
       
       if viewModel.selectedLevel == nil {
-        Text("Оберіть тему вище")
+        Text("Потрібно обрати рівень.")
           .foregroundStyle(.gray)
       } else if viewModel.topics.isEmpty {
-        Text("Немає тем")
+        Text("Наразі відсутні теми для цього рівня.")
           .foregroundStyle(.gray)
       } else {
         ScrollView(.horizontal) {
-          HStack(spacing: 5) {
+          HStack(spacing: 6) {
             ForEach(viewModel.sortedTopics, id: \.id) { topic in
               TopicButton(topic: topic, isSelected: viewModel.selectedTopic == topic) {
                 viewModel.selectedTopic = (viewModel.selectedTopic == topic) ? nil : topic
               }
             }
-          }.padding(8)
+          }.padding(3)
         }
         .scrollIndicators(.hidden)
         .shadow(radius: 1)
       }
     }
     .font(.subheadline)
-    .frame(maxWidth: .infinity, alignment: .leading)
-    .onChange(of: viewModel.selectedLevel) {
-      Task { await viewModel.getTopics() }
+    .frame(maxWidth: .infinity, minHeight: 45, alignment: .leading)
+    .task(id: viewModel.selectedLevel) {
+      await viewModel.getTopics()
     }
   }
 }
 
-//#Preview {
-//  CardsTopicStackView(viewModel: .mock)
-//}
-
 #Preview {
-  CardsSetupView(
-    lesson: .mock,
-    activeLesson: .constant(.mock)
-  )
-  .environment(CardsViewModel.mock)
+  CardsTopicStackView(viewModel: .mock)
 }

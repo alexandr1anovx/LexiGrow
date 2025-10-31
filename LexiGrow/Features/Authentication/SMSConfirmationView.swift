@@ -16,40 +16,43 @@ struct PhoneNumberView: View {
   
   var body: some View {
     NavigationStack {
-      VStack(spacing: 20) {
+      ZStack {
+        Color.mainBackground.ignoresSafeArea()
         
-        VStack(spacing: 15) {
-          Image(systemName: "phone.fill")
-            .font(.system(size: 30))
-          Text("Enter your phone number to receive a confirmation SMS.")
-            .font(.subheadline)
-            .foregroundColor(.secondary)
-            .multilineTextAlignment(.center)
-        }
-        
-        DefaultTextField(content: .phoneNumber, text: $phoneNumber)
-          .focused($fieldContent, equals: .email)
-          .submitLabel(.done)
-          .onSubmit { fieldContent = nil }
-          .keyboardType(.emailAddress)
-          .textInputAutocapitalization(.never)
-          .autocorrectionDisabled(true)
-          .padding(.top)
-        
-        PrimaryButton("Send code") {
-          Task {
-            if await authManager.sendOTP(for: phoneNumber) {
-              showConfirmationView = true
+        VStack(spacing: 20) {
+          VStack(spacing: 20) {
+            Image(systemName: "phone.fill")
+              .font(.system(size: 30))
+            Text("Введіть свій номер телефону, щоб отримати код з SMS.")
+              .font(.subheadline)
+              .foregroundColor(.secondary)
+              .multilineTextAlignment(.center)
+          }
+          
+          DefaultTextField(content: .phoneNumber, text: $phoneNumber)
+            .focused($fieldContent, equals: .email)
+            .submitLabel(.done)
+            .onSubmit { fieldContent = nil }
+            .keyboardType(.emailAddress)
+            .textInputAutocapitalization(.never)
+            .autocorrectionDisabled(true)
+            .padding(.top)
+          
+          PrimaryButton("Надіслати код") {
+            Task {
+              if await authManager.sendOTP(for: phoneNumber) {
+                showConfirmationView = true
+              }
             }
           }
+          .disabled(!validator.isValidUkrainianPhoneNumber(phoneNumber))
+          
+          Spacer()
         }
-        .disabled(!validator.isValidUkrainianPhoneNumber(phoneNumber))
-        
-        Spacer()
-      }
-      .padding(.horizontal)
-      .navigationDestination(isPresented: $showConfirmationView) {
-        SMSConfirmationView(phoneNumber: phoneNumber)
+        .padding(.horizontal)
+        .navigationDestination(isPresented: $showConfirmationView) {
+          SMSConfirmationView(phoneNumber: phoneNumber)
+        }
       }
     }
   }
@@ -57,59 +60,57 @@ struct PhoneNumberView: View {
 
 struct SMSConfirmationView: View {
   @Environment(AuthManager.self) private var authManager
-  @State private var otpCode = ""
   @FocusState private var isKeyboardFocused: Bool
+  @State private var otpCode = ""
   let phoneNumber: String
   
-  // MARK: - body
-  
   var body: some View {
-    VStack(spacing: 20) {
-      
-      VStack(spacing: 15) {
-        Label("Enter the code", systemImage: "message.circle.fill")
-          .font(.title)
-          .fontWeight(.bold)
+    ZStack {
+      Color.mainBackground.ignoresSafeArea()
+      VStack(spacing: 20) {
         
-        Text("We have sent a 6-digit confirmation code to **\(phoneNumber)**.")
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
-          .multilineTextAlignment(.center)
-          .padding()
-      }
-      
-      ZStack {
-        HStack(spacing: 10) {
-          ForEach(0..<6) { index in
-            OTPBox(
-              character: character(at: index),
-              isActive: index == otpCode.count
-            )
-          }
+        VStack(spacing: 12) {
+          Text("Введіть код")
+            .font(.title)
+            .fontWeight(.bold)
+          Text("Ми надіслали 6-значний код підтвердження на **\(phoneNumber)**.")
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+            .multilineTextAlignment(.center)
+            .padding()
         }
-        TextField("", text: $otpCode)
-          .keyboardType(.numberPad)
-          .textContentType(.oneTimeCode)
-          .focused($isKeyboardFocused)
-          .opacity(0)
-          .onChange(of: otpCode) {
-            limitOTPCodeLength()
-            autoSubmitWhenReady()
+        
+        ZStack {
+          HStack(spacing: 10) {
+            ForEach(0..<6) { index in
+              OTPBox(
+                character: character(at: index),
+                isActive: index == otpCode.count
+              )
+            }
           }
+          TextField("", text: $otpCode)
+            .keyboardType(.numberPad)
+            .textContentType(.oneTimeCode)
+            .focused($isKeyboardFocused)
+            .opacity(0)
+            .onChange(of: otpCode) {
+              limitOTPCodeLength()
+              autoSubmitWhenReady()
+            }
+        }
+        .onTapGesture { isKeyboardFocused = true }
+        
+        PrimaryButton("Надіслати код знову") {
+          // action
+        }
+        .padding(.top, 20)
+        
+        Spacer()
       }
-      .onTapGesture { isKeyboardFocused = true }
-      
-      Button("Send code again") {
-        print("Resend code tapped")
-      }
-      .tint(.blue)
-      .padding(.top, 20)
-      
-      Spacer()
+      .padding()
+      .onAppear { isKeyboardFocused = true }
     }
-    .padding()
-    .background(.mainBackground)
-    .onAppear { isKeyboardFocused = true }
   }
   
   // MARK: - Private Helper Methods
@@ -122,46 +123,42 @@ struct SMSConfirmationView: View {
     return String(otpCode[charIndex])
   }
   
-  /// Ограничивает длину вводимого кода 6 символами.
   private func limitOTPCodeLength() {
     if otpCode.count > 6 {
       otpCode = String(otpCode.prefix(6))
     }
   }
   
-  /// Автоматически отправляет код на проверку, когда введено 6 символов.
   private func autoSubmitWhenReady() {
     if otpCode.count == 6 {
-      isKeyboardFocused = false // Скрываем клавиатуру
-      // Заменяем `code` (массив) на `otpCode` (строку)
-      Task { await authManager.verifyOTP(for: phoneNumber, with: otpCode) }
+      isKeyboardFocused = false
+      Task {
+        await authManager.verifyOTP(for: phoneNumber, with: otpCode)
+      }
     }
   }
 }
 
-// MARK: - OTPBox Subview
+// MARK: - OTPBox
 
-/// Вспомогательное View для отображения одной ячейки кода.
 private struct OTPBox: View {
   let character: String
   let isActive: Bool
   
   var body: some View {
     Text(character)
-      .font(.title.bold())
+      .font(.title)
+      .fontWeight(.bold)
       .frame(width: 45, height: 55)
-      .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 10))
+      .background(.thinMaterial, in: Capsule())
       .overlay {
-        // Добавляем рамку для активной ячейки
         if isActive {
-          RoundedRectangle(cornerRadius: 10)
-            .stroke(Color.accentColor, lineWidth: 2)
+          Capsule()
+            .stroke(.mainGreen, lineWidth: 2)
         }
       }
   }
 }
-
-// MARK: - Preview
 
 #Preview {
   NavigationStack {

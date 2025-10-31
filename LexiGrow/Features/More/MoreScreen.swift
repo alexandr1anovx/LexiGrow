@@ -20,36 +20,41 @@ struct MoreScreen: View {
             if let user = authManager.currentUser {
               UserDataView(user: user)
             } else {
-              Text("No data provided")
+              Text("Дані не надано")
             }
-          } header: {
-            Text("Personal data")
           } footer: {
             HStack(spacing: 5) {
-              Text("Would you like to edit your data?")
+              Text("Хочеш редагувати свої дані?")
               NavigationLink {
                 ProfileScreen()
               } label: {
-                Text("Go to Profile")
+                Text("Перейти до профілю")
                   .underline()
               }
             }.font(.footnote)
           }
           
           Section {
-            NavigationLink("Settings") {
+            NavigationLink {
               SettingsScreen()
+            } label: {
+              Label {
+                Text("Налаштування")
+              } icon: {
+                Image(systemName: "gearshape")
+                  .font(.subheadline)
+              }
             }
           }
           
           Section {
-            Button("Sign Out") {
+            Button("Вийти") {
               showSignOutConfirmation = true
             }.tint(.red)
           }
         }
         .scrollContentBackground(.hidden)
-        .navigationTitle("More")
+        .navigationTitle(Tab.more.rawValue)
         .navigationBarTitleDisplayMode(.large)
         .sheet(isPresented: $showSignOutConfirmation) {
           SignOutConfirmationView()

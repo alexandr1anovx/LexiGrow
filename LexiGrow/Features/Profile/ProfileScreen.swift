@@ -10,15 +10,15 @@ import SwiftUI
 struct ProfileScreen: View {
   @Environment(AuthManager.self) var authManager
   
-  @State private var showSaveButton = false
-  @State private var showAccountDeletionAlert = false
-  
   @State private var fullName = ""
   @State private var email = ""
   @State private var isEmailConfirmed: Bool?
   @State private var connectedProviders: [String] = []
   
-  private let feedbackGenerator = UINotificationFeedbackGenerator()
+  @State private var showSaveButton = false
+  @State private var showAccountDeletionAlert = false
+  @State private var triggerSuccess = false
+  @State private var triggerWarning = false
   
   private var formHasChanges: Bool {
     guard let user = authManager.currentUser else { return false }
@@ -27,8 +27,6 @@ struct ProfileScreen: View {
     return changedUsername || changedEmail
   }
   
-  // MARK: - Body
-  
   var body: some View {
     NavigationView {
       ZStack {
@@ -36,7 +34,15 @@ struct ProfileScreen: View {
         Form {
           userInfoSection
           providersSection
-          actionsSection
+          
+          Section {
+            Button("Видалити обліковий запис") {
+              showAccountDeletionAlert.toggle()
+              triggerWarning.toggle()
+            }
+            .tint(.red)
+            .sensoryFeedback(.warning, trigger: triggerWarning)
+          }
         }
         .scrollContentBackground(.hidden)
       }
@@ -47,13 +53,14 @@ struct ProfileScreen: View {
             Button {
               Task {
                 await authManager.updateUser(fullName: fullName)
-                feedbackGenerator.notificationOccurred(.success)
+                triggerSuccess.toggle()
               }
             } label: {
               Image(systemName: "checkmark")
             }
             .tint(.green)
             .buttonStyle(.borderedProminent)
+            .sensoryFeedback(.success, trigger: triggerSuccess)
           }
         }
       }
@@ -93,7 +100,7 @@ private extension ProfileScreen {
   var userInfoSection: some View {
     VStack(alignment: .leading, spacing: 10) {
       
-      Image(.boy)
+      Image(systemName: "person.circle.fill")
         .resizable()
         .frame(width: 50, height: 50)
         .frame(maxWidth: .infinity, alignment: .center)
@@ -105,7 +112,7 @@ private extension ProfileScreen {
       
       if let isEmailConfirmed {
         Label {
-          Text(isEmailConfirmed ? "Email confirmed" : "Email is not confirmed")
+          Text(isEmailConfirmed ? "Пошту підтверджено" : "Пошту не підтверджено")
         } icon: {
           Image(systemName: isEmailConfirmed ? "checkmark.circle.fill" : "xmark.circle.fill")
             .foregroundStyle(.green)
@@ -129,16 +136,6 @@ private extension ProfileScreen {
           }
         }
       }
-    }
-  }
-  
-  var actionsSection: some View {
-    Section {
-      Button("Видалити обліковий запис") {
-        showAccountDeletionAlert.toggle()
-        feedbackGenerator.notificationOccurred(.warning)
-      }
-      .tint(.red)
     }
   }
 }
@@ -180,6 +177,7 @@ struct ProviderRowView: View {
 }
 
 // MARK: - Preview
+
 #Preview {
   NavigationStack {
     ProfileScreen()

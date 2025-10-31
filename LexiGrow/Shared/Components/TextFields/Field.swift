@@ -21,10 +21,10 @@ enum Field {
   
   var title: String {
     switch self {
-    case .fullName: "Full name"
-    case .email: "Email address"
-    case .password: "Password"
-    case .confirmPassword: "Confirm password"
+    case .fullName: "Ім'я та прізвище"
+    case .email: "Адреса електронної пошти"
+    case .password: "Пароль"
+    case .confirmPassword: "Підтвердження паролю"
     case .phoneNumber: "+380(50) 123 45 67"
     }
   }

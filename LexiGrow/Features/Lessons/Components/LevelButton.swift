@@ -14,20 +14,18 @@ struct LevelButton: View {
   
   var body: some View {
     Button(action: selectAction) {
-      Text(name)
-        .font(.subheadline)
-        .fontWeight(.medium)
-        .foregroundColor(.white)
-        .padding(15)
-        .background {
-          Capsule()
-            .fill(selectedLevel?.name == name ? .mainBrown : .mainGreen)
-            .stroke(
-              selectedLevel?.name == name ? .white : .clear,
-              lineWidth: 2
-            )
-            .frame(width: 55)
-        }
+      ZStack {
+        Capsule()
+          .fill(selectedLevel?.name == name ? .mainBrown : .mainGreen)
+          .stroke(
+            selectedLevel?.name == name ? .mainGreen : .clear,
+            lineWidth: 2
+          )
+          .frame(width: 55, height: 48)
+        Text(name)
+          .font(.subheadline)
+          .foregroundColor(.white)
+      }
     }
   }
 }
@@ -38,7 +36,7 @@ struct LevelButton: View {
   let levels: [Level] = [.mockB1, .mockB2]
   VStack {
     ScrollView(.horizontal) {
-      HStack(spacing: 18) {
+      HStack {
         ForEach(levels) { level in
           LevelButton(
             name: level.name,
@@ -46,7 +44,7 @@ struct LevelButton: View {
               selectedLevel = level
             }
         }
-      }.padding(4)
+      }.padding(3)
     }
     .scrollIndicators(.hidden)
     .shadow(radius: 1)

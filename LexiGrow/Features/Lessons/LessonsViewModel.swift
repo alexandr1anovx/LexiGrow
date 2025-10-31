@@ -11,15 +11,22 @@ import SwiftData
 @Observable
 @MainActor
 final class LessonsViewModel {
+  // MARK: - Properties
+  
   private(set) var lessons: [LessonEntity] = []
   private(set) var levels: [LevelProgressEntity] = []
-  var isLoading = false
+  private(set) var isLoading = false
   private(set) var errorMessage: String?
+  
   private let educationService: EducationServiceProtocol
+  
+  // MARK: - Init
   
   init(educationService: EducationServiceProtocol) {
     self.educationService = educationService
   }
+  
+  // MARK: - Local Data
   
   /// Loads lessons data from local storage.
   func fetchLocalLessons(context: ModelContext) {
@@ -32,6 +39,8 @@ final class LessonsViewModel {
       print("⚠️ Failed to fetch lessons from local storage: \(error)")
     }
   }
+  
+  // MARK: - Sync / Networking
   
   /// Synchronizes data from server with the local database.
   func syncData(context: ModelContext) async {
@@ -66,6 +75,8 @@ final class LessonsViewModel {
     }
   }
 }
+
+// MARK: - Mocks / Preview
 
 extension LessonsViewModel {
   static var mock: LessonsViewModel = {

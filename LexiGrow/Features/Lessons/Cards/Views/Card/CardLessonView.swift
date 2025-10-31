@@ -10,7 +10,7 @@ import SwiftUI
 struct CardLessonView: View {
   @Environment(CardsViewModel.self) var viewModel
   @Environment(\.dismiss) var dismiss
-  @AppStorage("automatic_sound_playback") private var isTurnedAudioPlayback = false
+  @AppStorage(AppStorageKeys.isAutomaticAudioPlaybackOn) private var isAutomaticAudioPlaybackOn = false
   @State private var isFlipped = false
   
   var body: some View {
@@ -22,7 +22,7 @@ struct CardLessonView: View {
           Toggle(
             "Озвучувати слова",
             systemImage: "speaker.wave.2.fill",
-            isOn: $isTurnedAudioPlayback
+            isOn: $isAutomaticAudioPlaybackOn
           )
           .font(.subheadline)
           .foregroundStyle(.secondary)
@@ -49,10 +49,10 @@ struct CardLessonView: View {
             withAnimation(.easeInOut(duration: 0.6)) { isFlipped.toggle() }
           }
           .onChange(of: viewModel.currentWordIndex) {
-            viewModel.speakCurrentWord(auto: isTurnedAudioPlayback)
+            viewModel.speakCurrentWord(auto: isAutomaticAudioPlaybackOn)
           }
           .onAppear {
-            viewModel.speakCurrentWord(auto: isTurnedAudioPlayback)
+            viewModel.speakCurrentWord(auto: isAutomaticAudioPlaybackOn)
           }
         } else {
           ProgressView("The data is loading...")
