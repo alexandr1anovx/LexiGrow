@@ -29,7 +29,7 @@ struct FinishLessonConfirmationView: View {
       }
       .padding(.horizontal)
       .toolbar {
-        ToolbarItem(placement: .topBarTrailing) {
+        ToolbarItem(placement: .cancellationAction) {
           CloseButton {
             dismiss()
           }

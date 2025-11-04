@@ -101,7 +101,7 @@ extension CardsSummaryView {
         .shadow(radius: 1)
         .scrollContentBackground(.hidden)
         .toolbar {
-          ToolbarItem(placement: .topBarTrailing) {
+          ToolbarItem(placement: .cancellationAction) {
             Button {
               withAnimation(.easeInOut) { onClose() }
             } label: {
