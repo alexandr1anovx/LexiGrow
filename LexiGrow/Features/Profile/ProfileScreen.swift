@@ -48,7 +48,7 @@ struct ProfileScreen: View {
       }
       .navigationTitle("Профіль")
       .toolbar {
-        ToolbarItem(placement: .topBarTrailing) {
+        ToolbarItem(placement: .confirmationAction) {
           if formHasChanges {
             Button {
               Task {
