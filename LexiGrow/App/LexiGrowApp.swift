@@ -8,12 +8,12 @@
 import SwiftUI
 import SwiftData
 
-struct AppStorageKeys {
+enum AppStorageKeys {
+  // Global
   static let appTheme = "appTheme"
   static let isCompleteOnboarding = "isCompleteOnboarding"
-  // Responsible for topic sorting.
-  static let topicSortOption = "topic_sort_option"
-  /// Responsible for automatic audio playback during the "Cards" lesson.
+  // Lessons
+  static let topicSortOption = "topicSortOption"
   static let isAutomaticAudioPlaybackOn = "isAutomaticAudioPlaybackOn"
 }
 
