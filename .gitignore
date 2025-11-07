@@ -1,2 +1,47 @@
-Secrets.xcconfig
-**/xcuserdata/
+# Xcode
+*.xcworkspace
+*.xcuserdata
+*.xccheckout
+*.xcuserstate
+*.xcscheme
+*.xcschemes
+*.xcuserdatad
+*.xcdebugger
+
+# Build
+build/
+DerivedData/
+*.dSYM/
+*.o
+*.a
+
+# Swift Package Manager
+/.build
+/.swiftpm
+Package.pins
+Package.resolved
+
+# CocoaPods
+Pods/
+Podfile.lock
+
+# Carthage
+Carthage/Build/
+Carthage/Checkouts/
+
+# fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/Preview.png
+fastlane/screenshots
+
+# macOS
+.DS_Store
+*.swp
+
+# Archives
+*.xcarchive/
+
+# Simulator
+*.simruntimes/
+*.simulateddevices/
