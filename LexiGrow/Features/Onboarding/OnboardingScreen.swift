@@ -19,38 +19,37 @@ struct OnboardingScreen: View {
       if currentPage == .getStarted {
         Color.onboardingLastPageBackground.ignoresSafeArea()
       } else {
-        Color.primary.ignoresSafeArea()
+        Color.system.ignoresSafeArea()
       }
       
       VStack {
         Button("Пропустити") {
           currentPage = .getStarted
         }
-        .font(.footnote)
-        .capsuleLabelStyle()
+        .tint(.gray)
+        .font(.subheadline)
+        .underline()
+        .padding(.top)
+        .opacity(currentPage == .getStarted ? 0:1)
         .frame(maxWidth: .infinity, alignment: .trailing)
-        .opacity(currentPage == .getStarted ? 0 : 0.5)
-        .padding(.trailing)
         
         Spacer()
-        
         OnboardingPageView(page: currentPage)
           .transition(.blurReplace)
           .id(currentPage)
-        
         Spacer()
         
         AnimatableButton(currentPage == .getStarted ? "Почати подорож" : "Далі") {
-          handleNextButton()
+          goToNextPage()
         }
         .sensoryFeedback(.impact, trigger: currentPage)
-        .padding(20)
       }
-      .animation(.easeInOut, value: currentPage)
+      .padding(20)
+      .animation(.spring, value: currentPage)
     }
   }
   
-  private func handleNextButton() {
+  private func goToNextPage() {
     if currentPage == .getStarted {
        onComplete()
     } else {
@@ -66,71 +65,67 @@ struct OnboardingScreen: View {
 
 // MARK: - Onboarding Page View
 
-extension OnboardingScreen {
-  struct OnboardingPageView: View {
-    var page: OnboardingPage
-    
-    var body: some View {
+private struct OnboardingPageView: View {
+  var page: OnboardingPage
+  
+  var body: some View {
+    VStack(spacing: 20) {
+      
+      LottieView(animation: .named(page.animationName))
+        .playbackMode(.playing(.toProgress(1, loopMode: page == .getStarted ? .playOnce : .loop)))
+        .frame(width: 200, height: 200)
+      
       VStack(spacing: 20) {
-        
-        LottieView(animation: .named(page.imageName))
-          .playbackMode(.playing(.toProgress(1, loopMode: page == .getStarted ? .playOnce : .loop)))
-          .frame(width: 250, height: 200)
-        
-        VStack(spacing: 20) {
-          Text(page.title)
-            .font(.title)
-            .fontWeight(.bold)
-            .foregroundStyle(page == .getStarted ? Color.whiteGradient : Color.yellowGreenGradient)
-          Text(page.description)
-            .multilineTextAlignment(.center)
-            .foregroundColor(page == .getStarted ? .white : .secondary)
-        }
-      }.padding(.horizontal, 30)
+        Text(page.title)
+          .font(.title)
+          .fontWeight(.bold)
+          .foregroundStyle(page == .getStarted ? .white : .mainGreen)
+        Text(page.description)
+          .multilineTextAlignment(.center)
+          .foregroundColor(page == .getStarted ? .white : .primary)
+      }
     }
   }
 }
 
 // MARK: - Onboarding Page
 
-extension OnboardingScreen {
-  enum OnboardingPage: CaseIterable, Identifiable {
-    case welcome
-    case learnWithCards
-    case trackYourProgress
-    case getStarted
-    
-    var id: Self { self }
-    
-    var imageName: String {
-      switch self {
-      case .welcome: "Welcome"
-      case .learnWithCards: "CardsSwap"
-      case .trackYourProgress: "Progress"
-      case .getStarted: "Success"
-      }
+private enum OnboardingPage: CaseIterable, Identifiable {
+  case welcome
+  case learnWithCards
+  case trackYourProgress
+  case getStarted
+  
+  var id: Self { self }
+  
+  var animationName: String {
+    switch self {
+    case .welcome: "Welcome"
+    case .learnWithCards: "CardsSwap"
+    case .trackYourProgress: "Progress"
+    case .getStarted: "Success"
     }
-    
-    var title: String {
-      switch self {
-      case .welcome: "Привіт! 😊"
-      case .learnWithCards: "Вивчай слова легко 😎"
-      case .trackYourProgress: "Відстежуй прогрес 🧐"
-      case .getStarted: "Ну що, поїхали?"
-      }
+  }
+  
+  var title: String {
+    switch self {
+    case .welcome: "Привіт!"
+    case .learnWithCards: "Вивчай слова легко"
+    case .trackYourProgress: "Відстежуй свій прогрес"
+    case .getStarted: "Ну що, поїхали?"
     }
-    
-    var description: String {
-      switch self {
-      case .welcome:
-        "Lexi допоможе тобі досягти мовних цілей ефективно та з задоволенням."
-      case .learnWithCards:
-        "Обирай цікаві теми та запам'ятовуй нові слова за допомогою карток."
-      case .trackYourProgress:
-        "Слідкуй за кількістю вивчених слів та покращуй свої результати щодня."
-      case .getStarted:
-        "Давай налаштуємо твій профіль та оберемо першу тему для вивчення!"
-      }
+  }
+  
+  var description: String {
+    switch self {
+    case .welcome:
+      "Я - Lexi, допоможу тобі досягти мовних цілей ефективно та з задоволенням."
+    case .learnWithCards:
+      "Обирай цікаві теми та запам'ятовуй нові слова за допомогою карток."
+    case .trackYourProgress:
+      "Слідкуй за кількістю вивчених слів та покращуй свої результати щодня."
+    case .getStarted:
+      "Давай налаштуємо твій профіль та оберемо першу тему для вивчення!"
     }
   }
 }

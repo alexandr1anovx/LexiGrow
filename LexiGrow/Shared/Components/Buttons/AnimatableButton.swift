@@ -30,7 +30,7 @@ struct AnimatableButton: View {
   var body: some View {
     ZStack {
       Capsule(style: .continuous)
-        .fill(AngularGradient(colors: [.yellow, .mainGreen, .orange], center: .center, angle: .degrees(isAnimating ? 360 : 0)))
+        .fill(AngularGradient(colors: [.yellow, .mainGreen], center: .center, angle: .degrees(isAnimating ? 360 : 0)))
         .frame(height: 45)
         .blur(radius: 13)
         .onAppear {
