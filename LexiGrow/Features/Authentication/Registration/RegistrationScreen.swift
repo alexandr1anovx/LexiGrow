@@ -25,53 +25,50 @@ struct RegistrationScreen: View {
   
   var body: some View {
     NavigationView {
-    ZStack {
-      Color.mainBackground.ignoresSafeArea()
-        ScrollView {
-          VStack(spacing: 25) {
-            TextFields(
-              fullName: $fullName,
-              email: $email,
-              password: $password,
-              confirmPassword: $confirmPassword
-            )
-            
-            PrimaryButton("Зареєструватись") {
-              Task {
-                await authManager.signUp(
-                  fullName: fullName,
-                  email: email,
-                  password: password
-                )
-                password = ""
-                confirmPassword = ""
-              }
+      ScrollView {
+        VStack(spacing: 25) {
+          TextFields(
+            fullName: $fullName,
+            email: $email,
+            password: $password,
+            confirmPassword: $confirmPassword
+          )
+          
+          PrimaryButton("Зареєструватись") {
+            Task {
+              await authManager.signUp(
+                fullName: fullName,
+                email: email,
+                password: password
+              )
+              password = ""
+              confirmPassword = ""
             }
-            .disabled(!isValidForm)
-            .opacity(!isValidForm ? 0.5:1)
-            
-            HStack(spacing: 5) {
-              Text("Вже маєте обліковий запис?")
-                .foregroundStyle(.secondary)
-              Button("Увійти.") {
-                dismiss()
-              }
-              .underline()
-            }
-            .font(.subheadline)
           }
-          .padding([.top, .horizontal])
-          .opacity(authManager.isLoading ? 0.5 : 1)
-          .disabled(authManager.isLoading)
-          .overlay {
-            if authManager.isLoading {
-              DefaultProgressView()
+          .disabled(!isValidForm)
+          .opacity(!isValidForm ? 0.5:1)
+          
+          HStack(spacing: 5) {
+            Text("Вже маєте обліковий запис?")
+              .foregroundStyle(.secondary)
+            Button("Увійти.") {
+              dismiss()
             }
+            .underline()
+          }
+          .font(.subheadline)
+        }
+        .padding([.top, .horizontal])
+        .opacity(authManager.isLoading ? 0.5 : 1)
+        .disabled(authManager.isLoading)
+        .overlay {
+          if authManager.isLoading {
+            DefaultProgressView()
           }
         }
-        .navigationTitle("Реєстрація")
-        .navigationBarTitleDisplayMode(.inline)
       }
+      .navigationTitle("Реєстрація")
+      .navigationBarTitleDisplayMode(.inline)
     }
   }
 }

@@ -19,7 +19,7 @@ struct OnboardingScreen: View {
       if currentPage == .getStarted {
         Color.onboardingLastPageBackground.ignoresSafeArea()
       } else {
-        Color.mainBackground.ignoresSafeArea()
+        Color.primary.ignoresSafeArea()
       }
       
       VStack {

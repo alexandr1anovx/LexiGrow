@@ -14,8 +14,6 @@ struct EmailLinkScreen: View {
   
   var body: some View {
     ZStack {
-      Color.mainBackground.ignoresSafeArea()
-      
       if showConfirmationView {
         EmailConfirmationView(email: email) { // send action:
           Task {

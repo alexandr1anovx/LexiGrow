@@ -23,23 +23,21 @@ struct LaunchScreen: View {
   @State private var isContentReady = false
   
   var body: some View {
-    ZStack {
-      Color.mainBackground.ignoresSafeArea()
-      VStack {
-        HStack {
-          Circle()
-            .fill(.mainBrown)
-            .frame(width: 20, height: 20)
-            .scaleEffect(currentState == .start ? 1 : 0.3)
-            .opacity(currentState == .start ? 1 : 0)
-          Circle()
-            .fill(.mainGreen)
-            .frame(width: 20, height: 20)
-            .scaleEffect(currentState == .end ? 1 : 0.3)
-            .opacity(currentState == .end ? 1 : 0)
-        }
-      }.onAppear(perform: startAnimation)
+    VStack {
+      HStack {
+        Circle()
+          .fill(.mainBrown)
+          .frame(width: 20, height: 20)
+          .scaleEffect(currentState == .start ? 1 : 0.3)
+          .opacity(currentState == .start ? 1 : 0)
+        Circle()
+          .fill(.mainGreen)
+          .frame(width: 20, height: 20)
+          .scaleEffect(currentState == .end ? 1 : 0.3)
+          .opacity(currentState == .end ? 1 : 0)
+      }
     }
+    .onAppear(perform: startAnimation)
   }
   
   private func startAnimation() {

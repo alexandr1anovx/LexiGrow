@@ -21,50 +21,46 @@ struct ForgotPasswordScreen: View {
   private let validator = ValidationService.shared
   
   var body: some View {
-    ZStack {
-      Color.mainBackground.ignoresSafeArea()
-      
+    VStack(spacing: 25) {
       VStack(spacing: 25) {
-        VStack(spacing: 25) {
-          Text("Забули пароль?")
-            .font(.title2)
-            .fontWeight(.bold)
-          Text("Введіть свою адресу електронної пошти, щоб отримати посилання для скидання пароля.")
-            .font(.subheadline)
-            .foregroundColor(.secondary)
-            .multilineTextAlignment(.center)
-        }
-        
-        DefaultTextField(content: .email, text: $email)
-          .focused($fieldContent, equals: .email)
-          .keyboardType(.emailAddress)
-          .textInputAutocapitalization(.never)
-          .autocorrectionDisabled()
-          .submitLabel(.done)
-          .onSubmit { fieldContent = nil }
-        
-        PrimaryButton("Надіслати посилання") {
-          Task {
-            await authManager.requestPasswordReset(for: email)
-            email = ""
-            dismiss()
-          }
-        }
-        .disabled(!validator.isValidEmail(email) || isLoading)
-        .opacity(!validator.isValidEmail(email) ? 0.5 : 1)
-        
-        Spacer()
+        Text("Забули пароль?")
+          .font(.title2)
+          .fontWeight(.bold)
+        Text("Введіть свою адресу електронної пошти, щоб отримати посилання для скидання пароля.")
+          .font(.subheadline)
+          .foregroundColor(.secondary)
+          .multilineTextAlignment(.center)
       }
-      .padding([.top, .horizontal])
-      .alert(isPresented: $showAlert) {
-        Alert(
-          title: Text(alertTitle),
-          message: Text(alertMessage),
-          dismissButton: .default(Text("OK"))
-        )
+      
+      DefaultTextField(content: .email, text: $email)
+        .focused($fieldContent, equals: .email)
+        .keyboardType(.emailAddress)
+        .textInputAutocapitalization(.never)
+        .autocorrectionDisabled()
+        .submitLabel(.done)
+        .onSubmit { fieldContent = nil }
+      
+      PrimaryButton("Надіслати посилання") {
+        Task {
+          await authManager.requestPasswordReset(for: email)
+          email = ""
+          dismiss()
+        }
       }
-      .onAppear { fieldContent = .email }
+      .disabled(!validator.isValidEmail(email) || isLoading)
+      .opacity(!validator.isValidEmail(email) ? 0.5 : 1)
+      
+      Spacer()
     }
+    .padding([.top, .horizontal])
+    .alert(isPresented: $showAlert) {
+      Alert(
+        title: Text(alertTitle),
+        message: Text(alertMessage),
+        dismissButton: .default(Text("OK"))
+      )
+    }
+    .onAppear { fieldContent = .email }
   }
 }
 

@@ -17,32 +17,30 @@ struct SettingsScreen: View {
   @State private var triggerSelection = false
   
   var body: some View {
-    ZStack {
-      Color.mainBackground.ignoresSafeArea()
-      Form {
-        Section("Зовнішній вигляд") {
-          Picker("Тема застосунку", selection: $appTheme) {
-            ForEach(AppTheme.allCases) {
-              Text($0.title)
-            }
+    Form {
+      Section("Зовнішній вигляд") {
+        Picker("Тема застосунку", selection: $appTheme) {
+          ForEach(AppTheme.allCases) {
+            Text($0.title)
+          }
+        }
+      }
+      
+      Section("Аудіо") {
+        Toggle("Озвучувати слова", isOn: $isAutomaticAudioPlaybackOn)
+      }
+      
+      Section("Сортування") {
+        Picker("Теми", selection: $topicSortOption) {
+          ForEach(TopicSortOption.allCases) {
+            Text($0.rawValue)
+              .tag($0)
           }
         }
         
-        Section("Аудіо") {
-          Toggle("Озвучувати слова", isOn: $isAutomaticAudioPlaybackOn)
-        }
-        
-        Section("Сортування") {
-          Picker("Теми", selection: $topicSortOption) {
-            ForEach(TopicSortOption.allCases) {
-              Text($0.rawValue)
-                .tag($0)
-            }
-          }
-          
-        }
-      }.scrollContentBackground(.hidden)
+      }
     }
+    .scrollContentBackground(.hidden)
     .navigationTitle("Налаштування")
     .navigationBarTitleDisplayMode(.inline)
   }

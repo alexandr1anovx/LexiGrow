@@ -13,57 +13,54 @@ struct MoreScreen: View {
   
   var body: some View {
     NavigationStack {
-      ZStack {
-        Color.mainBackground.ignoresSafeArea()
-        Form {
-          Section {
-            if let user = authManager.currentUser {
-              UserDataView(user: user)
-            } else {
-              Text("Дані не надано")
-            }
-          } footer: {
-            HStack(spacing: 5) {
-              Text("Хочеш редагувати свої дані?")
-              NavigationLink {
-                ProfileScreen()
-              } label: {
-                Text("Перейти до профілю")
-                  .underline()
-              }
-            }.font(.footnote)
+      Form {
+        Section {
+          if let user = authManager.currentUser {
+            UserDataView(user: user)
+          } else {
+            Text("Дані не надано")
           }
-          
-          Section {
+        } footer: {
+          HStack(spacing: 5) {
+            Text("Хочеш редагувати свої дані?")
             NavigationLink {
-              SettingsScreen()
+              ProfileScreen()
             } label: {
-              Label {
-                Text("Налаштування")
-              } icon: {
-                Image(systemName: "gearshape")
-                  .font(.subheadline)
-              }
+              Text("Перейти до профілю")
+                .underline()
+            }
+          }.font(.footnote)
+        }
+        
+        Section {
+          NavigationLink {
+            SettingsScreen()
+          } label: {
+            Label {
+              Text("Налаштування")
+            } icon: {
+              Image(systemName: "gearshape")
+                .font(.subheadline)
             }
           }
-          
-          Section {
-            Button("Вийти") {
-              showSignOutConfirmation = true
-            }.tint(.red)
-          }
         }
-        .scrollContentBackground(.hidden)
-        .navigationTitle(Tab.more.rawValue)
-        .navigationBarTitleDisplayMode(.large)
-        .sheet(isPresented: $showSignOutConfirmation) {
-          SignOutConfirmationView()
-            .presentationDetents([.fraction(0.35)])
+        
+        Section {
+          Button("Вийти") {
+            showSignOutConfirmation = true
+          }.tint(.red)
         }
-        .overlay {
-          if authManager.isLoading {
-            DefaultProgressView()
-          }
+      }
+      .scrollContentBackground(.hidden)
+      .navigationTitle(Tab.more.rawValue)
+      .navigationBarTitleDisplayMode(.large)
+      .sheet(isPresented: $showSignOutConfirmation) {
+        SignOutConfirmationView()
+          .presentationDetents([.fraction(0.35)])
+      }
+      .overlay {
+        if authManager.isLoading {
+          DefaultProgressView()
         }
       }
     }

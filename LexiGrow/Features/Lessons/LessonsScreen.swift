@@ -18,48 +18,44 @@ struct LessonsScreen: View {
   @State private var displayMode: DisplayMode = .lessons
   
   var body: some View {
-    ZStack {
-      Color.mainBackground.ignoresSafeArea()
-      VStack {
-        Text("Привіт👋, \(authManager.currentUser?.firstName ?? "користувач")!")
-          .font(.subheadline)
-          .fontWeight(.semibold)
-          .fontDesign(.monospaced)
-          .lineLimit(1)
-          .padding(23)
-        
-        DisplayModeSelector(displayMode: $displayMode)
-        
-        Spacer()
-        
-        Group {
-          switch displayMode {
-          case .lessons:
-            GridView(selectedLesson: $selectedLesson)
-          case .progress:
-            LessonProgressScreen()
-          }
-        }.transition(.blurReplace)
-        
-        Spacer()
-      }
-      .animation(.easeInOut, value: displayMode)
-      .onDisappear {
-        // always return user to the first tab
-        displayMode = .lessons
-      }
-      .sheet(item: $selectedLesson) { lesson in
-        LessonSetupSheet(
-          lesson: lesson,
-          activeLesson: $activeLesson
-        )
-      }
-      .fullScreenCover(item: $activeLesson) { lesson in
-        LessonContainerView(lesson: lesson)
-      }
-      .task {
-        await viewModel.syncData(context: modelContext)
-      }
+    VStack {
+      Text("Привіт👋, \(authManager.currentUser?.firstName ?? "користувач")!")
+        .fontWeight(.semibold)
+        .fontDesign(.monospaced)
+        .lineLimit(1)
+        .padding(23)
+      
+      DisplayModeSelector(displayMode: $displayMode)
+      
+      Spacer()
+      
+      Group {
+        switch displayMode {
+        case .lessons:
+          GridView(selectedLesson: $selectedLesson)
+        case .progress:
+          LessonProgressScreen()
+        }
+      }.transition(.blurReplace)
+      
+      Spacer()
+    }
+    .animation(.easeInOut, value: displayMode)
+    .onDisappear {
+      // always return user to the first tab
+      displayMode = .lessons
+    }
+    .sheet(item: $selectedLesson) { lesson in
+      LessonSetupSheet(
+        lesson: lesson,
+        activeLesson: $activeLesson
+      )
+    }
+    .fullScreenCover(item: $activeLesson) { lesson in
+      LessonContainerView(lesson: lesson)
+    }
+    .task {
+      await viewModel.syncData(context: modelContext)
     }
   }
 }
@@ -179,19 +175,19 @@ private struct LessonProgressScreen: View {
     .refreshable {
       await viewModel.syncProgress(context: modelContext)
     }
-//    .task { await viewModel.syncProgress(context: modelContext) }
+    //    .task { await viewModel.syncProgress(context: modelContext) }
     /*
-    .alert(isPresented: $showAlert) {
-      Alert(
-        title: Text("Erase all progress?"),
-        message: Text("This action cannot be undone. All your achievements and settings will be deleted."),
-        primaryButton: .destructive(Text("Erase")) {
-          
-        },
-        secondaryButton: .cancel(Text("Cancel"))
-      )
-    }
-    */
+     .alert(isPresented: $showAlert) {
+     Alert(
+     title: Text("Erase all progress?"),
+     message: Text("This action cannot be undone. All your achievements and settings will be deleted."),
+     primaryButton: .destructive(Text("Erase")) {
+     
+     },
+     secondaryButton: .cancel(Text("Cancel"))
+     )
+     }
+     */
   }
 }
 
