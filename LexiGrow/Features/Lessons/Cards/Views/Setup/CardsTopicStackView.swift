@@ -27,9 +27,6 @@ struct CardsTopicStackView: View {
         Image(systemName: "line.3.horizontal.decrease")
           .font(.title3)
       }
-      .onChange(of: topicSortOption) { _, newTopic in
-        viewModel.topicSortOption = newTopic
-      }
       
       if viewModel.selectedLevel == nil {
         Text("Потрібно обрати рівень.")
@@ -40,7 +37,7 @@ struct CardsTopicStackView: View {
       } else {
         ScrollView(.horizontal) {
           HStack(spacing: 6) {
-            ForEach(viewModel.sortedTopics, id: \.id) { topic in
+            ForEach(viewModel.sortedTopics) { topic in
               TopicButton(topic: topic, isSelected: viewModel.selectedTopic == topic) {
                 viewModel.selectedTopic = (viewModel.selectedTopic == topic) ? nil : topic
               }
@@ -48,11 +45,14 @@ struct CardsTopicStackView: View {
           }.padding(3)
         }
         .scrollIndicators(.hidden)
-        .shadow(radius: 1)
+        .shadow(radius: 2)
       }
     }
     .font(.subheadline)
     .frame(maxWidth: .infinity, minHeight: 45, alignment: .leading)
+    .onChange(of: topicSortOption) { _, newTopic in
+      viewModel.topicSortOption = newTopic
+    }
     .task(id: viewModel.selectedLevel) {
       await viewModel.getTopics()
     }

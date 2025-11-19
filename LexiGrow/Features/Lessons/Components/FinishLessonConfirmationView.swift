@@ -16,14 +16,14 @@ struct FinishLessonConfirmationView: View {
       VStack(spacing: 30) {
         Spacer()
         VStack(spacing: 12) {
-          Text("Finish lesson?")
+          Text("Завершити урок?")
             .font(.title2)
             .fontWeight(.bold)
-          Text("The progress will not be saved.")
+          Text("Ваш прогрес не буде збережено.")
             .foregroundStyle(.gray)
             .multilineTextAlignment(.center)
         }
-        PrimaryButton("Finish", tint: .red) {
+        PrimaryButton("Завершити", tint: .red) {
           finishAction()
         }
       }

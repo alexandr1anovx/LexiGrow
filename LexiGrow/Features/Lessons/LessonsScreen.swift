@@ -19,9 +19,9 @@ struct LessonsScreen: View {
   
   var body: some View {
     VStack {
-      Text("Привіт👋, \(authManager.currentUser?.firstName ?? "користувач")!")
+      Text("Привіт 😊,  \(authManager.currentUser?.firstName ?? "користувач")!")
+        .font(.title3)
         .fontWeight(.semibold)
-        .fontDesign(.monospaced)
         .lineLimit(1)
         .padding(23)
       
@@ -66,7 +66,7 @@ extension LessonsScreen {
   
   enum DisplayMode: String, Identifiable, CaseIterable {
     case lessons = "Уроки"
-    case progress = "Прогрес"
+    case progress = "Мій прогрес"
     
     var id: Self { self }
     var iconName: String {
@@ -84,19 +84,18 @@ extension LessonsScreen {
     @State private var triggerSelection = false
     
     var body: some View {
-      HStack(spacing: 8) {
+      HStack(spacing: 6) {
         ForEach(DisplayMode.allCases) { mode in
           ModeButton(mode: mode, isSelected: displayMode == mode) {
             displayMode = mode
             triggerSelection.toggle()
           }
-          .sensoryFeedback(.selection, trigger: triggerSelection)
         }
       }
-      .padding(6)
+      .padding(5)
       .background {
         Capsule()
-          .fill(.mainGreen)
+          .fill(.thinMaterial)
           .shadow(radius: 2)
       }.padding(.bottom)
     }
@@ -121,8 +120,8 @@ extension LessonsScreen {
         Label(mode.rawValue, systemImage: isSelected ? "\(mode.iconName).fill" : mode.iconName)
           .symbolEffect(.bounce, value: shouldAnimate)
           .font(.subheadline)
-          .foregroundStyle(.white)
-          .capsuleLabelStyle(pouring: isSelected ? .mainBrown : .clear)
+          .foregroundStyle(isSelected ? .white : .primary)
+          .capsuleLabelStyle(pouring: isSelected ? .mainGreen : .clear)
       }
     }
   }
@@ -174,7 +173,7 @@ private struct LessonProgressScreen: View {
     .refreshable {
       await viewModel.syncProgress(context: modelContext)
     }
-    //    .task { await viewModel.syncProgress(context: modelContext) }
+    .task { await viewModel.syncProgress(context: modelContext) }
     /*
      .alert(isPresented: $showAlert) {
      Alert(

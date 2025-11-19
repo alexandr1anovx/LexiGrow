@@ -18,12 +18,13 @@ struct LevelButton: View {
         Capsule()
           .fill(selectedLevel?.name == name ? .mainBrown : .mainGreen)
           .stroke(
-            selectedLevel?.name == name ? .mainGreen : .clear,
+            selectedLevel?.name == name ? .white : .clear,
             lineWidth: 2
           )
           .frame(width: 55, height: 48)
         Text(name)
           .font(.subheadline)
+          .fontWeight(.medium)
           .foregroundColor(.white)
       }
     }

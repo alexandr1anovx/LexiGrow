@@ -16,13 +16,13 @@ struct SignOutConfirmationView: View {
       VStack(spacing: 30) {
         Spacer()
         VStack(spacing: 15) {
-          Text("Sign Out")
+          Text("Вихід з облікового запису")
             .font(.title2)
             .fontWeight(.bold)
-          Text("Are you sure you want to sign out ?")
+          Text("Ви дійсно хочете вийти?")
             .foregroundStyle(.secondary)
         }
-        PrimaryButton("Sign Out", tint: .red) {
+        PrimaryButton("Вийти", tint: .red) {
           Task {
             await authManager.signOut()
             dismiss()

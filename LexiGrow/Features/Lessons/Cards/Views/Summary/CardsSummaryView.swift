@@ -38,7 +38,7 @@ struct CardsSummaryView: View {
       }
       
       VStack(spacing: 10) {
-        PrimaryLabelButton("Повторити невідомі слова", iconName: "repeat") {
+        PrimaryLabelButton("Повторити невідомі слова", iconName: "repeat", tint: .blue) {
           Task {
             await viewModel.startLesson()
           }

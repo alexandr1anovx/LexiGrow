@@ -39,7 +39,7 @@ struct CardsLevelStackView: View {
           .padding(3)
         }
         .scrollIndicators(.hidden)
-        .shadow(radius: 1)
+        .shadow(radius: 2)
       }
     }
     .frame(maxWidth: .infinity, minHeight: 45, alignment: .leading)
