@@ -14,8 +14,6 @@ struct EmailLinkScreen: View {
   
   var body: some View {
     ZStack {
-      Color.mainBackground.ignoresSafeArea()
-      
       if showConfirmationView {
         EmailConfirmationView(email: email) { // send action:
           Task {
@@ -40,12 +38,9 @@ extension EmailLinkScreen {
     var body: some View {
       VStack(spacing: 25) {
         VStack(spacing: 20) {
-          HStack(spacing: 8) {
-            Image(systemName: "envelope.fill")
-            Text("Вхід через посилання")
-              .fontWeight(.bold)
-          }
-          .font(.title2)
+          Text("Вхід через посилання")
+            .font(.title2)
+            .fontWeight(.bold)
           Text("Введіть свою адресу електронної пошти, і Вам буде надіслано посилання для миттєвого входу.")
             .font(.subheadline)
             .foregroundStyle(.secondary)
@@ -69,7 +64,6 @@ extension EmailLinkScreen {
           }
         }
         .disabled(!validator.isValidEmail(email))
-        .opacity(!validator.isValidEmail(email) ? 0.5:1)
         
         Spacer()
       }

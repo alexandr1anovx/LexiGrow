@@ -15,54 +15,49 @@ struct EmailConfirmationView: View {
   var sendAction: (() -> Void)? = nil
   
   var body: some View {
-    ZStack {
-      Color.mainBackground.ignoresSafeArea()
-      
-      VStack(spacing: 30) {
-        Text("Перевірте свою пошту 👀")
-          .font(.title3)
-          .fontWeight(.semibold)
-          .foregroundStyle(.secondary)
-        VStack {
-          Text("Ми надіслали посилання для підтвердження на адресу ") + Text(email).bold().foregroundStyle(.secondary)
-        }
-        .font(.subheadline)
-        .multilineTextAlignment(.center)
-        
-        Button {
-          sendAction?()
-          disableButtonTemporarily()
-        } label: {
-          if remainingTime > 0 {
-            Text("Send again in \(remainingTime)s")
-          } else {
-            Text("Send again")
-              .foregroundStyle(.blue)
-          }
-        }
-        .font(.subheadline)
-        .underline()
-        .disabled(!showSendButton)
+    VStack(spacing: 30) {
+      Text("Перевірте свою пошту 👀")
+        .font(.title3)
+        .fontWeight(.semibold)
+        .foregroundStyle(.secondary)
+      VStack {
+        Text("Ми надіслали посилання для підтвердження на адресу ") + Text(email).bold().foregroundStyle(.secondary)
       }
-      .padding(.horizontal)
+      .font(.subheadline)
+      .multilineTextAlignment(.center)
       
-      .background {
-        RoundedRectangle(cornerRadius: 50, style: .circular)
-          .fill(.systemGray)
-          .shadow(
-            color: animateShadow ? .blue : .yellow,
-            radius: 5,
-            x: 0,
-            y: animateShadow ? 2:-2
-          )
-          .frame(height: 240)
-      }
-      .navigationBarBackButtonHidden()
-      .onAppear {
+      Button {
+        sendAction?()
         disableButtonTemporarily()
-        withAnimation(.linear(duration: 1).repeatForever()) {
-          animateShadow.toggle()
+      } label: {
+        if remainingTime > 0 {
+          Text("Send again in \(remainingTime)s")
+        } else {
+          Text("Send again")
+            .foregroundStyle(.blue)
         }
+      }
+      .font(.subheadline)
+      .underline()
+      .disabled(!showSendButton)
+    }
+    .padding(.horizontal)
+    .background {
+      RoundedRectangle(cornerRadius: 50, style: .circular)
+        .fill(.systemGray)
+        .shadow(
+          color: animateShadow ? .blue : .yellow,
+          radius: 5,
+          x: 0,
+          y: animateShadow ? 2:-2
+        )
+        .frame(height: 240)
+    }
+    .navigationBarBackButtonHidden()
+    .onAppear {
+      disableButtonTemporarily()
+      withAnimation(.linear(duration: 1).repeatForever()) {
+        animateShadow.toggle()
       }
     }
   }

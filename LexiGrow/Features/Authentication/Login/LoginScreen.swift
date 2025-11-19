@@ -17,56 +17,52 @@ struct LoginScreen: View {
   
   var body: some View {
     NavigationStack {
-      ZStack {
-        Color.mainBackground.ignoresSafeArea()
-        ScrollView {
-          VStack(spacing: 20) {
-            TextFields(email: $email, password: $password)
+      ScrollView {
+        VStack(spacing: 20) {
+          TextFields(email: $email, password: $password)
+          
+          PrimaryButton("Увійти") {
+            Task {
+              await authManager.signIn(email: email, password: password)
+              password = ""
+            }
+          }
+          .disabled(!isValidForm)
+          
+          HStack {
+            Text("Або через:")
+              .font(.subheadline)
+              .foregroundStyle(.secondary)
             
-            PrimaryButton("Увійти") {
-              Task {
-                await authManager.signIn(email: email, password: password)
-                password = ""
+            ScrollView(.horizontal) {
+              HStack(spacing: 10) {
+                GoogleButton()
+                EmailLinkButton()
+                PhoneNumberButton()
               }
             }
-            .opacity(!isValidForm ? 0.5:1)
-            .disabled(!isValidForm)
-            
-            HStack {
-              Text("Увійти через:")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-              
-              ScrollView(.horizontal) {
-                HStack(spacing: 10) {
-                  GoogleButton()
-                  EmailLinkButton()
-                  PhoneNumberButton()
-                }
-              }
-              .scrollIndicators(.hidden)
-            }
-            .padding(.vertical)
-            
-            FooterView()
+            .scrollIndicators(.hidden)
           }
-          .padding([.top, .horizontal])
-          .opacity(authManager.isLoading ? 0.5 : 1)
-          .disabled(authManager.isLoading)
-          .overlay {
-            if authManager.isLoading {
-              DefaultProgressView()
-            }
+          .padding(.vertical)
+          
+          FooterView()
+        }
+        .padding([.top, .horizontal])
+        .opacity(authManager.isLoading ? 0.5 : 1)
+        .disabled(authManager.isLoading)
+        .overlay {
+          if authManager.isLoading {
+            DefaultProgressView()
           }
-          .navigationTitle("Вхід")
-          .navigationBarTitleDisplayMode(.large)
-          .alert(item: $authManager.authError) { error in
-            Alert(
-              title: Text(error.title),
-              message: Text(error.message),
-              dismissButton: .default(Text("OK"))
-            )
-          }
+        }
+        .navigationTitle("Вхід")
+        .navigationBarTitleDisplayMode(.large)
+        .alert(item: $authManager.authError) { error in
+          Alert(
+            title: Text(error.title),
+            message: Text(error.message),
+            dismissButton: .default(Text("OK"))
+          )
         }
       }
     }

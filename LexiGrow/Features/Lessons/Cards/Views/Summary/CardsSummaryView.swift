@@ -14,57 +14,53 @@ struct CardsSummaryView: View {
   @State private var wordSection: WordSection?
   
   var body: some View {
-    ZStack {
-      Color.mainBackground.ignoresSafeArea()
+    VStack(spacing: 30) {
       
-      VStack(spacing: 30) {
+      Text(viewModel.lessonFeedbackTitle)
+        .font(.title)
+        .fontWeight(.semibold)
         
-        Text(viewModel.lessonFeedbackTitle)
-          .font(.title)
-          .fontWeight(.semibold)
-          
-        
-        LottieView(animation: .named(viewModel.lessonFeedbackIconName))
-          .playbackMode(.playing(.toProgress(1, loopMode: .loop)))
-          .frame(width: 300, height: 200)
-        
-        HStack(spacing: 10) {
-          StatItem("Знаю", viewModel.knownWords.count) {
-            withAnimation(.easeInOut) { wordSection = .known }
-          }
-          StatItem("Не знаю", viewModel.unknownWords.count) {
-            withAnimation(.easeInOut) { wordSection = .unknown }
-          }
-          StatItem("Загалом", viewModel.words.count) {
-            withAnimation(.easeInOut) { wordSection = .total }
+      
+      LottieView(animation: .named(viewModel.lessonFeedbackIconName))
+        .playbackMode(.playing(.toProgress(1, loopMode: .loop)))
+        .frame(width: 300, height: 200)
+      
+      HStack(spacing: 10) {
+        StatItem("Знаю", viewModel.knownWords.count) {
+          withAnimation(.easeInOut) { wordSection = .known }
+        }
+        StatItem("Не знаю", viewModel.unknownWords.count) {
+          withAnimation(.easeInOut) { wordSection = .unknown }
+        }
+        StatItem("Загалом", viewModel.words.count) {
+          withAnimation(.easeInOut) { wordSection = .total }
+        }
+      }
+      
+      VStack(spacing: 10) {
+        PrimaryLabelButton("Повторити невідомі слова", iconName: "repeat", tint: .blue) {
+          Task {
+            await viewModel.startLesson()
           }
         }
-        
-        VStack(spacing: 10) {
-          PrimaryLabelButton("Повторити невідомі слова", iconName: "repeat") {
-            Task {
-              await viewModel.startLesson()
-            }
-          }
-          PrimaryButton("Завершити урок") {
-            Task {
-              await viewModel.saveLessonProgress()
-              viewModel.resetSetupData()
-              dismiss()
-            }
+        PrimaryButton("Завершити урок") {
+          Task {
+            await viewModel.saveLessonProgress()
+            viewModel.resetSetupData()
+            dismiss()
           }
         }
       }
-      .padding()
-      .overlay {
-        if let section = wordSection {
-          WordList(
-            words: getWords(for: section),
-            onClose: {
-              self.wordSection = nil
-            }
-          )
-        }
+    }
+    .padding()
+    .overlay {
+      if let section = wordSection {
+        WordList(
+          words: getWords(for: section),
+          onClose: {
+            self.wordSection = nil
+          }
+        )
       }
     }
   }

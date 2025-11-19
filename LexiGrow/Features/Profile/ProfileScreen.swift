@@ -29,22 +29,18 @@ struct ProfileScreen: View {
   
   var body: some View {
     NavigationView {
-      ZStack {
-        Color.mainBackground.ignoresSafeArea()
-        Form {
-          userInfoSection
-          providersSection
-          
-          Section {
-            Button("Видалити обліковий запис") {
-              showAccountDeletionAlert.toggle()
-              triggerWarning.toggle()
-            }
-            .tint(.red)
-            .sensoryFeedback(.warning, trigger: triggerWarning)
+      Form {
+        userInfoSection
+        providersSection
+        
+        Section {
+          Button("Видалити обліковий запис") {
+            showAccountDeletionAlert.toggle()
+            triggerWarning.toggle()
           }
+          .tint(.red)
+          .sensoryFeedback(.warning, trigger: triggerWarning)
         }
-        .scrollContentBackground(.hidden)
       }
       .navigationTitle("Профіль")
       .toolbar {

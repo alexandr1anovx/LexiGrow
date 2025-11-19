@@ -18,48 +18,44 @@ struct LessonsScreen: View {
   @State private var displayMode: DisplayMode = .lessons
   
   var body: some View {
-    ZStack {
-      Color.mainBackground.ignoresSafeArea()
-      VStack {
-        Text("Привіт👋, \(authManager.currentUser?.firstName ?? "користувач")!")
-          .font(.subheadline)
-          .fontWeight(.semibold)
-          .fontDesign(.monospaced)
-          .lineLimit(1)
-          .padding(23)
-        
-        DisplayModeSelector(displayMode: $displayMode)
-        
-        Spacer()
-        
-        Group {
-          switch displayMode {
-          case .lessons:
-            GridView(selectedLesson: $selectedLesson)
-          case .progress:
-            LessonProgressScreen()
-          }
-        }.transition(.blurReplace)
-        
-        Spacer()
-      }
-      .animation(.easeInOut, value: displayMode)
-      .onDisappear {
-        // always return user to the first tab
-        displayMode = .lessons
-      }
-      .sheet(item: $selectedLesson) { lesson in
-        LessonSetupSheet(
-          lesson: lesson,
-          activeLesson: $activeLesson
-        )
-      }
-      .fullScreenCover(item: $activeLesson) { lesson in
-        LessonContainerView(lesson: lesson)
-      }
-      .task {
-        await viewModel.syncData(context: modelContext)
-      }
+    VStack {
+      Text("Привіт 😊,  \(authManager.currentUser?.firstName ?? "користувач")!")
+        .font(.title3)
+        .fontWeight(.semibold)
+        .lineLimit(1)
+        .padding(23)
+      
+      DisplayModeSelector(displayMode: $displayMode)
+      
+      Spacer()
+      
+      Group {
+        switch displayMode {
+        case .lessons:
+          GridView(selectedLesson: $selectedLesson)
+        case .progress:
+          LessonProgressScreen()
+        }
+      }.transition(.blurReplace)
+      
+      Spacer()
+    }
+    .animation(.easeInOut, value: displayMode)
+    .onDisappear {
+      // always return user to the first tab
+      displayMode = .lessons
+    }
+    .sheet(item: $selectedLesson) { lesson in
+      LessonSetupSheet(
+        lesson: lesson,
+        activeLesson: $activeLesson
+      )
+    }
+    .fullScreenCover(item: $activeLesson) { lesson in
+      LessonContainerView(lesson: lesson)
+    }
+    .task {
+      await viewModel.syncData(context: modelContext)
     }
   }
 }
@@ -70,7 +66,7 @@ extension LessonsScreen {
   
   enum DisplayMode: String, Identifiable, CaseIterable {
     case lessons = "Уроки"
-    case progress = "Прогрес"
+    case progress = "Мій прогрес"
     
     var id: Self { self }
     var iconName: String {
@@ -88,19 +84,18 @@ extension LessonsScreen {
     @State private var triggerSelection = false
     
     var body: some View {
-      HStack(spacing: 8) {
+      HStack(spacing: 6) {
         ForEach(DisplayMode.allCases) { mode in
           ModeButton(mode: mode, isSelected: displayMode == mode) {
             displayMode = mode
             triggerSelection.toggle()
           }
-          .sensoryFeedback(.selection, trigger: triggerSelection)
         }
       }
-      .padding(6)
+      .padding(5)
       .background {
         Capsule()
-          .fill(.mainGreen)
+          .fill(.thinMaterial)
           .shadow(radius: 2)
       }.padding(.bottom)
     }
@@ -125,8 +120,8 @@ extension LessonsScreen {
         Label(mode.rawValue, systemImage: isSelected ? "\(mode.iconName).fill" : mode.iconName)
           .symbolEffect(.bounce, value: shouldAnimate)
           .font(.subheadline)
-          .foregroundStyle(.white)
-          .capsuleLabelStyle(pouring: isSelected ? .mainBrown : .clear)
+          .foregroundStyle(isSelected ? .white : .primary)
+          .capsuleLabelStyle(pouring: isSelected ? .mainGreen : .clear)
       }
     }
   }
@@ -175,23 +170,22 @@ private struct LessonProgressScreen: View {
       )
     }
     .listRowSpacing(8)
-    .scrollContentBackground(.hidden)
     .refreshable {
       await viewModel.syncProgress(context: modelContext)
     }
-//    .task { await viewModel.syncProgress(context: modelContext) }
+    .task { await viewModel.syncProgress(context: modelContext) }
     /*
-    .alert(isPresented: $showAlert) {
-      Alert(
-        title: Text("Erase all progress?"),
-        message: Text("This action cannot be undone. All your achievements and settings will be deleted."),
-        primaryButton: .destructive(Text("Erase")) {
-          
-        },
-        secondaryButton: .cancel(Text("Cancel"))
-      )
-    }
-    */
+     .alert(isPresented: $showAlert) {
+     Alert(
+     title: Text("Erase all progress?"),
+     message: Text("This action cannot be undone. All your achievements and settings will be deleted."),
+     primaryButton: .destructive(Text("Erase")) {
+     
+     },
+     secondaryButton: .cancel(Text("Cancel"))
+     )
+     }
+     */
   }
 }
 

@@ -21,13 +21,14 @@ struct TopicButton: View {
       HStack(spacing: 8) {
         Text(topic.name)
           .font(.subheadline)
+          .fontWeight(.medium)
         Text("\(topic.learnedWords)/\(topic.totalWords)")
           .font(.caption)
           .fontWeight(.medium)
           .padding(6)
           .background {
             Capsule()
-              .fill(isSelected ? .mainGreen : (topic.learnedWords == topic.totalWords ? .orange : .mainBrown))
+              .fill(isSelected ? .mainGreen : .mainBrown)
           }
       }
       .foregroundColor(.white)
@@ -35,7 +36,7 @@ struct TopicButton: View {
       .background {
         Capsule()
           .fill(isSelected ? .mainBrown : .mainGreen)
-          .stroke(isSelected ? .mainGreen : .clear, lineWidth: 2)
+          .stroke(isSelected ? .white : .clear, lineWidth: 2)
       }
     }
     .disabled(topic.learnedWords == topic.totalWords)
