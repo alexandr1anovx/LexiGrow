@@ -48,7 +48,6 @@ struct ForgotPasswordScreen: View {
         }
       }
       .disabled(!validator.isValidEmail(email) || isLoading)
-      .opacity(!validator.isValidEmail(email) ? 0.5 : 1)
       
       Spacer()
     }

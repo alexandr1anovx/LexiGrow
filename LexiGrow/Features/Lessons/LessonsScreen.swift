@@ -171,7 +171,6 @@ private struct LessonProgressScreen: View {
       )
     }
     .listRowSpacing(8)
-    .scrollContentBackground(.hidden)
     .refreshable {
       await viewModel.syncProgress(context: modelContext)
     }

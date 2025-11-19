@@ -46,12 +46,11 @@ struct RegistrationScreen: View {
             }
           }
           .disabled(!isValidForm)
-          .opacity(!isValidForm ? 0.5:1)
           
           HStack(spacing: 5) {
             Text("Вже маєте обліковий запис?")
               .foregroundStyle(.secondary)
-            Button("Увійти.") {
+            Button("Увійти") {
               dismiss()
             }
             .underline()
@@ -66,9 +65,9 @@ struct RegistrationScreen: View {
             DefaultProgressView()
           }
         }
+        .navigationTitle("Реєстрація")
+        .navigationBarTitleDisplayMode(.inline)
       }
-      .navigationTitle("Реєстрація")
-      .navigationBarTitleDisplayMode(.inline)
     }
   }
 }

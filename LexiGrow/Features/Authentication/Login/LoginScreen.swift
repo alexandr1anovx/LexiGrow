@@ -27,11 +27,10 @@ struct LoginScreen: View {
               password = ""
             }
           }
-          .opacity(!isValidForm ? 0.5:1)
           .disabled(!isValidForm)
           
           HStack {
-            Text("Увійти через:")
+            Text("Або через:")
               .font(.subheadline)
               .foregroundStyle(.secondary)
             

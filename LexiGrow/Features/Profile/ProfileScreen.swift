@@ -42,7 +42,6 @@ struct ProfileScreen: View {
           .sensoryFeedback(.warning, trigger: triggerWarning)
         }
       }
-      .scrollContentBackground(.hidden)
       .navigationTitle("Профіль")
       .toolbar {
         ToolbarItem(placement: .confirmationAction) {

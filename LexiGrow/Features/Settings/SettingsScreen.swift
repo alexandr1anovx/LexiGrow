@@ -40,7 +40,6 @@ struct SettingsScreen: View {
         
       }
     }
-    .scrollContentBackground(.hidden)
     .navigationTitle("Налаштування")
     .navigationBarTitleDisplayMode(.inline)
   }

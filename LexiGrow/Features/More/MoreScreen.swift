@@ -51,7 +51,6 @@ struct MoreScreen: View {
           }.tint(.red)
         }
       }
-      .scrollContentBackground(.hidden)
       .navigationTitle(Tab.more.rawValue)
       .navigationBarTitleDisplayMode(.large)
       .sheet(isPresented: $showSignOutConfirmation) {

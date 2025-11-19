@@ -51,7 +51,6 @@ struct CardsSetupView: View {
           }
         }
         .disabled(!viewModel.canStartLesson)
-        .opacity(!viewModel.canStartLesson ? 0.5 : 1)
       }
       .padding(.horizontal)
       .padding(.bottom)
