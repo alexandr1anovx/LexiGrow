@@ -1,37 +1,12 @@
 //
-//  Lesson.swift
+//  LessonEntity.swift
 //  LexiGrow
 //
-//  Created by Alexander Andrianov on 08.07.2025.
+//  Created by Oleksandr Andrianov on 01.12.2025.
 //
 
-import SwiftUI
+import Foundation
 import SwiftData
-
-enum LessonType: String {
-  case cards = "Картки"
-  case translation = "Переклад"
-  case unknown
-}
-
-// This model is only used to decode data from Supabase.
-struct Lesson: Identifiable, Codable, Hashable {
-  let id: UUID
-  let title: String
-  let subtitle: String
-  let iconName: String
-  let isLocked: Bool
-  
-  enum CodingKeys: String, CodingKey {
-    case id, title, subtitle
-    case iconName = "icon_name"
-    case isLocked = "is_locked"
-  }
-  
-  var type: LessonType {
-    return LessonType(rawValue: self.title) ?? .unknown
-  }
-}
 
 @Model
 final class LessonEntity {
@@ -54,7 +29,7 @@ final class LessonEntity {
     self.isLocked = isLocked
   }
   
-  convenience init(from dto: Lesson) {
+  convenience init(from dto: LessonDTO) {
     self.init(
       id: dto.id,
       title: dto.title,

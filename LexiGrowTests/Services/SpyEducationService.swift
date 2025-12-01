@@ -15,7 +15,7 @@ final class SpyEducationService: EducationServiceProtocol {
   var getWordsCalled = false
   var saveLessonProgressCalled = false
 
-  var lessonsToReturn: [Lesson] = [.mockCards, .mockReading]
+  var lessonsToReturn: [LessonDTO] = [.mockCards, .mockReading]
   var levelsToReturn: [Level] = [.mockB1, .mockB2]
   var topicsToReturn: [Topic] = [.mock1, .mock2, .mock3]
   var wordsToReturn: [Word] = [.mock1, .mock2]
@@ -26,7 +26,7 @@ final class SpyEducationService: EducationServiceProtocol {
   var getWordsError: Error?
   var saveProgressError: Error?
 
-  func getLessons() async throws -> [Lesson] {
+  func getLessons() async throws -> [LessonDTO] {
     getLessonsCalled = true
     if let e = getLessonsError { throw e }
     return lessonsToReturn

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct LessonContainerView: View {
+struct LessonsContainerView: View {
   @Environment(TranslationViewModel.self) var translationViewModel
   @Environment(\.dismiss) var dismiss
   let lesson: LessonEntity

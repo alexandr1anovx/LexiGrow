@@ -9,7 +9,6 @@ import SwiftUI
 
 struct CardLessonView: View {
   @Environment(CardsViewModel.self) var viewModel
-  @Environment(\.dismiss) var dismiss
   @AppStorage(AppStorageKeys.isAutomaticAudioPlaybackOn) private var isAutomaticAudioPlaybackOn = false
   @State private var isFlipped = false
   
@@ -59,19 +58,17 @@ struct CardLessonView: View {
   }
 }
 
-extension CardLessonView {
-  struct WordCountView: View {
-    let count: Int
-    let iconName: String
-    
-    var body: some View {
-      Label("\(count)", systemImage: iconName)
-        .capsuleLabelStyle(pouring: .mainBrown)
-        .monospacedDigit()
-        .contentTransition(.numericText())
-        .animation(.bouncy, value: count)
-        .foregroundStyle(.white)
-    }
+private struct WordCountView: View {
+  let count: Int
+  let iconName: String
+  
+  var body: some View {
+    Label("\(count)", systemImage: iconName)
+      .capsuleLabelStyle(pouring: .mainBrown)
+      .monospacedDigit()
+      .contentTransition(.numericText())
+      .animation(.bouncy, value: count)
+      .foregroundStyle(.white)
   }
 }
 

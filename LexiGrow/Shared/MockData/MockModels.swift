@@ -31,15 +31,15 @@ extension Word {
 
 // MARK: - Lesson
 
-extension Lesson {
-  static let mockCards = Lesson(
+extension LessonDTO {
+  static let mockCards = LessonDTO(
     id: UUID(),
     title: "Cards",
     subtitle: "Description",
     iconName: "rectangle.stack.fill",
     isLocked: false
   )
-  static let mockReading = Lesson(
+  static let mockReading = LessonDTO(
     id: UUID(),
     title: "Reading",
     subtitle: "Description",

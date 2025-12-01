@@ -8,6 +8,8 @@
 import SwiftUI
 import SwiftData
 
+
+
 struct LessonsScreen: View {
   @Environment(\.modelContext) var modelContext
   @Environment(AuthManager.self) var authManager
@@ -32,7 +34,7 @@ struct LessonsScreen: View {
       Group {
         switch displayMode {
         case .lessons:
-          GridView(selectedLesson: $selectedLesson)
+          LessonsGridView(selectedLesson: $selectedLesson)
         case .progress:
           LessonProgressScreen()
         }
@@ -49,7 +51,7 @@ struct LessonsScreen: View {
       LessonSetupView(lesson: lesson, activeLesson: $activeLesson)
     }
     .fullScreenCover(item: $activeLesson) { lesson in
-      LessonContainerView(lesson: lesson)
+      LessonsContainerView(lesson: lesson)
     }
     .task {
       await viewModel.syncData(context: modelContext)
@@ -114,7 +116,7 @@ private struct DisplayModeButton: View {
   }
 }
 
-private struct GridView: View {
+private struct LessonsGridView: View {
   @Environment(LessonsViewModel.self) var viewModel
   @Binding var selectedLesson: LessonEntity?
   
