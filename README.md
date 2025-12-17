@@ -12,15 +12,24 @@ An iOS app designed to help people learn English.
 
 ## Screenshots
 <p align="center">
-   <img src="./Screenshots/LogIn.png" width="250" />
-   <img src="./Screenshots/Registration.png" width="250" />
-   <img src="./Screenshots/ResetPassword.png" width="250" />
-   <img src="./Screenshots/LessonSetup.png" width="250" />
-   <img src="./Screenshots/Card_Original.png" width="250" />
-   <img src="./Screenshots/Card_Translation.png" width="250" />
-   <img src="./Screenshots/LessonSummary.png" width="250" />
-   <img src="./Screenshots/Statistics.png" width="250" />
-   <img src="./Screenshots/MoreScreen.png" width="250" />
+   <img src="./Screenshots/OnboardingWelcome.png" width="250" />
+   <img src="./Screenshots/OnboardingLearnFast.png" width="250" />
+   <img src="./Screenshots/OnboardingCheckProgress.png" width="250" />
+   <img src="./Screenshots/OnboardingReadyToGo.png" width="250" />
+   
+   <img src="./Screenshots/LoginScreen.png" width="250" />
+   <img src="./Screenshots/RegistrationScreen.png" width="250" />
+   <img src="./Screenshots/ResetPasswordScreen.png" width="250" />
+   
+   <img src="./Screenshots/LessonsScreen.png" width="250" />
+   <img src="./Screenshots/LessonsProgressScreen.png" width="250" />
+   
+   <img src="./Screenshots/FlashcardsSetupView.png" width="250" />
+   <img src="./Screenshots/FlashcardsLessonScreen.png" width="250" />
+   <img src="./Screenshots/FlashcardsSummaryScreen.png" width="250" />
+
+   <img src="./Screenshots/SettingsScreen.png" width="250" />
+   <img src="./Screenshots/ProfileScreen.png" width="250" />
 </p>
 
 ---
@@ -32,10 +41,9 @@ An iOS app designed to help people learn English.
 - Supabase
 - AVFoundation
 - async/await
-- XCTest
 ---
 
 ## Installation  
 
    ```bash
-   git clone https://github.com/alexandr1anov/LexiGrow.git
+   git clone https://github.com/alexandr1anovx/LexiGrow.git
