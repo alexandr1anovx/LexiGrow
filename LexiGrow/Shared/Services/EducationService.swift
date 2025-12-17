@@ -8,7 +8,7 @@
 import Foundation
 
 protocol EducationServiceProtocol {
-  func getLessons() async throws -> [Lesson]
+  func getLessons() async throws -> [LessonDTO]
   func getLevels() async throws -> [Level]
   func getTopics(levelId: UUID, userId: UUID) async throws -> [Topic]
   func getWords(levelId: UUID, topicId: UUID, userId: UUID) async throws -> [Word]
@@ -21,8 +21,8 @@ protocol EducationServiceProtocol {
 final class EducationService: EducationServiceProtocol {
   
   /// Loads the list of all lessons from the database, sorted by lock status.
-  func getLessons() async throws -> [Lesson] {
-    let lessons: [Lesson] = try await SupabaseService.shared.client
+  func getLessons() async throws -> [LessonDTO] {
+    let lessons: [LessonDTO] = try await SupabaseService.shared.client
       .from("lessons")
       .select()
       .order("is_locked")

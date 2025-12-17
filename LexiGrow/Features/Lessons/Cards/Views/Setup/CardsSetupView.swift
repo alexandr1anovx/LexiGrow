@@ -55,7 +55,7 @@ struct CardsSetupView: View {
       .padding(.horizontal)
       .padding(.bottom)
       .toolbar {
-        ToolbarItem(placement: .cancellationAction) {
+        ToolbarItem(placement: .topBarTrailing) {
           CloseButton {
             dismiss()
           }

@@ -29,18 +29,18 @@ final class ModelsTests: XCTestCase {
   }
   
   func test_Lesson_typeMapping() {
-    let flash = Lesson(id: UUID(), title: "Cards", subtitle: "", iconName: "x", isLocked: false)
+    let flash = LessonDTO(id: UUID(), title: "Cards", subtitle: "", iconName: "x", isLocked: false)
     XCTAssertEqual(flash.type, .cards)
     
-    let trans = Lesson(id: UUID(), title: "Translation", subtitle: "", iconName: "x", isLocked: false)
+    let trans = LessonDTO(id: UUID(), title: "Translation", subtitle: "", iconName: "x", isLocked: false)
     XCTAssertEqual(trans.type, .translation)
     
-    let other = Lesson(id: UUID(), title: "SomethingElse", subtitle: "", iconName: "x", isLocked: false)
+    let other = LessonDTO(id: UUID(), title: "SomethingElse", subtitle: "", iconName: "x", isLocked: false)
     XCTAssertEqual(other.type, .unknown)
   }
   
   func test_LessonEntity_convenienceInit_fromDTO() {
-    let dto = Lesson(id: UUID(), title: "Cards", subtitle: "Sub", iconName: "house", isLocked: true)
+    let dto = LessonDTO(id: UUID(), title: "Cards", subtitle: "Sub", iconName: "house", isLocked: true)
     let entity = LessonEntity(from: dto)
     XCTAssertEqual(entity.id, dto.id)
     XCTAssertEqual(entity.title, dto.title)

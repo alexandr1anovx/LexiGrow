@@ -26,7 +26,7 @@ struct CardsContainerView: View {
       .navigationBarTitleDisplayMode(viewModel.lessonState == .summary ? .inline : .large)
       .toolbar {
         if viewModel.lessonState == .inProgress {
-          ToolbarItem(placement: .cancellationAction) {
+          ToolbarItem(placement: .topBarTrailing) {
             CloseButton {
               showFinishConfirmationView = true
             }
