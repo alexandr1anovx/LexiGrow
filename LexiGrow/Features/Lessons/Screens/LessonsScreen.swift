@@ -127,9 +127,9 @@ private struct LessonsGridView: View {
   
   var body: some View {
     if viewModel.isLoading {
-      DefaultProgressView()
+      ContentUnavailableView("Завантаження уроків...", systemImage: "hourglass")
     } else {
-      ScrollView {
+      ScrollView(.vertical) {
         LazyVGrid(columns: columns, spacing: 25) {
           ForEach(viewModel.lessons) { lesson in
             LessonBlockView(lesson: lesson)

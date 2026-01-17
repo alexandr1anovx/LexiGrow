@@ -42,7 +42,7 @@ struct TranslationView: View {
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .disabled(viewModel.answerState != .idle)
       } else {
-        ProgressView()
+        ContentUnavailableView("Підготовка речень...", systemImage: "text.bubble", description: Text("Завантажуємо речення для перекладу. Це допоможе вам покращити навички!"))
       }
     }
     .padding()

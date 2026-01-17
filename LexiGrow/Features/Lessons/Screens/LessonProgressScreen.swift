@@ -15,15 +15,20 @@ struct LessonProgressScreen: View {
   private var levelProgressData: [LevelProgressEntity]
   
   var body: some View {
-    List(levelProgressData) {
-      LessonProgressCell(
-        title: $0.name,
-        progress: $0.progress,
-        learnedWords: $0.learnedWords,
-        totalWords: $0.totalWords
-      )
+    Group {
+      if levelProgressData.isEmpty {
+        ContentUnavailableView("Завантаження прогресу...", systemImage: "hourglass")
+      } else {
+        List(levelProgressData) {
+          LessonProgressCell(
+            title: $0.name,
+            progress: $0.progress,
+            learnedWords: $0.learnedWords,
+            totalWords: $0.totalWords
+          )
+        }.listRowSpacing(8)
+      }
     }
-    .listRowSpacing(8)
     .task {
       await viewModel.syncProgress(context: modelContext)
     }
