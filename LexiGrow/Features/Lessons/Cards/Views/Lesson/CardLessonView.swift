@@ -52,7 +52,7 @@ struct CardLessonView: View {
           viewModel.speakCurrentWord(auto: isAutomaticAudioPlaybackOn)
         }
       } else {
-        ProgressView("The data is loading...")
+        ContentUnavailableView("Підготовка карток...", systemImage: "rectangle.stack", description: Text("Завантажуємо слова для вашого уроку. Це займе всього кілька секунд."))
       }
     }
   }
