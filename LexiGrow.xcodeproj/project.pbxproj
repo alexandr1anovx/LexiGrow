@@ -11,27 +11,8 @@
 		D1CA3B682EB01CA500318CDF /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = D1CA3B672EB01CA500318CDF /* Lottie */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		D197FB972E7760480038BFF3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D16774912E04B62500967AC8 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = D16774982E04B62500967AC8;
-			remoteInfo = LexiGrow;
-		};
-		D197FBA62E77608F0038BFF3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D16774912E04B62500967AC8 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = D16774982E04B62500967AC8;
-			remoteInfo = LexiGrow;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
 		D16774992E04B62600967AC8 /* LexiGrow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LexiGrow.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		D197FB932E7760480038BFF3 /* LexiGrowTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LexiGrowTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		D197FBA02E77608F0038BFF3 /* LexiGrowUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LexiGrowUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -53,16 +34,6 @@
 			path = LexiGrow;
 			sourceTree = "<group>";
 		};
-		D197FB942E7760480038BFF3 /* LexiGrowTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = LexiGrowTests;
-			sourceTree = "<group>";
-		};
-		D197FBA12E77608F0038BFF3 /* LexiGrowUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = LexiGrowUITests;
-			sourceTree = "<group>";
-		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,16 +44,6 @@
 				D1CA3B682EB01CA500318CDF /* Lottie in Frameworks */,
 			);
 		};
-		D197FB902E7760480038BFF3 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			files = (
-			);
-		};
-		D197FB9D2E77608F0038BFF3 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			files = (
-			);
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -90,8 +51,6 @@
 			isa = PBXGroup;
 			children = (
 				D167749B2E04B62600967AC8 /* LexiGrow */,
-				D197FB942E7760480038BFF3 /* LexiGrowTests */,
-				D197FBA12E77608F0038BFF3 /* LexiGrowUITests */,
 				D1C6D9412E1ABB8A0084D5D3 /* Frameworks */,
 				D167749A2E04B62600967AC8 /* Products */,
 			);
@@ -101,8 +60,6 @@
 			isa = PBXGroup;
 			children = (
 				D16774992E04B62600967AC8 /* LexiGrow.app */,
-				D197FB932E7760480038BFF3 /* LexiGrowTests.xctest */,
-				D197FBA02E77608F0038BFF3 /* LexiGrowUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -139,48 +96,6 @@
 			productReference = D16774992E04B62600967AC8 /* LexiGrow.app */;
 			productType = "com.apple.product-type.application";
 		};
-		D197FB922E7760480038BFF3 /* LexiGrowTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = D197FB9B2E7760480038BFF3 /* Build configuration list for PBXNativeTarget "LexiGrowTests" */;
-			buildPhases = (
-				D197FB8F2E7760480038BFF3 /* Sources */,
-				D197FB902E7760480038BFF3 /* Frameworks */,
-				D197FB912E7760480038BFF3 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				D197FB982E7760480038BFF3 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				D197FB942E7760480038BFF3 /* LexiGrowTests */,
-			);
-			name = LexiGrowTests;
-			productName = LexiGrowTests;
-			productReference = D197FB932E7760480038BFF3 /* LexiGrowTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		D197FB9F2E77608F0038BFF3 /* LexiGrowUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = D197FBA82E77608F0038BFF3 /* Build configuration list for PBXNativeTarget "LexiGrowUITests" */;
-			buildPhases = (
-				D197FB9C2E77608F0038BFF3 /* Sources */,
-				D197FB9D2E77608F0038BFF3 /* Frameworks */,
-				D197FB9E2E77608F0038BFF3 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				D197FBA72E77608F0038BFF3 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				D197FBA12E77608F0038BFF3 /* LexiGrowUITests */,
-			);
-			name = LexiGrowUITests;
-			productName = LexiGrowUITests;
-			productReference = D197FBA02E77608F0038BFF3 /* LexiGrowUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -193,14 +108,6 @@
 				TargetAttributes = {
 					D16774982E04B62500967AC8 = {
 						CreatedOnToolsVersion = 16.2;
-					};
-					D197FB922E7760480038BFF3 = {
-						CreatedOnToolsVersion = 16.2;
-						TestTargetID = D16774982E04B62500967AC8;
-					};
-					D197FB9F2E77608F0038BFF3 = {
-						CreatedOnToolsVersion = 16.2;
-						TestTargetID = D16774982E04B62500967AC8;
 					};
 				};
 			};
@@ -223,24 +130,12 @@
 			projectRoot = "";
 			targets = (
 				D16774982E04B62500967AC8 /* LexiGrow */,
-				D197FB922E7760480038BFF3 /* LexiGrowTests */,
-				D197FB9F2E77608F0038BFF3 /* LexiGrowUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		D16774972E04B62500967AC8 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			files = (
-			);
-		};
-		D197FB912E7760480038BFF3 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			files = (
-			);
-		};
-		D197FB9E2E77608F0038BFF3 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			files = (
 			);
@@ -253,30 +148,7 @@
 			files = (
 			);
 		};
-		D197FB8F2E7760480038BFF3 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			files = (
-			);
-		};
-		D197FB9C2E77608F0038BFF3 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			files = (
-			);
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		D197FB982E7760480038BFF3 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = D16774982E04B62500967AC8 /* LexiGrow */;
-			targetProxy = D197FB972E7760480038BFF3 /* PBXContainerItemProxy */;
-		};
-		D197FBA72E77608F0038BFF3 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = D16774982E04B62500967AC8 /* LexiGrow */;
-			targetProxy = D197FBA62E77608F0038BFF3 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		D16774A52E04B62700967AC8 /* Debug configuration for PBXProject "LexiGrow" */ = {
@@ -474,92 +346,6 @@
 			};
 			name = Release;
 		};
-		D197FB992E7760480038BFF3 /* Debug configuration for PBXNativeTarget "LexiGrowTests" */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.alexandr1anovx.LexiGrowTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LexiGrow.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/LexiGrow";
-			};
-			name = Debug;
-		};
-		D197FB9A2E7760480038BFF3 /* Release configuration for PBXNativeTarget "LexiGrowTests" */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.alexandr1anovx.LexiGrowTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LexiGrow.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/LexiGrow";
-			};
-			name = Release;
-		};
-		D197FBA92E77608F0038BFF3 /* Debug configuration for PBXNativeTarget "LexiGrowUITests" */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.alexandr1anovx.LexiGrowUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-				TEST_TARGET_NAME = LexiGrow;
-			};
-			name = Debug;
-		};
-		D197FBAA2E77608F0038BFF3 /* Release configuration for PBXNativeTarget "LexiGrowUITests" */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.alexandr1anovx.LexiGrowUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-				TEST_TARGET_NAME = LexiGrow;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -576,22 +362,6 @@
 			buildConfigurations = (
 				D16774A82E04B62700967AC8 /* Debug configuration for PBXNativeTarget "LexiGrow" */,
 				D16774A92E04B62700967AC8 /* Release configuration for PBXNativeTarget "LexiGrow" */,
-			);
-			defaultConfigurationName = Release;
-		};
-		D197FB9B2E7760480038BFF3 /* Build configuration list for PBXNativeTarget "LexiGrowTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				D197FB992E7760480038BFF3 /* Debug configuration for PBXNativeTarget "LexiGrowTests" */,
-				D197FB9A2E7760480038BFF3 /* Release configuration for PBXNativeTarget "LexiGrowTests" */,
-			);
-			defaultConfigurationName = Release;
-		};
-		D197FBA82E77608F0038BFF3 /* Build configuration list for PBXNativeTarget "LexiGrowUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				D197FBA92E77608F0038BFF3 /* Debug configuration for PBXNativeTarget "LexiGrowUITests" */,
-				D197FBAA2E77608F0038BFF3 /* Release configuration for PBXNativeTarget "LexiGrowUITests" */,
 			);
 			defaultConfigurationName = Release;
 		};
