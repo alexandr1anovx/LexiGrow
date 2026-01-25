@@ -23,7 +23,7 @@ An iOS app designed to help people learn English and build vocabulary effectivel
    
    <img src="./Screenshots/LoginScreen.png" width="250" />
    <img src="./Screenshots/RegistrationScreen.png" width="250" />
-   <img src="./Screenshots/ResetPasswordScreen.png" width="250" />
+   <img src="./Screenshots/ForgotPasswordScreen.png" width="250" />
    
    <img src="./Screenshots/LessonsScreen.png" width="250" />
    <img src="./Screenshots/LessonsProgressScreen.png" width="250" />
