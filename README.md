@@ -1,12 +1,16 @@
-#  LexiGrow
+#  ReWord
 
-An iOS app designed to help people learn English.  
+An iOS app designed to help people learn English and build vocabulary effectively.
 
-**Features**  
-- practice with flashcards to reinforce memory.  
-- track the number of words you’ve learned.
+**Features:**  
+- **Flashcards**: practice with interactive flashcards designed to boost memory and long-term retention.
+- **Progress Tracking**: track how many words you’ve learned and watch your vocabulary grow over time.
+- **Language-Friendly Design**: clean, distraction-free interface focused on fast and enjoyable learning.
 
-**iOS 18.6+**  
+---
+
+## Tech Stack  
+- MVVM, SwiftUI, SwiftData, Supabase, AVFoundation, async/await.
 
 ---
 
@@ -31,19 +35,3 @@ An iOS app designed to help people learn English.
    <img src="./Screenshots/SettingsScreen.png" width="250" />
    <img src="./Screenshots/ProfileScreen.png" width="250" />
 </p>
-
----
-
-## Tech Stack  
-- MVVM
-- SwiftUI
-- SwiftData
-- Supabase
-- AVFoundation
-- async/await
----
-
-## Installation  
-
-   ```bash
-   git clone https://github.com/alexandr1anovx/LexiGrow.git
