@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct ProfileScreen: View {
+  
   @Environment(AuthManager.self) var authManager
+  @FocusState private var focusedField: Field?
   
   @State private var fullName = ""
   @State private var email = ""
@@ -47,6 +49,7 @@ struct ProfileScreen: View {
         ToolbarItem(placement: .confirmationAction) {
           if formHasChanges {
             Button {
+              focusedField = nil
               Task {
                 await authManager.updateUser(fullName: fullName)
                 triggerSuccess.toggle()
@@ -78,8 +81,15 @@ struct ProfileScreen: View {
   }
 }
 
-extension ProfileScreen {
-  private func retrieveUserData() {
+private extension ProfileScreen {
+  enum Field: Hashable {
+    case fullName
+    case email
+  }
+}
+
+private extension ProfileScreen {
+  func retrieveUserData() {
     guard let user = authManager.currentUser else {
       fullName = "Full Name"
       email = "Email address"
@@ -104,7 +114,9 @@ private extension ProfileScreen {
       
       DefaultTextField(content: .fullName, text: $fullName)
         .textInputAutocapitalization(.words)
+        .focused($focusedField, equals: .fullName)
       DefaultTextField(content: .email, text: $email)
+        .focused($focusedField, equals: .email)
       
       if let isEmailConfirmed {
         Label {
@@ -136,7 +148,7 @@ private extension ProfileScreen {
   }
 }
 
-struct ProviderRowView: View {
+private struct ProviderRowView: View {
   let providerName: String
   
   private var displayName: String {
