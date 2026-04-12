@@ -87,7 +87,7 @@ final class EducationService: EducationServiceProtocol {
       learnedAt: Date.now
     )
     try await SupabaseService.shared.client
-      .from("user_progress")
+      .from("user_word_progress")
       .upsert(progress) // .upsert() prevents an error if the user learns the same word twice.
       .execute()
   }
@@ -101,7 +101,7 @@ final class EducationService: EducationServiceProtocol {
       UserProgress(userId: user.id, wordId: word.id, learnedAt: Date())
     }
     try await SupabaseService.shared.client
-      .from("user_progress")
+      .from("user_word_progress")
       .upsert(progressArray)
       .execute()
   }
