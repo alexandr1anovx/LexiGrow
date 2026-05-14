@@ -13,14 +13,13 @@ struct RegistrationScreen: View {
   @State private var fullName = ""
   @State private var email = ""
   @State private var password = ""
-  @State private var confirmPassword = ""
   
   private let validator = ValidationService.shared
+  
   private var isValidForm: Bool {
     validator.isValidFullName(fullName) &&
     validator.isValidEmail(email) &&
-    validator.isValidPassword(password) &&
-    password == confirmPassword
+    validator.isValidPassword(password)
   }
   
   var body: some View {
@@ -30,8 +29,7 @@ struct RegistrationScreen: View {
           TextFields(
             fullName: $fullName,
             email: $email,
-            password: $password,
-            confirmPassword: $confirmPassword
+            password: $password
           )
           
           PrimaryButton("Зареєструватись") {
@@ -42,7 +40,6 @@ struct RegistrationScreen: View {
                 password: password
               )
               password = ""
-              confirmPassword = ""
             }
           }
           .disabled(!isValidForm)
@@ -78,7 +75,6 @@ extension RegistrationScreen {
     @Binding var fullName: String
     @Binding var email: String
     @Binding var password: String
-    @Binding var confirmPassword: String
     @FocusState private var focusedField: Field?
     
     var body: some View {
@@ -97,11 +93,6 @@ extension RegistrationScreen {
         
         SecureTextField(content: .password, text: $password, showEye: true)
           .focused($focusedField, equals: .password)
-          .submitLabel(.next)
-          .onSubmit { focusedField = .confirmPassword }
-        
-        SecureTextField(content: .confirmPassword, text: $confirmPassword, showEye: false)
-          .focused($focusedField, equals: .confirmPassword)
           .submitLabel(.done)
           .onSubmit { focusedField = nil }
       }

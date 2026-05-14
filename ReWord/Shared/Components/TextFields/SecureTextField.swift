@@ -22,6 +22,8 @@ struct SecureTextField: View {
       
       if showPassword {
         TextField(content.title, text: $text)
+          .textInputAutocapitalization(.never)
+          .autocorrectionDisabled()
       } else {
         SecureField(content.title, text: $text)
       }
