@@ -9,19 +9,19 @@ import SwiftUI
 
 struct EmailConfirmationView: View {
   @State private var showSendButton = false
-  @State private var animateShadow = false
   @State private var remainingTime = 0
   let email: String
   var sendAction: (() -> Void)? = nil
   
+  @Environment(AuthManager.self) private var authManager
+  
   var body: some View {
-    VStack(spacing: 30) {
-      Text("Перевірте свою пошту 👀")
+    VStack(spacing: 35) {
+      Text("Check your email")
         .font(.title3)
         .fontWeight(.semibold)
-        .foregroundStyle(.secondary)
       VStack {
-        Text("Ми надіслали посилання для підтвердження на адресу ") + Text(email).bold().foregroundStyle(.secondary)
+        Text("A confirmation link has been sent to ") + Text(email).bold().foregroundStyle(.blue)
       }
       .font(.subheadline)
       .multilineTextAlignment(.center)
@@ -37,34 +37,33 @@ struct EmailConfirmationView: View {
             .foregroundStyle(.blue)
         }
       }
+      .tint(.blue)
+      .buttonStyle(.bordered)
       .font(.subheadline)
-      .underline()
       .disabled(!showSendButton)
     }
-    .padding(.horizontal)
+    .padding(.horizontal, 20)
     .background {
-      RoundedRectangle(cornerRadius: 50, style: .circular)
+      RoundedRectangle(cornerRadius: 40, style: .circular)
         .fill(.systemGray)
-        .shadow(
-          color: animateShadow ? .blue : .yellow,
-          radius: 5,
-          x: 0,
-          y: animateShadow ? 2:-2
-        )
+        
         .frame(height: 240)
     }
     .navigationBarBackButtonHidden()
     .onAppear {
       disableButtonTemporarily()
-      withAnimation(.linear(duration: 1).repeatForever()) {
-        animateShadow.toggle()
+    }
+    .task {
+      while !Task.isCancelled {
+        try? await Task.sleep(for: .seconds(3))
+        await authManager.checkEmailConfirmation(email: email)
       }
     }
   }
   
   private func disableButtonTemporarily() {
     showSendButton = false
-    remainingTime = 60
+    remainingTime = 30
     Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
       if remainingTime > 0 {
         remainingTime -= 1
@@ -78,4 +77,5 @@ struct EmailConfirmationView: View {
 
 #Preview {
   EmailConfirmationView(email: "an4lex@gmail.com")
+    .environment(AuthManager.mock)
 }
