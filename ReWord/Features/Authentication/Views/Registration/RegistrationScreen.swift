@@ -87,6 +87,7 @@ extension RegistrationScreen {
         
         DefaultTextField(content: .email, text: $email)
           .focused($focusedField, equals: .email)
+          .textInputAutocapitalization(.never)
           .keyboardType(.emailAddress)
           .submitLabel(.next)
           .onSubmit { focusedField = .password }
