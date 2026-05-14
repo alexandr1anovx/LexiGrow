@@ -23,6 +23,8 @@ final class AuthManager {
   private(set) var currentUser: AppUser?
   private(set) var isLoading = false
   
+  private var tempPassword: String?
+  
   private let authService: AuthServiceProtocol
   
   init(authService: AuthServiceProtocol = AuthService()) {
@@ -48,6 +50,7 @@ final class AuthManager {
   
   /// Registers a new user with full name, email, and password.
   func signUp(fullName: String, email: String, password: String) async {
+    self.tempPassword = password
     prepareForRequest()
     defer { isLoading = false }
     
@@ -143,6 +146,18 @@ final class AuthManager {
     } catch {
       print("Failed to get providers list: \(error)")
       return ["No Providers Used"]
+    }
+  }
+  
+  func checkEmailConfirmation(email: String) async {
+    guard let password = tempPassword else { return }
+    
+    do {
+      try await SupabaseService.shared.client.auth.signIn(email: email, password: password)
+      print("Checking email is in process...")
+      tempPassword = nil
+    } catch {
+      print("Can't sign in with email: \(error.localizedDescription)")
     }
   }
   
