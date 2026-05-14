@@ -20,6 +20,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Resources/Info.plist,
+				Resources/Secrets.xcconfig,
 			);
 			target = D16774982E04B62500967AC8 /* ReWord */;
 		};
@@ -104,7 +105,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2600;
-				LastUpgradeCheck = 2600;
+				LastUpgradeCheck = 2650;
 				TargetAttributes = {
 					D16774982E04B62500967AC8 = {
 						CreatedOnToolsVersion = 16.2;
